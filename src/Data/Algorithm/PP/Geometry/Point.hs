@@ -6,25 +6,31 @@
 
   import qualified Data.Tuple as T
 
-  newtype Point a = Point (a, a) deriving (Eq)
+  newtype Point = Point (Int, Int) deriving (Eq)
 
-  mk :: a -> a -> Point a
+  mk :: Int -> Int -> Point
   mk x y = Point (x, y)
 
-  instance (Show a) => Show (Point a) where
+  instance Show (Point) where
     show (Point (x, y)) = show (x, y)
 
-  --assocX :: (Enum a) => a -> [a] -> [Point a]
-  assocX yStart = zipWith (curry Point . T.swap) [yStart..]
+  assocX :: Int -> [Int] -> [Point]
+  assocX yStart = zipWith (flip mk) [yStart..]
 
-  assocY :: (Enum a) => a -> [a] -> [Point a]
-  assocY xStart = zipWith (curry Point) [xStart..]
+  assocX' :: [Int] -> [Point]
+  assocX' = assocX 1
 
-  toPair :: Point a -> (a, a)
+  assocY :: Int -> [Int] -> [Point]
+  assocY xStart = zipWith mk [xStart..]
+
+  assocY' :: [Int] -> [Point]
+  assocY' = assocY 1
+
+  toPair :: Point -> (Int, Int)
   toPair (Point (x, y)) = (x, y)
 
-  getX :: Point a -> a
+  getX :: Point -> Int
   getX (Point (x, _)) = x
 
-  getY :: Point a -> a
+  getY :: Point -> Int
   getY (Point (_, y)) = y
