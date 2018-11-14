@@ -6,13 +6,13 @@
 
   import qualified Data.Tuple as T
 
-  newtype Point = Point (Int, Int) deriving (Eq)
-
-  mk :: Int -> Int -> Point
-  mk x y = Point (x, y)
+  newtype Point = Point { getPoint :: (Int, Int) } deriving (Eq)
 
   instance Show (Point) where
-    show (Point (x, y)) = show (x, y)
+    show = show . getPoint
+
+  mk :: Int -> Int -> Point
+  mk x y = Point { getPoint = (x, y) }
 
   assocX :: Int -> [Int] -> [Point]
   assocX yStart = zipWith (flip mk) [yStart..]
@@ -26,11 +26,8 @@
   assocY' :: [Int] -> [Point]
   assocY' = assocY 1
 
-  toPair :: Point -> (Int, Int)
-  toPair (Point (x, y)) = (x, y)
-
   getX :: Point -> Int
-  getX (Point (x, _)) = x
+  getX = T.fst . getPoint
 
   getY :: Point -> Int
-  getY (Point (_, y)) = y
+  getY = T.snd . getPoint
