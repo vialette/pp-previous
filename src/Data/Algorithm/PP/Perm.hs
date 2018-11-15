@@ -1,13 +1,19 @@
 module Data.Algorithm.PP.Perm
 (
   Perm
+, T
 
 , identity
 , fromList
+, mk
 
 , toList
+, toPoints
 
 , perms
+
+, len
+, at
 
 , inv
 , rev
@@ -21,15 +27,21 @@ where
   import qualified Data.Tuple     as T
   import Data.Function (on)
 
-  newtype Perm = Perm { getElems :: [Int] } deriving (Eq, Ord)
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+
+  type T = Int
+
+  newtype Perm = PermImpl { getElems :: [T] } deriving (Eq, Ord)
 
   instance Show Perm where
     show = show . getElems
 
   toList = getElems
 
+  toPoints = L.map (T.uncurry PP.Geometry.Point.mk). zip [1..] . toList
+
   --
-  reduce :: (Ord a) => [a] -> [Int]
+  reduce :: (Ord a) => [a] -> [T]
   reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zip [1..]
     where
       cmpFstSnd = compare `on` (T.fst . T.snd)
@@ -37,30 +49,38 @@ where
 
   --
   fromList :: (Ord a) => [a] -> Perm
-  fromList = Perm . reduce
+  fromList = PermImpl . reduce
+
+  mk :: (Ord a) => [a] -> Perm
+  mk = fromList
 
   --
   identity :: Int -> Perm
-  identity n = Perm [1 .. n]
+  identity n = PermImpl [1 .. n]
 
   -- 'perms n' returns all permutations of length 'n'.
   perms :: Int -> [Perm]
-  perms n = L.map Perm $ L.permutations [1..n]
+  perms n = L.map PermImpl $ L.permutations [1..n]
 
   len :: Perm -> Int
   len = L.length . getElems
 
+  at :: Perm -> Int -> T
+  at p i = xs L.!! i
+    where
+      xs = getElems p
+
   -- The 'inv' function returns the inverse permutation.
   inv :: Perm -> Perm
-  inv Perm { getElems = xs } = Perm . L.map T.snd . L.sort $ L.zip xs [1..L.length xs]
+  inv PermImpl { getElems = xs } = PermImpl . L.map T.snd . L.sort $ L.zip xs [1..L.length xs]
 
   -- 'rev p' returns the reverse of permutation 'p'.
   rev :: Perm -> Perm
-  rev = Perm . L.reverse . getElems
+  rev = PermImpl . L.reverse . getElems
 
   -- 'comp p' returns the complement of permutation 'p'.
   comp :: Perm -> Perm
-  comp Perm { getElems = xs } = Perm $ fmap (\x -> m - x + 1) xs
+  comp PermImpl { getElems = xs } = PermImpl $ fmap (\x -> m - x + 1) xs
     where
       m = F.maximum xs
 

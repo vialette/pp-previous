@@ -49,11 +49,15 @@ cabal-version:       >=1.10
 library
   -- Modules exported by the library.
   exposed-modules:     Data.Algorithm.PP.Perm
-                     , Data.Algorithm.PP.Complexity
+                     , Data.Algorithm.PP.Perm.Complexity
+                     , Data.Algorithm.PP.Perm.Rank
+                     , Data.Algorithm.PP.Perm.Square
+                     , Data.Algorithm.PP.Perm.Stat
+                     , Data.Algorithm.PP.SepTree
 
   -- Modules included in this library but not exported.
   other-modules:       Data.Algorithm.PP.Utils.List
-                     , Data.Algorithm.PP.Combi 
+                     , Data.Algorithm.PP.Combi
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
