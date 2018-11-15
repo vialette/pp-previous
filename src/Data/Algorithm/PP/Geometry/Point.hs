@@ -1,18 +1,27 @@
--- module Data.Algorithm.PP.Geometry.Point
--- (
---
--- )
--- where
+module Data.Algorithm.PP.Geometry.Point
+(
+  Point(..)
+
+, mk
+, assocX
+, assocX'
+, assocY
+, assocY'
+
+, getX
+, getY
+)
+where
 
   import qualified Data.Tuple as T
 
-  newtype Point = Point { getPoint :: (Int, Int) } deriving (Eq)
+  newtype Point = Point { getCoordinates :: (Int, Int) } deriving (Eq)
 
-  instance Show (Point) where
-    show = show . getPoint
+  instance Show Point where
+    show = show . getCoordinates
 
   mk :: Int -> Int -> Point
-  mk x y = Point { getPoint = (x, y) }
+  mk x y = Point { getCoordinates = (x, y) }
 
   assocX :: Int -> [Int] -> [Point]
   assocX yStart = zipWith (flip mk) [yStart..]
@@ -27,7 +36,7 @@
   assocY' = assocY 1
 
   getX :: Point -> Int
-  getX = T.fst . getPoint
+  getX = T.fst . getCoordinates
 
   getY :: Point -> Int
-  getY = T.snd . getPoint
+  getY = T.snd . getCoordinates
