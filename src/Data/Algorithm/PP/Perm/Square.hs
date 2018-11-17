@@ -26,59 +26,72 @@ where
   import qualified Data.List      as L
   import qualified Data.Tuple     as T
 
-  import qualified Data.Algorithm.PP.Combi      as PP.Combi
-  import qualified Data.Algorithm.PP.Perm       as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  import qualified Data.Algorithm.PP.Combi        as PP.Combi
+  import qualified Data.Algorithm.PP.Perm         as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.GSquare as PP.Perm.GSquare
+  import qualified Data.Algorithm.PP.Utils.List   as PP.Utils.List
 
-  squareRootsT :: [PP.Perm.T] -> [[PP.Perm.T]]
-  squareRootsT = PP.Utils.List.uniq . L.map h . L.filter g . L.map f . PP.Combi.balPartitions
-    where
-      f = reduce A.*** reduce
-      g = T.uncurry (==)
-      h = T.fst
-
+  -- |'squareRoots' 'p' return the list of all square root permutations of 'p'
+  -- (i.e., all permutation 'q' such that permutation 'p' is the disjoint union
+  -- of 'q' and 'q').
+  --
+  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
+  -- >>> import qualified Data.Algorithm.PP.Perm.Square as Square
+  -- >>>
+  -- >>> SquaresquareRoots (Perm.mk [3,1,4,2,5,6])
+  -- [[1,2,3],[2,1,3]]
+  -- >>> SquaresquareRoots (Perm.mk [6,3,1,5,4,2])
+  -- [[3,2,1]]
+  -- >>> SquaresquareRoots (Perm.mk [6,2,3,1,5,4])
+  -- []
   squareRoots :: PP.Perm.Perm -> [PP.Perm.Perm]
-  squareRoots = L.map P.Perm.fromList . squareRootsT . PP.Perm.toList
+  squareRoots = PP.Perm.GSquare.squareRoots id
 
   squareRootsStat ::  PP.Perm.Perm -> Int
-  squareRootsStat = L.length . squareRoots
+  squareRootsStat = PP.Perm.GSquare.squareRootsStat id
 
   squareRootsMult ::  PP.Perm.Perm -> Int
-  squareRootsMult = squareRootsStat
+  squareRootsMult = PP.Perm.GSquare.squareRootsMult id
 
+  -- | 'isSquare' 'p' returns 'True' if and only if the permutation 'p' is square.
+  --
+  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
+  -- >>> import qualified Data.Algorithm.PP.Perm.Square as Square
+  -- >>>
+  -- >>> PP.Perm.isSquare $ Perm.mk [3,4,2,4]
+  -- True
+  -- >>> PP.Perm.squareRoots $ Perm.mk [3,4,2,4] -- find its square roots
+  -- [[1,2]]
+  -- >>> PP.Perm.isSquare $ Perm.mk [3,2,1,4]
+  -- False
+  -- >>> PP.Perm.squareRoots $ Perm.mk [3,2,1,4] -- find its square roots
+  -- []
   isSquare :: PP.Perm.Perm -> Bool
-  isSquare = not . L.null . squareRoots
+  isSquare = PP.Perm.GSquare.isSquare id
 
+  -- |'isSimpleSquare' 'p' returns 'True' if and only if the permutation 'p' has
+  -- exactly one square root.
+  --
+  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
+  -- >>> import qualified Data.Algorithm.PP.Perm.Square as Square
+  -- >>>
   isSimpleSquare :: PP.Perm.Perm -> Bool
-  isSimpleSquare = go . squareRoots
-    where
-      go [p] = True
-      go _   = False
+  isSimpleSquare = PP.Perm.GSquare.isSimpleSquare id
 
   isKSquare :: Int -> PP.Perm.Perm -> Bool
-  isKSquare k = (==) k . L.length . squareRoots
+  isKSquare = PP.Perm.GSquare.isKSquare id
 
   isExtremalSquare :: PP.Perm.Perm -> Bool
-  isExtremalSquare = False
+  isExtremalSquare p = False
 
   -- |'squares' 'n' returns all square permutations of length 'n'.
   squares :: Int -> [PP.Perm.Perm]
-  squares n
-    | odd n     = []
-    | otherwise = L.filter isSquare . PP.Perm.pems
+  squares = PP.Perm.GSquare.squares id
 
   -- |'nonSquares' 'n' returns all non-square permutations of length 'n'.
   nonSquares :: Int -> [PP.Perm.Perm]
-  nonSquares n
-    | odd n     = PP.Perm.perms n
-    | otherwise = L.filter (not . isSquare) . PP.Perm.pems
+  nonSquares = PP.Perm.GSquare.nonSquares id
 
   -- |'subSquares' 'p' return the longest square subpermutations of permutation 'p'.
-  subSquares :: Perm -> [Perm]
-  subSquares p = go $ PP.Perm.len p
-    where
-      go k
-        | odd k     = go (k-1)
-        | otherwise = if L.null sqs then go (k-2) else sqs
-        where
-          sqs = L.filter isSquare (sub k p)
+  subSquares :: PP.Perm.Perm -> [PP.Perm.Perm]
+  subSquares = PP.Perm.GSquare.subSquares id

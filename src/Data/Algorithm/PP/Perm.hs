@@ -18,8 +18,16 @@ module Data.Algorithm.PP.Perm
 , rev
 , comp
 , revComp
+, compInv
+, invComp
+, invRevComp
 
 , sub
+
+, shuffle
+, shuffle2
+, shuffle3
+, shuffle4
 )
 where
 
@@ -35,6 +43,9 @@ where
 
   newtype Perm = PermImpl { getElems :: [T] } deriving (Eq, Ord)
 
+  -- |
+  type FPerm = Perm -> Perm
+
   instance Show Perm where
     show = show . getElems
 
@@ -48,7 +59,12 @@ where
       cmpFstSnd = compare `on` (T.fst . T.snd)
       cmpSnd    = compare `on` T.snd
 
+  -- |
   --
+  -- >>> fromList "acba"
+  -- [1,4,3,2]
+  -- >>> fromList [2,9,7,2]
+  -- [1,4,3,2]
   fromList :: (Ord a) => [a] -> Perm
   fromList = PermImpl . reduce
 
@@ -56,11 +72,27 @@ where
   mk :: (Ord a) => [a] -> Perm
   mk = fromList
 
-  -- | 'identity n' retuns the identity permutation of length 'n'.
+  -- | 'identity' 'n' retuns the identity permutation of length 'n'.
+  --
+  -- >>> identity 4
+  -- [1,2,3,4]
   identity :: Int -> Perm
   identity n = PermImpl [1 .. n]
 
+  -- | Rturn the empty permutation.
+  empty :: Perm
+  empty = PermImpl []
+
   -- | 'perms n' returns all permutations of length 'n'.
+  --
+  -- >>> perms 0
+  -- [[]]
+  -- >>> perms 1
+  -- [[1]]
+  -- >>> perms 2
+  -- [[1,2],[2,1]]
+  -- >>> perms 3
+  -- [[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
   perms :: Int -> [Perm]
   perms n = L.map PermImpl $ L.permutations [1..n]
 
@@ -75,24 +107,98 @@ where
       xs = getElems p
 
   -- | 'inv p' returns the inverse of permutation 'p'.
+  --
+  -- >>> inv $ mk [1,3,4,2]
+  -- [1,4,2,3]
   inv :: Perm -> Perm
   inv PermImpl { getElems = xs } = PermImpl . L.map T.snd . L.sort $ L.zip xs [1..L.length xs]
 
-  -- | 'rev p' returns the reverse of permutation 'p'.
+  -- | 'rev' 'p' returns the reverse of permutation 'p'.
+  --
+  -- >>> rev $ mk [1,3,4,2]
+  -- [2,4,3,1]
   rev :: Perm -> Perm
   rev = PermImpl . L.reverse . getElems
 
-  -- | 'comp p' returns the complement of permutation 'p'.
+  -- | 'comp' 'p' returns the complement of permutation 'p'.
+  --
+  -- >>> comp $ mk [1,3,4,2]
+  -- [4,2,1,3]
   comp :: Perm -> Perm
   comp PermImpl { getElems = xs } = PermImpl $ fmap (\x -> m - x + 1) xs
     where
       m = F.maximum xs
 
-  -- | 'revComp p' returns the reverse complement of permutation 'p'.
+  -- | 'revComp' 'p' returns the reverse complement of permutation 'p'.
+  --
+  -- >>> revComp $ mk [1,3,4,2]
+  -- [3,1,2,4]
   revComp :: Perm -> Perm
   revComp = rev . comp
 
-  -- | 'sub' 'k' 'p' returns all permutations of length 'k' that occurs in
+  -- | 'compInv' 'p' returns the complement inverse of permutation 'p'.
+  --
+  -- >>> compInv $ mk [1,3,4,2]
+  -- [4,1,3,2]
+  compInv :: Perm -> Perm
+  compInv = comp . inv
+
+  -- | 'invComp' 'p' returns the inverse complement of permutation 'p'.
+  --
+  -- >>> invComp $ mk [1,3,4,2]
+  -- [3,2,4,1]
+  invComp :: Perm -> Perm
+  invComp = inv . comp
+
+  -- | 'invRevComp' 'p' returns the inverse reverse complement of permutation 'p'.
+  --
+  -- >>> invRevComp $ mk [1,3,4,2]
+  -- [2,3,1,4
+  invRevComp :: Perm -> Perm
+  invRevComp = inv . rev . comp
+
+  -- | 'sub' 'k' 'p' returns all distinct permutations of length 'k' that occurs in
   -- permutation 'p'.
+  --
+  -- >>> sub 0 (mk [2,4,1,3,5])
+  -- [[]]
+  -- >>> sub 1 (mk [2,4,1,3,5])
+  -- [[1]]
+  -- >>> sub 2 (mk [2,4,1,3,5])
+  -- [[1,2],[2,1]]
+  -- >>> sub 3 (mk [2,4,1,3,5])
+  -- [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2]]
+  -- >>> sub 4 (mk [2,4,1,3,5])
+  -- [[1,3,2,4],[2,1,3,4],[2,3,1,4],[2,4,1,3],[3,1,2,4]]
+  -- >>> sub 5 (mk [2,4,1,3,5])
+  -- [[2,4,1,3,5]]
+  -- >>> sub 6 (mk [2,4,1,3,5])
+  -- []
   sub :: Int -> Perm -> [Perm]
   sub k = PP.Utils.List.uniq . L.map mk . PP.Combi.subsets k . toList
+
+  -- |'shuffle2' 'p' 'q' return all distinct permutations that can be be obtained by
+  -- shuffling permutation 'p' and 'q'.
+  --
+  -- >>>  shuffle2 (mk [1,2]) (mk [2,1])
+  -- [[1,3,4,2],[1,3,4,2],[1,3,2,4],[3,1,4,2],[3,1,2,4],[3,1,2,4]]
+  shuffle2 :: Perm -> Perm -> [Perm]
+  shuffle2 p q = shuffle [p, q]
+
+  -- |'shuffle3' 'p' 'q' 'r' return all distinct permutations that can be be obtained by
+  -- shuffling permutation 'p', 'q' and 'r'.
+  shuffle3 :: Perm -> Perm -> Perm -> [Perm]
+  shuffle3 p q r = shuffle [p, q, r]
+
+  -- |'shuffle4' 'p' 'q' 'r' 's' return all distinct permutations that can be be obtained by
+  -- shuffling permutation 'p', 'q', 'r' and 's'.
+  shuffle4 :: Perm -> Perm -> Perm -> Perm -> [Perm]
+  shuffle4 p q r s = shuffle [p, q, r, s]
+
+  -- |'shuffle' 'ps' return all distinct permutations that can be be obtained by
+  -- shuffling permutations in 'ps'.
+  --
+  -- >>> shuffle [mk [1,2], mk [2,1]]
+  -- [[1,3,4,2],[1,3,4,2],[1,3,2,4],[3,1,4,2],[3,1,2,4],[3,1,2,4]]
+  shuffle :: [Perm] -> [Perm]
+  shuffle = L.map mk . PP.Utils.List.shuffle . L.map toList

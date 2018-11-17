@@ -1,7 +1,9 @@
 module Data.Algorithm.PP.Perm.Complexity
 (
   complexity
+, hComplexity
 , complexityStat
+, hComplexityStat
 
 , maxComplexity
 , maxComplexityStat
@@ -37,6 +39,12 @@ where
   complexity :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
   complexity k = PP.List.uniq . L.map PP.Perm.mk . PP.Combi.subsets k . PP.Perm.toList
 
+  hComplexity :: PP.Perm.Perm -> [PP.Perm.Perm]
+  hComplexity p = complexity k p
+    where
+      n = PP.Perm.len p
+      k = n `div` 2
+
   -- |The 'complexityStat' 'n' 'p' function returns the number of permutations of length
   -- 'k' that occurs in permutation 'p'.
   --
@@ -55,6 +63,12 @@ where
   -- 1
   complexityStat :: Int -> PP.Perm.Perm -> Int
   complexityStat k = L.length . complexity k
+
+  hComplexityStat :: PP.Perm.Perm -> Int
+  hComplexityStat p = complexityStat k p
+    where
+      n = PP.Perm.len p
+      k = n `div` 2
 
   -- | The 'maxComplexity' 'k' 'n' function returns a pair ('m', 'ps'), where 'm' is
   -- the maximum number of permutations of length 'k' a permutation of length 'n'
