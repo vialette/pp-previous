@@ -22,7 +22,10 @@ module Data.Algorithm.PP.Perm
 , invComp
 , invRevComp
 
-, sub
+, patterns
+, maxPattern
+, maxPattern'
+, maxPatterns
 
 , shuffle
 , shuffle2
@@ -160,22 +163,42 @@ where
   -- | 'sub' 'k' 'p' returns all distinct permutations of length 'k' that occurs in
   -- permutation 'p'.
   --
-  -- >>> sub 0 (mk [2,4,1,3,5])
+  -- >>> patterns 0 (mk [2,4,1,3,5])
   -- [[]]
-  -- >>> sub 1 (mk [2,4,1,3,5])
+  -- >>> patterns 1 (mk [2,4,1,3,5])
   -- [[1]]
-  -- >>> sub 2 (mk [2,4,1,3,5])
+  -- >>> patterns 2 (mk [2,4,1,3,5])
   -- [[1,2],[2,1]]
-  -- >>> sub 3 (mk [2,4,1,3,5])
+  -- >>> patterns 3 (mk [2,4,1,3,5])
   -- [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2]]
-  -- >>> sub 4 (mk [2,4,1,3,5])
+  -- >>> patterns 4 (mk [2,4,1,3,5])
   -- [[1,3,2,4],[2,1,3,4],[2,3,1,4],[2,4,1,3],[3,1,2,4]]
-  -- >>> sub 5 (mk [2,4,1,3,5])
+  -- >>> patterns 5 (mk [2,4,1,3,5])
   -- [[2,4,1,3,5]]
-  -- >>> sub 6 (mk [2,4,1,3,5])
+  -- >>> patterns 6 (mk [2,4,1,3,5])
   -- []
-  sub :: Int -> Perm -> [Perm]
-  sub k = PP.Utils.List.uniq . L.map mk . PP.Combi.subsets k . toList
+  patterns :: Int -> Perm -> [Perm]
+  patterns k = L.map mk . PP.Utils.List.uniq . PP.Combi.subsets k . toList
+
+  maxPatternsAux :: (Perm -> Bool) -> Perm -> [[Perm]]
+  maxPatternsAux f p = L.dropWhile L.null [[q | q <- patterns k p, f q] | k <- [n,n-1..1]]
+    where
+      n  = len p
+
+  -- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
+  -- such that 'f' 'q' holds.
+  maxPatterns :: (Perm -> Bool) -> Perm -> [Perm]
+  maxPatterns f p = case maxPatternsAux f p of
+                    []       -> []
+                    (qs : _) -> qs
+
+  -- |'maxPattern' 'f' 'p' returns a longest pattern 'q' of permutation 'p'
+  -- such that 'f' 'q' holds.
+  maxPattern :: (Perm -> Bool) -> Perm -> Maybe Perm
+  maxPattern f = PP.Utils.List.safeHead . maxPatterns f
+
+  maxPattern' :: (Perm -> Bool) -> Perm -> Perm
+  maxPattern' f = L.head . maxPatterns f
 
   -- |'shuffle2' 'p' 'q' return all distinct permutations that can be be obtained by
   -- shuffling permutation 'p' and 'q'.

@@ -1,6 +1,9 @@
 module Data.Algorithm.PP.Utils.List
 (
-  uniq
+  safeHead
+, safeTail
+
+, uniq
 , chunk
 , chunk2
 , chunk3
@@ -13,6 +16,14 @@ where
   import qualified Data.Foldable as F
   import qualified Data.List     as L
   import qualified Data.Set      as S
+
+  safeHead :: [a] -> Maybe a
+  safeHead [] = Nothing
+  safeHead (x:xs) = Just x
+
+  safeTail :: [a] -> Maybe [a]
+  safeTail [] = Nothing
+  safeTail (x:xs) = Just xs
 
   -- |'uniq' xs removes all duplicates in 'xs'. No order is guaranteed.
   --

@@ -91,4 +91,4 @@ where
         | odd k     = go (k-1)
         | otherwise = if L.null sqs then go (k-2) else sqs
         where
-          sqs  = L.filter (isSquare f) $ PP.Perm.sub k p
+          sqs  = L.filter (isSquare f) $ PP.Perm.patterns k p

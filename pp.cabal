@@ -49,10 +49,13 @@ cabal-version:       >=1.10
 library
   -- Modules exported by the library.
   exposed-modules:     Data.Algorithm.PP.Perm
+                     , Data.Algorithm.PP.Perm.Avoidance
+                     , Data.Algorithm.PP.Perm.Combine
                      , Data.Algorithm.PP.Perm.Complexity
                      , Data.Algorithm.PP.Perm.Gen.Base
                      , Data.Algorithm.PP.Perm.GSquare
                      , Data.Algorithm.PP.Perm.Rank
+                     , Data.Algorithm.PP.Perm.Simple
                      , Data.Algorithm.PP.Perm.Square
                      , Data.Algorithm.PP.Perm.Stat
                      , Data.Algorithm.PP.SepTree
