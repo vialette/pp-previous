@@ -11,7 +11,9 @@ module Data.Algorithm.PP.Perm.Combine
 )
 where
 
-  import qualified Data.List as L
+  import qualified Data.List  as L
+  import qualified Data.Tuple as T
+  import Data.Function (on)
 
   import qualified Data.Algorithm.PP.Perm         as PP.Perm
 
@@ -40,15 +42,19 @@ where
   skewSum = (/+/)
 
   -- |
-  (/./) :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
-  p /./ q = L.map T.snd . L.sortBy cmpFst) . map proj . L.zip ixs . L.sortBy (cmpSnd) $ iys
+  (/./) :: PP.Perm.Perm -> PP.Perm.Perm -> Maybe PP.Perm.Perm
+  p /./ q
+    | np == nq  = Just . PP.Perm.mk . L.map T.snd . L.sortBy cmpFst . L.zipWith (T.curry proj) ips . L.sortBy cmpSnd $ iqs
+    | otherwise = Nothing
     where
+      np         = PP.Perm.len p
+      nq         = PP.Perm.len q
       cmpFst     = compare `on` T.fst
       cmpSnd     = compare `on` T.snd
       proj (x,y) = (T.fst y, T.snd x)
-      ixs        = L.zip [1..] $ PP.Perm.toList p
-      iys        = L.zip [1..] $ PP.Perm.toList q
+      ips        = L.zip [1..] $ PP.Perm.toList p
+      iqs        = L.zip [1..] $ PP.Perm.toList q
 
   -- |
-  dot :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
+  dot :: PP.Perm.Perm -> PP.Perm.Perm -> Maybe PP.Perm.Perm
   dot = (/./)

@@ -1,7 +1,8 @@
 module Data.Algorithm.PP.Perm
 (
-  Perm
-, T
+  T
+, Perm
+, FPerm
 
 , identity
 , fromList
@@ -14,13 +15,7 @@ module Data.Algorithm.PP.Perm
 , len
 , at
 
-, inv
-, rev
-, comp
-, revComp
-, compInv
-, invComp
-, invRevComp
+, module Data.Algorithm.PP.Perm.Bijection
 
 , patterns
 , maxPattern
@@ -39,43 +34,13 @@ where
   import qualified Data.Tuple     as T
   import Data.Function (on)
 
+  import Data.Algorithm.PP.Perm.Inner
+  import Data.Algorithm.PP.Perm.Bijection
+
   import qualified Data.Algorithm.PP.Combi      as PP.Combi
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
-  type T = Int
-
-  newtype Perm = PermImpl { getElems :: [T] } deriving (Eq, Ord)
-
-  -- |
-  type FPerm = Perm -> Perm
-
-  instance Show Perm where
-    show = show . getElems
-
-  -- | 'toList p' return the list of the elements of permutation 'p'.
-  toList = getElems
-
-  --
-  reduce :: (Ord a) => [a] -> [T]
-  reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zip [1..]
-    where
-      cmpFstSnd = compare `on` (T.fst . T.snd)
-      cmpSnd    = compare `on` T.snd
-
-  -- |
-  --
-  -- >>> fromList "acba"
-  -- [1,4,3,2]
-  -- >>> fromList [2,9,7,2]
-  -- [1,4,3,2]
-  fromList :: (Ord a) => [a] -> Perm
-  fromList = PermImpl . reduce
-
-  -- | Alias for 'fromList'.
-  mk :: (Ord a) => [a] -> Perm
-  mk = fromList
-
-  -- | 'identity' 'n' retuns the identity permutation of length 'n'.
+  -- | 'identity' 'n' returns the identity permutation of length 'n'.
   --
   -- >>> identity 4
   -- [1,2,3,4]
@@ -86,7 +51,7 @@ where
   empty :: Perm
   empty = PermImpl []
 
-  -- | 'perms n' returns all permutations of length 'n'.
+  -- | 'perms' 'n' returns all permutations of length 'n'.
   --
   -- >>> perms 0
   -- [[]]
@@ -109,56 +74,6 @@ where
     where
       xs = getElems p
 
-  -- | 'inv p' returns the inverse of permutation 'p'.
-  --
-  -- >>> inv $ mk [1,3,4,2]
-  -- [1,4,2,3]
-  inv :: Perm -> Perm
-  inv PermImpl { getElems = xs } = PermImpl . L.map T.snd . L.sort $ L.zip xs [1..L.length xs]
-
-  -- | 'rev' 'p' returns the reverse of permutation 'p'.
-  --
-  -- >>> rev $ mk [1,3,4,2]
-  -- [2,4,3,1]
-  rev :: Perm -> Perm
-  rev = PermImpl . L.reverse . getElems
-
-  -- | 'comp' 'p' returns the complement of permutation 'p'.
-  --
-  -- >>> comp $ mk [1,3,4,2]
-  -- [4,2,1,3]
-  comp :: Perm -> Perm
-  comp PermImpl { getElems = xs } = PermImpl $ fmap (\x -> m - x + 1) xs
-    where
-      m = F.maximum xs
-
-  -- | 'revComp' 'p' returns the reverse complement of permutation 'p'.
-  --
-  -- >>> revComp $ mk [1,3,4,2]
-  -- [3,1,2,4]
-  revComp :: Perm -> Perm
-  revComp = rev . comp
-
-  -- | 'compInv' 'p' returns the complement inverse of permutation 'p'.
-  --
-  -- >>> compInv $ mk [1,3,4,2]
-  -- [4,1,3,2]
-  compInv :: Perm -> Perm
-  compInv = comp . inv
-
-  -- | 'invComp' 'p' returns the inverse complement of permutation 'p'.
-  --
-  -- >>> invComp $ mk [1,3,4,2]
-  -- [3,2,4,1]
-  invComp :: Perm -> Perm
-  invComp = inv . comp
-
-  -- | 'invRevComp' 'p' returns the inverse reverse complement of permutation 'p'.
-  --
-  -- >>> invRevComp $ mk [1,3,4,2]
-  -- [2,3,1,4
-  invRevComp :: Perm -> Perm
-  invRevComp = inv . rev . comp
 
   -- | 'sub' 'k' 'p' returns all distinct permutations of length 'k' that occurs in
   -- permutation 'p'.
@@ -197,6 +112,7 @@ where
   maxPattern :: (Perm -> Bool) -> Perm -> Maybe Perm
   maxPattern f = PP.Utils.List.safeHead . maxPatterns f
 
+  -- |
   maxPattern' :: (Perm -> Bool) -> Perm -> Perm
   maxPattern' f = L.head . maxPatterns f
 

@@ -50,6 +50,7 @@ library
   -- Modules exported by the library.
   exposed-modules:     Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
+                     , Data.Algorithm.PP.Perm.Bijection
                      , Data.Algorithm.PP.Perm.Combine
                      , Data.Algorithm.PP.Perm.Complexity
                      , Data.Algorithm.PP.Perm.Gen.Base
@@ -61,7 +62,8 @@ library
                      , Data.Algorithm.PP.SepTree
 
   -- Modules included in this library but not exported.
-  other-modules:       Data.Algorithm.PP.Utils.List
+  other-modules:       Data.Algorithm.PP.Perm.Inner
+                     , Data.Algorithm.PP.Utils.List
                      , Data.Algorithm.PP.Combi
 
   -- LANGUAGE extensions used by modules in this package.

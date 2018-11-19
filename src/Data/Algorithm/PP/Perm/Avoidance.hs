@@ -108,12 +108,11 @@ where
   dispatch :: PP.Perm.Perm -> [PP.Perm.Perm] -> Bool
   dispatch _ [] = True
   dispatch p qs
-    | qs == [PP.Perm.mk [1,3,2]] = True
-    | qs == [PP.Perm.mk [2,1,3]] = True
-    | qs == [PP.Perm.mk [1,2,3]] = True
-    | qs == [PP.Perm.mk [1,2,3]] = True
-    | qs == [PP.Perm.mk [1,2,3]] = True
-    | qs == [PP.Perm.mk [1,2,3]] = True
-
-    | qs == [PP.Perm.mk [3,2,1]] = True
+    | qs == [p123] = True
+    | qs == [p132] = True
+    | qs == [p213] = True
+    | qs == [p231] = True
+    | qs == [p312] = True
+    | qs == [p321] = True
+    | qs == [p2413, p3142] = True
     | otherwise                  = False
