@@ -1,6 +1,6 @@
 <!-- python -m readme2tex --usepackage "tikz" --usepackage "xcolor" --output README.md --readme  READOTHER.md --nocdn --pngtrick -->
 
-# PPattern - Permutation Pattern
+# PP - Permutation Pattern
 
 A permutation of length $n$ is a bijective mapping
 $\tau : [n] \to [n]$; one way to represent it is as the
@@ -27,7 +27,7 @@ can be solved in time $2^{O(k^2 \log(k))}}$
 (i.e., the *Permutation Pattern* problem is fixed-parameter tractable
 parameterized by the size of the pattern).
 
-## Permutations
+<!-- ## Permutations
 
 ### Implementation
 
@@ -358,4 +358,4 @@ searchRightmostVerticalConflictFirst :: Perm.Perm -> Perm.Perm -> Maybe Occurren
 ```
 
 The `Data.Algorithm.PPattern.searchWithConflictSelectionStrategy` allows for
-new implemented conflict selection strategies.
+new implemented conflict selection strategies. -->
