@@ -11,17 +11,18 @@ where
 
   import qualified Data.Algorithm.PP.Utils.List as PP.List
 
+  -- Return all subsets of a list.
   subsets :: (Eq t, Num t) => t -> [a] -> [[a]]
   subsets 0 _        = [[]]
   subsets _ []       = []
   subsets k (x : xs) = [x : xs' | xs' <- subsets (k-1) xs] ++ subsets k xs
 
-  --partitions :: Perm -> Int -> Int -> [(Pattern, Pattern)]
+  partitions :: Eq a => [a] -> Int -> Int -> [([a], [a])]
   partitions xs nl nr
     | nl + nr /= L.length xs = []
     | otherwise              = [(xs', xs L.\\ xs') | xs' <- subsets nl xs]
 
-  --balPartitions :: Perm -> [(Pattern, Pattern)]
+  balPartitions :: Ord a => [a] -> [([a], [a])]
   balPartitions []       = []
   balPartitions (x : xs) = PP.List.uniq $ fmap f ps
     where

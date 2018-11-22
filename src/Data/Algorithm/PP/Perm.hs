@@ -16,11 +16,14 @@ module Data.Algorithm.PP.Perm
 , at
 
 , module Data.Algorithm.PP.Perm.Bijection
+, module Data.Algorithm.PP.Pattern
 
 , patterns
 , maxPattern
 , maxPattern'
 , maxPatterns
+
+, factors
 
 , shuffle
 , shuffle2
@@ -74,7 +77,6 @@ where
     where
       xs = getElems p
 
-
   -- | 'sub' 'k' 'p' returns all distinct permutations of length 'k' that occurs in
   -- permutation 'p'.
   --
@@ -94,6 +96,14 @@ where
   -- []
   patterns :: Int -> Perm -> [Perm]
   patterns k = L.map mk . PP.Utils.List.uniq . PP.Combi.subsets k . toList
+
+  -- |'factors' 'k' 'p' returns the list of all factors of length 'k' of the
+  -- permutation 'p'.
+  factors :: Int -> Perm -> [Pattern]
+  factors k = PP.Utils.List.uniq . PP.Utils.List.chunk k . toList
+
+  factors' :: Int -> Perm -> [Perm]
+  factors' k = L.map mk . factors
 
   maxPatternsAux :: (Perm -> Bool) -> Perm -> [[Perm]]
   maxPatternsAux f p = L.dropWhile L.null [[q | q <- patterns k p, f q] | k <- [n,n-1..1]]
