@@ -16,14 +16,24 @@ module Data.Algorithm.PP.Perm
 , at
 
 , module Data.Algorithm.PP.Perm.Bijection
-, module Data.Algorithm.PP.Pattern
+
+, transpose
+
+, extendLeft
+, extendRight
+
+, prefix
+, prefixes
+, suffix
+, suffixes
 
 , patterns
-, maxPattern
-, maxPattern'
-, maxPatterns
+, permPatterns
+, maxPermPatterns
 
 , factors
+, permFactors
+, maxPermFactors
 
 , shuffle
 , shuffle2
@@ -77,6 +87,30 @@ where
     where
       xs = getElems p
 
+  transpose :: Int -> Int -> Perm -> Perm
+  transpose i j = mk $ L.prefix (i-1) xs ++ [xs L.!! i] ++ 
+
+  extendLeft :: Perm -> [Perm]
+  extendLeft p = L.map mk [k : f k xs | k <- [1..len p+1]]
+    where
+      xs  = toList p
+      f k = F.foldr (\x acc -> (if x<k then x else x+1) : acc) []
+
+  extendRight :: Perm -> [Perm]
+  extendRight = L.map rev . extendLeft . rev
+
+  prefix :: Int -> Perm -> Perm
+  prefix k = mk . L.take k . toList
+
+  prefixes :: Perm -> [Perm]
+  prefixes = L.map mk . L.tail . L.inits . toList
+
+  suffix :: Int -> Perm -> Perm
+  suffix k = mk . L.take k . toList
+
+  suffixes :: Perm -> [Perm]
+  suffixes = L.map mk . L.init . L.tails . toList
+
   -- | 'sub' 'k' 'p' returns all distinct permutations of length 'k' that occurs in
   -- permutation 'p'.
   --
@@ -94,37 +128,34 @@ where
   -- [[2,4,1,3,5]]
   -- >>> patterns 6 (mk [2,4,1,3,5])
   -- []
-  patterns :: Int -> Perm -> [Perm]
-  patterns k = L.map mk . PP.Utils.List.uniq . PP.Combi.subsets k . toList
+  patterns :: Int -> Perm -> [Pattern]
+  patterns k = PP.Utils.List.uniq . PP.Combi.subsets k . toList
+
+  permPatterns :: Int -> Perm -> [Perm]
+  permPatterns k = L.map mk . patterns k
+
+  -- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
+  -- such that 'f' 'q' holds.
+  maxPermPatterns :: (Perm -> Bool) -> Perm -> [Perm]
+  maxPermPatterns f p = select $ L.dropWhile L.null [[q | q <- permPatterns k p, f q] | k <- [n,n-1..1]]
+    where
+      n         = len p
+      select xs = if L.null xs then [] else L.head xs
 
   -- |'factors' 'k' 'p' returns the list of all factors of length 'k' of the
   -- permutation 'p'.
   factors :: Int -> Perm -> [Pattern]
   factors k = PP.Utils.List.uniq . PP.Utils.List.chunk k . toList
 
-  factors' :: Int -> Perm -> [Perm]
-  factors' k = L.map mk . factors
+  permFactors :: Int -> Perm -> [Perm]
+  permFactors k = L.map mk . factors k
 
-  maxPatternsAux :: (Perm -> Bool) -> Perm -> [[Perm]]
-  maxPatternsAux f p = L.dropWhile L.null [[q | q <- patterns k p, f q] | k <- [n,n-1..1]]
+  maxPermFactors :: (Perm -> Bool) -> Perm -> [Perm]
+  maxPermFactors f p = select $ L.dropWhile L.null [[q | q <- permFactors k p, f q] | k <- [n,n-1..1]]
     where
-      n  = len p
+      n         = len p
+      select xs = if L.null xs then [] else L.head xs
 
-  -- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
-  -- such that 'f' 'q' holds.
-  maxPatterns :: (Perm -> Bool) -> Perm -> [Perm]
-  maxPatterns f p = case maxPatternsAux f p of
-                    []       -> []
-                    (qs : _) -> qs
-
-  -- |'maxPattern' 'f' 'p' returns a longest pattern 'q' of permutation 'p'
-  -- such that 'f' 'q' holds.
-  maxPattern :: (Perm -> Bool) -> Perm -> Maybe Perm
-  maxPattern f = PP.Utils.List.safeHead . maxPatterns f
-
-  -- |
-  maxPattern' :: (Perm -> Bool) -> Perm -> Perm
-  maxPattern' f = L.head . maxPatterns f
 
   -- |'shuffle2' 'p' 'q' return all distinct permutations that can be be obtained by
   -- shuffling permutation 'p' and 'q'.

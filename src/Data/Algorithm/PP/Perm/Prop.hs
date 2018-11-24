@@ -1,15 +1,14 @@
 module Data.Algorithm.PP.Perm.Prop
 (
-  isIncreasing
-, isDecreasing
-, isMonotone
+  derangement
 
-, isUpDownAlternating
-, isDownUpAlternating
-, isAlternating
+, increasing
+, decreasing
+, monotone
 
-, isUpDown
-, isDownUp
+, upDownAlternating
+, downUpAlternating
+, alternating
 )
 where
 
@@ -20,40 +19,44 @@ where
   import qualified Data.Algorithm.PP.Perm as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
+
+  derangement :: PP.Perm.Perm -> Bool
+  derangement = F.all (T.uncurry (/=)) . L.zip [1..] . PP.Perm.toList
+
   -- |
-  isIncreasing :: PP.Perm.Perm -> Bool
-  isIncreasing = F.any f . PP.Utils.List.chunk2 . PP.Perm.toList
+  increasing :: PP.Perm.Perm -> Bool
+  increasing = F.any f . PP.Utils.List.chunk2 . PP.Perm.toList
     where
       f [i, j] = i < j
 
   -- |
-  isDecreasing :: PP.Perm.Perm -> Bool
-  isDecreasing = F.any f . PP.Utils.List.chunk2 . PP.Perm.toList
+  decreasing :: PP.Perm.Perm -> Bool
+  decreasing = F.any f . PP.Utils.List.chunk2 . PP.Perm.toList
     where
       f [i, j] = i > j
 
   -- |
-  isMonotone :: PP.Perm.Perm -> Bool
-  isMonotone p = isIncreasing p || isDecreasing p
+  monotone :: PP.Perm.Perm -> Bool
+  monotone p = increasing p || decreasing p
 
   -- |
-  isUpDownAlternating :: PP.Perm.Perm -> Bool
-  isUpDownAlternating = isUpDownAlternatingT . PP.Utils.List.chunk3 . PP.Perm.toList
+  upDownAlternating' :: [[PP.Perm.T]] -> Bool
+  upDownAlternating' []                 = True
+  upDownAlternating' ([i, j, k] : ijks) = i < j && j > k && downUpAlternating' ijks
 
   -- |
-  isDownUpAlternating :: PP.Perm.Perm -> Bool
-  isDownUpAlternating = isDownUpAlternatingT . PP.Utils.List.chunk3 . PP.Perm.toList  --
+  downUpAlternating' :: [[PP.Perm.T]] -> Bool
+  downUpAlternating' []                 = True
+  downUpAlternating' ([i, j, k] : ijks) = i > j && j < k && upDownAlternating' ijks
 
   -- |
-  isUpDownAlternatingT :: [[PP.Perm.T]] -> Bool
-  isUpDownAlternatingT []                 = True
-  isUpDownAlternatingT ([i, j, k] : ijks) = i < j && j > k && isDownUpAlternatingT ijks
+  upDownAlternating :: PP.Perm.Perm -> Bool
+  upDownAlternating = upDownAlternating' . PP.Utils.List.chunk3 . PP.Perm.toList
 
   -- |
-  isDownUpAlternatingT :: [[PP.Perm.T]] -> Bool
-  isDownUpAlternatingT []                 = True
-  isDownUpAlternatingT ([i, j, k] : ijks) = i > j && j < k && isUpDownAlternatingT ijks
+  downUpAlternating :: PP.Perm.Perm -> Bool
+  downUpAlternating = downUpAlternating' . PP.Utils.List.chunk3 . PP.Perm.toList  --
 
   -- |
-  isAlternating :: PP.Perm.Perm -> Bool
-  isAlternating p = isUpDownAlternating || isDownUpAlternating p
+  alternating :: PP.Perm.Perm -> Bool
+  alternating p = upDownAlternating p || downUpAlternating p

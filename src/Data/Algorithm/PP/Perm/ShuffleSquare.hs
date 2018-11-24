@@ -6,11 +6,13 @@ module Data.Algorithm.PP.Perm.ShuffleSquare
 , shuffleSquareRootsMult
 
   -- * Testing
-, isShuffleSquare
-, isSimpleShuffleSquare
-, isExtremalShuffleSquare
-, isKShuffleSquare
+, shuffleSquare
+, simpleShuffleSquare
+, extremalShuffleSquare
+, kShuffleSquare
 , maxShuffleSquareRootsMult
+, kShuffleSquareFree
+, shuffleSquareFree
 
   -- * Generating
 , shuffleSquares
@@ -84,8 +86,8 @@ where
   -- False
   -- >>> shuffleSquareRoots $ Perm.mk [3,2,1,4] -- find its shuffleSquare roots
   -- []
-  isShuffleSquare :: PP.Perm.Perm -> Bool
-  isShuffleSquare = PP.Perm.ShuffleSquareBy.isShuffleSquareBy id
+  shuffleSquare :: PP.Perm.Perm -> Bool
+  shuffleSquare = PP.Perm.ShuffleSquareBy.shuffleSquareBy id
 
   -- |'isSimpleShuffleSquare' 'p' returns 'True' if and only if the permutation 'p' has
   -- exactly one shuffleSquare root.
@@ -104,14 +106,15 @@ where
   -- False
   -- >>> shuffleSquareRoots $ Perm.mk [6,2,3,1,5,4]
   -- []
-  isSimpleShuffleSquare :: PP.Perm.Perm -> Bool
-  isSimpleShuffleSquare = PP.Perm.ShuffleSquareBy.isSimpleShuffleSquareBy id
+  simpleShuffleSquare :: PP.Perm.Perm -> Bool
+  simpleShuffleSquare = PP.Perm.ShuffleSquareBy.simpleShuffleSquareBy id
 
   -- 'isKShuffleSquare' 'k' 'p' return 'True' if and only if the permutation 'p' has
   -- 'k' distinct shuffleSquare roots.
-  isKShuffleSquare :: Int -> PP.Perm.Perm -> Bool
-  isKShuffleSquare = PP.Perm.ShuffleSquareBy.isKShuffleSquareBy id
+  kShuffleSquare :: Int -> PP.Perm.Perm -> Bool
+  kShuffleSquare = PP.Perm.ShuffleSquareBy.kShuffleSquareBy id
 
+  -- |'maxShuffleSquareRootsMult' 'n'
   maxShuffleSquareRootsMult :: Int -> Int
   maxShuffleSquareRootsMult n = fromMaybe k (IntMap.lookup n m)
     where
@@ -121,12 +124,21 @@ where
 
   -- | 'isExtremalShuffleSquare' 'p' returns 'True' if and only if the permutation 'p'
   -- has the maximum number of permutations.
-  isExtremalShuffleSquare :: PP.Perm.Perm -> Bool
-  isExtremalShuffleSquare p = k == k'
+  extremalShuffleSquare :: PP.Perm.Perm -> Bool
+  extremalShuffleSquare p = k == k'
     where
       n  = PP.Perm.len p
       k  = shuffleSquareRootsStat p
       k' = maxShuffleSquareRootsMult n
+
+  kShuffleSquareFree :: Int -> PP.Perm.Perm -> Bool
+  kShuffleSquareFree = PP.Perm.ShuffleSquareBy.kShuffleSquareByFree id
+
+  -- |'shuffleSquareByFree' 'f' 'p' retusn 'True' if the permutations 'p' does not
+  -- contain any pattern of length at least 4 that is a shuffle square according
+  -- to the bijection 'f'.
+  shuffleSquareFree :: PP.Perm.Perm -> Bool
+  shuffleSquareFree = PP.Perm.ShuffleSquareBy.shuffleSquareByFree id
 
   -- |'shuffleSquares' 'n' returns all shuffleSquare permutations of length 'n'.
   --

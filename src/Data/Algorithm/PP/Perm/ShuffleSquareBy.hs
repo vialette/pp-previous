@@ -6,10 +6,12 @@ module Data.Algorithm.PP.Perm.ShuffleSquareBy
 , shuffleSquareRootsByMult
 
   -- * Testing
-, isShuffleSquareBy
-, isSimpleShuffleSquareBy
-, isKShuffleSquareBy
-, isExtremalShuffleSquareBy
+, shuffleSquareBy
+, simpleShuffleSquareBy
+, kShuffleSquareBy
+, extremalShuffleSquareBy
+, kShuffleSquareByFree
+, shuffleSquareByFree
 
   -- * Generating
 , shuffleSquaresBy
@@ -21,6 +23,7 @@ module Data.Algorithm.PP.Perm.ShuffleSquareBy
 where
 
   import qualified Control.Arrow  as A
+  import qualified Data.Foldable  as F
   import qualified Data.List      as L
   import qualified Data.Tuple     as T
 
@@ -45,38 +48,51 @@ where
   shuffleSquareRootsByMult :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Int
   shuffleSquareRootsByMult = shuffleSquareRootsByStat
 
-  -- |'isShuffleSquareBy' 'f' 'p' returns 'True' if the permutation 'p' is a
+  -- |'shuffleSquareBy' 'f' 'p' returns 'True' if the permutation 'p' is a
   -- shuffle-square according to the bijection 'f'.
-  isShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
-  isShuffleSquareBy f = not . L.null . shuffleSquareRootsBy f
+  shuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
+  shuffleSquareBy f = not . L.null . shuffleSquareRootsBy f
 
-  -- |'isSimpleShuffleSquareBy' 'f' 'p' returns 'True' if the permutations 'p' has
+  -- |'simpleShuffleSquareBy' 'f' 'p' returns 'True' if the permutations 'p' has
   -- exactly one square root according to the bijection 'f'.
-  isSimpleShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
-  isSimpleShuffleSquareBy f = go . shuffleSquareRootsBy f
+  simpleShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
+  simpleShuffleSquareBy f = go . shuffleSquareRootsBy f
     where
       go [p] = True
       go _   = False
 
-  -- |'isKShuffleSquareBy' 'f' 'k' 'p' returns 'True' if the permutations 'p' has
+  -- |'kShuffleSquareBy' 'f' 'k' 'p' returns 'True' if the permutations 'p' has
   -- exactly 'k' square roots according to the bijection 'f'.
-  isKShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
-  isKShuffleSquareBy f k = (==) k . L.length . shuffleSquareRootsBy f
+  kShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
+  kShuffleSquareBy f k = (==) k . L.length . shuffleSquareRootsBy f
 
-  isExtremalShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
-  isExtremalShuffleSquareBy f p = False
+  extremalShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
+  extremalShuffleSquareBy f p = False
+
+  kShuffleSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
+  kShuffleSquareByFree f k p
+    | odd k     = True
+    | otherwise = F.all (not . shuffleSquareBy f) $ PP.Perm.permPatterns k p
+
+  -- |'shuffleSquareByFree' 'f' 'p' retusn 'True' if the permutations 'p' does not
+  -- contain any pattern of length at least 4 that is a shuffle square according
+  -- to the bijection 'f'.
+  shuffleSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
+  shuffleSquareByFree f p = F.and [kShuffleSquareByFree f k p | k <- [4,6..n]]
+    where
+      n = PP.Perm.len p
 
   -- |'shuffleSquaresBy' 'n' returns all shuffle-square permutations of length 'n'.
   shuffleSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   shuffleSquaresBy f n
     | odd n     = []
-    | otherwise = L.filter (isShuffleSquareBy f) $ PP.Perm.perms n
+    | otherwise = L.filter (shuffleSquareBy f) $ PP.Perm.perms n
 
   -- |'nonShuffleSquaresBy' 'n' returns all non-shuffle-square permutations of length 'n'.
   nonShuffleSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   nonShuffleSquaresBy f n
     | odd n     = PP.Perm.perms n
-    | otherwise = L.filter (not . isShuffleSquareBy f) $ PP.Perm.perms n
+    | otherwise = L.filter (not . shuffleSquareBy f) $ PP.Perm.perms n
 
   -- |'subShuffleSquaresBy' 'p' return the longest shuffle-square subpermutations
   -- of permutation 'p'.
@@ -87,4 +103,4 @@ where
         | odd k     = go (k-1)
         | otherwise = if L.null sqs then go (k-2) else sqs
         where
-          sqs  = L.filter (isShuffleSquareBy f) $ PP.Perm.patterns k p
+          sqs  = L.filter (shuffleSquareBy f) $ PP.Perm.permPatterns k p

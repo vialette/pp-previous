@@ -1,8 +1,13 @@
 module Data.Algorithm.PP.Perm.SquareBy
 (
+  -- * Testing
   squareBy
 , kSquareFreeBy
 , squareFreeBy
+
+  -- * Generating
+, squaresBy
+, nonSquaresBy
 )
 where
 
@@ -11,6 +16,13 @@ where
   import qualified Data.List     as L
 
   import qualified Data.Algorithm.PP.Perm as PP.Perm
+
+  squaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
+  squaresBy f = L.filter (squareBy f) . PP.Perm.perms
+
+  nonSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
+  nonSquaresBy f = L.filter (not . squareBy f) . PP.Perm.perms
+
 
   -- |'squareBy' 'f' 'p' returns 'True' if the permutation 'p' is the concatenation
   -- of two factors 'q' and 'r' such that 'q' and 'f' 'r' are order-isomorphic.
@@ -27,7 +39,7 @@ where
   kSquareFreeBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
   kSquareFreeBy f k p
     | odd k     = True
-    | otherwise = F.all (not . squareBy f) $ PP.Perm.factors' k p
+    | otherwise = F.all (not . squareBy f) $ PP.Perm.permFactors k p
 
   -- |'squareFreeBy' 'f' 'p' return 'True' if the permutation 'p' does not contain
   -- a factor 'q' of length at least 4 such that 'squareBy' 'f' 'q' is 'True'.

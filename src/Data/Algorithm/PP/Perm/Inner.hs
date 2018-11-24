@@ -4,6 +4,8 @@ module Data.Algorithm.PP.Perm.Inner
 , Perm(..)
 , FPerm
 
+, Pattern
+
 , mk
 , fromList
 
@@ -24,6 +26,9 @@ where
 
   -- |
   type FPerm = Perm -> Perm
+
+  -- |
+  type Pattern = [T]
 
   -- |
   instance Show Perm where

@@ -1,6 +1,8 @@
 module Data.Algorithm.PP.Perm.Gen.Base
 (
-  oscillatingIncreasing
+  derangements
+
+, oscillatingIncreasing
 , oscillatingIncreasings
 
 , simpleAlternatingWedgeType1
@@ -14,7 +16,12 @@ where
   import qualified Data.List     as L
 
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Prop  as PP.Perm.Prop
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+
+  -- |'derangements' 'n' returns all derangements of length 'n'.
+  derangements :: Int -> [PP.Perm.Perm]
+  derangements = L.filter PP.Perm.Prop.derangement . PP.Perm.perms
 
   -- |'oscillatingIncreasing' 'n' return the oscillanting increasing permutations
   -- of length 'n'.

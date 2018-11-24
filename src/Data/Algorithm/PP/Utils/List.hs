@@ -3,6 +3,9 @@ module Data.Algorithm.PP.Utils.List
   safeHead
 , safeTail
 
+, factor
+, factor'
+
 , uniq
 , chunk
 , chunk2
@@ -10,6 +13,12 @@ module Data.Algorithm.PP.Utils.List
 
 , shuffle
 , perfectShuffle
+
+, reversal
+, reversal'
+, prefixReversal
+
+, transpose
 )
 where
 
@@ -24,6 +33,12 @@ where
   safeTail :: [a] -> Maybe [a]
   safeTail [] = Nothing
   safeTail (x:xs) = Just xs
+
+  factor :: Int -> Int -> [a] -> [a]
+  factor i j = L.take (j-i+1) . L.drop i
+
+  factor' :: Int -> Int -> [a] -> [a]
+  factor' i k = factor i (i+k-1)
 
   -- |'uniq' xs removes all duplicates in 'xs'. No order is guaranteed.
   --
@@ -40,7 +55,6 @@ where
 
   chunk3 :: [a] -> [[a]]
   chunk3 = chunk 3
-
 
   shuffle2 :: [a] -> [a] -> [[a]]
   shuffle2 []       []       = [[]]
@@ -77,3 +91,23 @@ where
       ys' = L.take k ys
       xys = F.foldMap (\(x,y) -> [x,y]) $ zip xs' ys'
       zs  = if nX < nY then L.drop k ys else L.drop k xs
+
+  reversal :: Int -> Int -> [a] -> [a]
+  reversal i j xs = ps ++ L.reverse ys ++ ss
+    where
+      (ps, ss') = L.splitAt i xs
+      (ys, ss)  = L.splitAt (j-i+1) ss'
+
+  reversal' :: Int -> Int -> [a] -> [a]
+  reversal' i m = reversal i (i+m-1)
+
+  prefixReversal :: Int -> [a] -> [a]
+  prefixReversal m = reversal 0 (m-1)
+
+
+  transposition :: Int -> Int -> Int -> [a] -> [a]
+  transposition i j k xs = ps ++ zs ++ ys ++ ss
+    where
+      (ps, ss')  = L.splitAt i xs
+      (ys, ss'') = L.splitAt (j-i+1) ss'
+      (yz, ss)   = L.splitAt (k-j-i+1) ss'
