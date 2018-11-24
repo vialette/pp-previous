@@ -17,8 +17,6 @@ module Data.Algorithm.PP.Utils.List
 , reversal
 , reversal'
 , prefixReversal
-
-, transpose
 )
 where
 
@@ -103,11 +101,3 @@ where
 
   prefixReversal :: Int -> [a] -> [a]
   prefixReversal m = reversal 0 (m-1)
-
-
-  transposition :: Int -> Int -> Int -> [a] -> [a]
-  transposition i j k xs = ps ++ zs ++ ys ++ ss
-    where
-      (ps, ss')  = L.splitAt i xs
-      (ys, ss'') = L.splitAt (j-i+1) ss'
-      (yz, ss)   = L.splitAt (k-j-i+1) ss'

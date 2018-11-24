@@ -1,8 +1,11 @@
 module Data.Algorithm.PP.Perm.Bijection
 (
+  -- * Trivial bijections
   inv
 , rev
 , comp
+
+ -- * Composing trivial bijections
 , revComp
 , compInv
 , invComp

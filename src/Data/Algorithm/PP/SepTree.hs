@@ -11,6 +11,8 @@ where
                | Leaf PP.Perm.T
                deriving (Show)
 
+  -- |'mk' 'p' returns a separating tree of the permutation 'p' if it is separable.
+  -- Otherwise, the functions returns 'Nothing'.
   mk :: PP.Perm.Perm -> Maybe SepTree
   mk = go [] . PP.Perm.toList
     where

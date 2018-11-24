@@ -2,12 +2,14 @@ module Data.Algorithm.PP.Perm.SquareBy
 (
   -- * Testing
   squareBy
-, kSquareFreeBy
-, squareFreeBy
+, nonSquareBy
+, kSquareByFree
+, squareByFree
 
   -- * Generating
 , squaresBy
 , nonSquaresBy
+, squaresByFree
 )
 where
 
@@ -17,15 +19,37 @@ where
 
   import qualified Data.Algorithm.PP.Perm as PP.Perm
 
+
   squaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   squaresBy f = L.filter (squareBy f) . PP.Perm.perms
+
 
   nonSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   nonSquaresBy f = L.filter (not . squareBy f) . PP.Perm.perms
 
+  squaresByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
+  squaresByFree f = L.filter (squareByFree f) . PP.Perm.perms
 
-  -- |'squareBy' 'f' 'p' returns 'True' if the permutation 'p' is the concatenation
-  -- of two factors 'q' and 'r' such that 'q' and 'f' 'r' are order-isomorphic.
+  -- |'squareBy' 'f' 'p' returns 'True' if the permutation 'p' is the
+  -- concatenation of two factors q and r such that q and f r are
+  -- order-isomorphic.
+  --
+  -- >>> squareBy id (mk [3,4,1,5,6,2])
+  -- True
+  -- >>> (mk [3,4,1]) == (mk [5,6,2])
+  -- True
+  -- >>> squareBy inv (mk [3,4,1,6,2,5])
+  -- True
+  -- >>> (mk [3,4,1]) == inv (mk [6,2,5])
+  -- True
+  -- >>> squareBy rev (mk [3,4,1,2,6,5])
+  -- True
+  -- >>> (mk [3,4,1]) == rev (mk [2,6,5])
+  -- True
+  -- >>> squareBy comp (mk [3,4,1,5,2,6])
+  -- True
+  -- >>> (mk [3,4,1]) == comp (mk [5,2,6])
+  -- True
   squareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
   squareBy f p = aux $ PP.Perm.toList p
     where
@@ -34,16 +58,22 @@ where
         | odd n     = False
         | otherwise = uncurry (==) . (A.***) PP.Perm.mk (f . PP.Perm.mk) $ L.splitAt (n `div` 2) xs
 
-  -- |'kSquareFreeBy' 'f' 'k' 'p' return 'True' if the permutation 'p' does not contain
+  -- |'nonSquaresBy' 'f' 'p' returns 'True' if the permutation 'p' is not the
+  -- concatenation of two factors 'q' and 'r' such that 'q' and 'f r' are
+  -- order-isomorphic.
+  nonSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
+  nonSquareBy f = not . squareBy f
+
+  -- |'kSquareByFree' 'f' 'k' 'p' return 'True' if the permutation 'p' does not contain
   -- a factor 'q' of length 'k' such that 'squareBy' 'f' 'q' is 'True'.
-  kSquareFreeBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
-  kSquareFreeBy f k p
+  kSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
+  kSquareByFree f k p
     | odd k     = True
     | otherwise = F.all (not . squareBy f) $ PP.Perm.permFactors k p
 
-  -- |'squareFreeBy' 'f' 'p' return 'True' if the permutation 'p' does not contain
+  -- |'squareByFree' 'f' 'p' return 'True' if the permutation 'p' does not contain
   -- a factor 'q' of length at least 4 such that 'squareBy' 'f' 'q' is 'True'.
-  squareFreeBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
-  squareFreeBy f p = F.and [kSquareFreeBy f k p | k <- [4,6..n]]
+  squareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
+  squareByFree f p = F.and [kSquareByFree f k p | k <- [4,6..n]]
     where
       n = PP.Perm.len p
