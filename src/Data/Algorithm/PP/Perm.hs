@@ -39,6 +39,8 @@ module Data.Algorithm.PP.Perm
 , shuffle2
 , shuffle3
 , shuffle4
+
+, inversions
 )
 where
 
@@ -251,3 +253,10 @@ where
   -- [[1,3,4,2],[1,3,4,2],[1,3,2,4],[3,1,4,2],[3,1,2,4],[3,1,2,4]]
   shuffle :: [Perm] -> [Perm]
   shuffle = L.map mk . PP.Utils.List.shuffle . L.map toList
+
+  -- |'inversions' 'p' returns the inversions of the permutation 'p'.
+  --
+  -- >>> inversions (mk [1,5,3,2,6,4])
+  -- [(5,3),(5,2),(5,4),(3,2),(6,4)]
+  inversions :: Perm -> [(T, T)]
+  inversions = L.map (\[i, j] -> (i, j)) . L.filter (\[i, j] -> i > j) . PP.Combi.subsets 2 . toList

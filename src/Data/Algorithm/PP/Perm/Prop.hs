@@ -19,25 +19,30 @@ where
   import qualified Data.Algorithm.PP.Perm as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
-
+  -- |'derangement' 'p' return 'True' if the permutation 'p' is a derangement
+  -- (i.e. 'p' is a permutation that has no fixed points).
   derangement :: PP.Perm.Perm -> Bool
   derangement = F.all (T.uncurry (/=)) . L.zip [1..] . PP.Perm.toList
 
-  -- |
+  -- | 'increasing' 'p' returns 'True' if the permutation 'p' is increasing.
   increasing :: PP.Perm.Perm -> Bool
   increasing = F.any f . PP.Utils.List.chunk2 . PP.Perm.toList
     where
       f [i, j] = i < j
 
-  -- |
+  -- |'decreasing' 'p' returns 'True' if the permutation 'p' is decreasing.
   decreasing :: PP.Perm.Perm -> Bool
   decreasing = F.any f . PP.Utils.List.chunk2 . PP.Perm.toList
     where
       f [i, j] = i > j
 
-  -- |
+  -- |'monotone' 'p' returns 'True' if the permutation 'p' is monotone
+  -- (i.e. 'p' is either increasing or decreasing).
   monotone :: PP.Perm.Perm -> Bool
   monotone p = increasing p || decreasing p
+
+  -- upDownAlternatings :: Int -> [PP.Perm.Perm]
+  -- upDownAlternatings n
 
   -- |
   upDownAlternating' :: [[PP.Perm.T]] -> Bool
@@ -49,14 +54,32 @@ where
   downUpAlternating' []                 = True
   downUpAlternating' ([i, j, k] : ijks) = i > j && j < k && upDownAlternating' ijks
 
-  -- |
+  -- |'upDownAlternating' 'p' return 'True' if the permutation 'p' is alternating
+  -- and starts with an up-step.
+  --
+  -- >>> upDownAlternating (mk [3,5,2,4,1])
+  -- True
+  -- >>> upDownAlternating (mk [4,1,5,2,3])
+  -- False
   upDownAlternating :: PP.Perm.Perm -> Bool
   upDownAlternating = upDownAlternating' . PP.Utils.List.chunk3 . PP.Perm.toList
 
-  -- |
+  -- |'downUpAlternating' 'p' return 'True' if the permutation 'p' is alternating
+  -- and starts with an down-step.
+  --
+  -- >>> downUpAlternating (mk [3,5,2,4,1])
+  -- False
+  -- >>> downUpAlternating (mk [4,1,5,2,3])
+  -- True
   downUpAlternating :: PP.Perm.Perm -> Bool
   downUpAlternating = downUpAlternating' . PP.Utils.List.chunk3 . PP.Perm.toList  --
 
-  -- |
+  -- | 'alternating' 'p' return 'True' if the permutation 'p' is alternating
+  -- (i.e. each entry of 'p' is alternately greater or less than the preceding entry).
+  --
+  -- >>> alternating (mk [3,5,2,4,1])
+  -- True
+  -- >>> alternating (mk [4,1,5,2,3])
+  -- True
   alternating :: PP.Perm.Perm -> Bool
   alternating p = upDownAlternating p || downUpAlternating p
