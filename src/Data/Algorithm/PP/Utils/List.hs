@@ -24,17 +24,21 @@ where
   import qualified Data.List     as L
   import qualified Data.Set      as S
 
+  -- |'safeHead' 'xs'
   safeHead :: [a] -> Maybe a
   safeHead []      = Nothing
   safeHead (x : _) = Just x
 
+  -- |'safeTail' 'xs'
   safeTail :: [a] -> Maybe [a]
   safeTail []       = Nothing
   safeTail (_ : xs) = Just xs
 
+  -- |'factor' 'xs'
   factor :: Int -> Int -> [a] -> [a]
   factor i j = L.take (j-i+1) . L.drop i
 
+  -- |'factor'' 'xs'
   factor' :: Int -> Int -> [a] -> [a]
   factor' i k = factor i (i+k-1)
 
@@ -48,11 +52,11 @@ where
   chunk :: Int -> [a] -> [[a]]
   chunk n = L.takeWhile ((== n) . L.length) . L.transpose . L.take n . L.iterate L.tail
 
-  chunk2 :: [a] -> [[a]]
-  chunk2 = chunk 2
+  chunk2 :: [a] -> [(a,a)]
+  chunk2 = L.map (\[x,y] -> (x, y)) . chunk 2
 
-  chunk3 :: [a] -> [[a]]
-  chunk3 = chunk 3
+  chunk3 :: [a] -> [(a,a,a)]
+  chunk3 = L.map (\[x,y,z] -> (x, y, z)) . chunk 3
 
   shuffle2 :: [a] -> [a] -> [[a]]
   shuffle2 []       []       = [[]]
