@@ -31,6 +31,7 @@ where
   import qualified Data.List  as L
   import qualified Data.Tuple as T
 
+  import qualified Data.Algorithm.PP.Geometry/Point as PP.Perm
   import qualified Data.Algorithm.PP.Perm as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 

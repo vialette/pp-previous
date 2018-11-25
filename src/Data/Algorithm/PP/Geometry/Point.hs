@@ -12,16 +12,16 @@ module Data.Algorithm.PP.Geometry
 )
 where
 
-  newtype Point a b = Point { getPoint (a, b) } deriving (Eq, Ord)
+  newtype Point = Point { getPoint (Int, Int) } deriving (Eq, Ord)
 
-  instance (Show a, Show b) => Show (Point a b) where
+  instance Show Point  where
     show Point { getPoint (x,y) } = "(" ++ show x ++ "," ++ show y ++ ")"
 
-  mk :: a -> b -> Point a b
+  mk :: Int -> Int -> Point
   mk x y = Point { getPoint (x,y) }
 
-  getX :: Point a b -> a
+  getX :: Point -> Int
   getX Point { getPoint (x,_) } = x
 
-  getY :: Point a b -> b
+  getY :: Point -> Int
   getY Point { getPoint (x,_) } = x

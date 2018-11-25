@@ -10,6 +10,7 @@ module Data.Algorithm.PP.Perm
 , mk
 
 , toList
+, toPoints
 
 , perms
 
@@ -45,11 +46,57 @@ where
   import qualified Data.Tuple     as T
   import Data.Function (on)
 
-  import Data.Algorithm.PP.Perm.Inner
-  import Data.Algorithm.PP.Perm.Bijection
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+  import qualified Data.Algorithm.PP.Combi          as PP.Combi
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-  import qualified Data.Algorithm.PP.Combi      as PP.Combi
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  -- |
+  type Pos = Int
+
+  -- |
+  type T = Int
+
+  -- |'Perm' type
+  newtype Perm = PermImpl { getElems :: [T] } deriving (Eq, Ord)
+
+  -- |
+  type FPerm = Perm -> Perm
+
+  -- |
+  type Pattern = [T]
+
+  -- |
+  instance Show Perm where
+    show = show . getElems
+
+  -- |'fromList' 'xs' makes a permutation from the list 'xs'.
+  -- Duplicate elements in 'xs' are ordered from left to right.
+  --
+  -- >>> fromList "acba"
+  -- [1,4,3,2]
+  -- >>> fromList [2,9,7,2]
+  -- [1,4,3,2]
+  fromList :: (Ord a) => [a] -> Perm
+  fromList = PermImpl . reduce
+
+  -- | Alias for 'fromList'.
+  mk :: (Ord a) => [a] -> Perm
+  mk = fromList
+
+  -- | 'toList' 'p' returns the list of the elements of permutation 'p'.
+  toList :: Perm -> [T]
+  toList = getElems
+
+  -- | 'toPoints' 'p'
+  toPoints :: Perm -> [PP.Geometry.Point.Point]
+  toPoint = L.zip [1..] . getElems
+
+  -- Reduce a list.
+  reduce :: (Ord a) => [a] -> [T]
+  reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zip [1..]
+    where
+      cmpFstSnd = compare `on` (T.fst . T.snd)
+      cmpSnd    = compare `on` T.snd
 
   -- | 'identity' 'n' returns the identity permutation of length 'n'.
   --
