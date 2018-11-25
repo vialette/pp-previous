@@ -6,6 +6,9 @@ module Data.Algorithm.PP.Geometry
   -- * Making
 , mk
 
+  -- * Testing
+, diagonal
+
   -- * Accessing
 , getX
 , getY
@@ -19,6 +22,9 @@ where
 
   mk :: Int -> Int -> Point
   mk x y = Point { getPoint (x,y) }
+
+  diagonal :: Point -> Bool
+  diagonal Point { getPoint (x,y) } = x == y
 
   getX :: Point -> Int
   getX Point { getPoint (x,_) } = x

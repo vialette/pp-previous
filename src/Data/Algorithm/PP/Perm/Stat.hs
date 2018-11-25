@@ -31,13 +31,13 @@ where
   import qualified Data.List  as L
   import qualified Data.Tuple as T
 
-  import qualified Data.Algorithm.PP.Geometry/Point as PP.Perm
-  import qualified Data.Algorithm.PP.Perm as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   --
-  fixedPoints' :: PP.Perm.Perm -> [(Int, PP.Perm.T)]
-  fixedPoints' = L.filter (T.uncurry (==)) . L.zip [1..] . PP.Perm.toList
+  fixedPoints' :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  fixedPoints' = L.filter PP.Geometry.Point.diagonal . PP.Perm.toPoints
 
   -- |
   fixedPoints :: PP.Perm.Perm -> [PP.Perm.T]
