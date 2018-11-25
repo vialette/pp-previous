@@ -41,18 +41,9 @@ where
 
   --
 
-  fixedPoints' :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  fixedPoints' = L.filter PP.Geometry.Point.diagonal . PP.Perm.toPoints
-
   -- |'fixedPoints' 'p'
-  --
-  -- >>> fixedPoints (mk [3,2,1,6,5,4])
-  -- [2,5]
-  -- >>> fixedPoints (mk [3,1,5,6,2,4])
-  -- []
-  fixedPoints :: PP.Perm.Perm -> [PP.Perm.T]
-  fixedPoints = L.map T.snd . fixedPointsAux
-
+  fixedPoints :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  fixedPoints = L.filter PP.Geometry.Point.diagonal . PP.Perm.toPoints
 
   -- |'fixedPointsStat' 'p'
   --
@@ -64,8 +55,8 @@ where
   fixedPointsStat = L.length . fixedPoints
 
   -- auxilliary function for 'ascents' and 'descents' functions.
-  ascentsDescentsAux :: (PP.Perm.T -> PP.Perm.T -> Bool) -> PP.Perm.Perm -> [(Int, PP.Perm.T)]
-  ascentsDescentsAux cmp = L.map T.fst . L.filter f . PP.Utils.List.chunk2 . L.zip [1..] . PP.Perm.toList
+  ascentsDescentsAux :: (PP.Perm.T -> PP.Perm.T -> Bool) -> PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  ascentsDescentsAux cmp = L.map T.fst . L.filter f . PP.Utils.List.chunk2 . PP.Perm.toPoints
     where
       f ((_, x), (_, y)) = x `cmp` y
 
