@@ -10,8 +10,6 @@ module Data.Algorithm.PP.Perm.Reversal
 )
 where
 
-  import qualified Control.Arrow as A
-  import qualified Data.Foldable as F
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
@@ -62,7 +60,7 @@ where
           where
             m' = L.length ps
 
-  -- |'dReversalRadius' 'n' return the radius 
+  -- |'dReversalRadius' 'n' return the radius
   --
   -- >>> dReversalRadius 2
   -- 1

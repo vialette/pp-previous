@@ -25,12 +25,12 @@ where
   import qualified Data.Set      as S
 
   safeHead :: [a] -> Maybe a
-  safeHead [] = Nothing
-  safeHead (x:xs) = Just x
+  safeHead []      = Nothing
+  safeHead (x : _) = Just x
 
   safeTail :: [a] -> Maybe [a]
-  safeTail [] = Nothing
-  safeTail (x:xs) = Just xs
+  safeTail []       = Nothing
+  safeTail (_ : xs) = Just xs
 
   factor :: Int -> Int -> [a] -> [a]
   factor i j = L.take (j-i+1) . L.drop i

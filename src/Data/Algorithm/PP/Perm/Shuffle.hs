@@ -1,16 +1,57 @@
 module Data.Algorithm.PP.Perm.Shuffle
 (
+  -- * Generating
   shuffle
 , shuffle2
 , shuffle3
 , shuffle4
+
+  -- * Testing
+, shuffleOf2
+, shuffleOf2'
+, shuffleOf2''
 )
 where
 
-  import qualified Data.List      as L
+  import qualified Control.Arrow as A
+  import qualified Data.Foldable as F
+  import qualified Data.List     as L
+  import qualified Data.Tuple    as T
 
+  import qualified Data.Algorithm.PP.Combi      as PP.Combi
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+
+  -- |'shuffleOf2' 'p' 'q' 'r' returns 'True' if the permutation 'r' is in the
+  -- shuffle of permutations 'p' and 'q'.
+  --
+  -- >>> shuffleOf2 (mk [1,3,2]) (mk [3,1,2]) (mk [1,5,3,6,2,4])
+  -- True
+  shuffleOf2 :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> Bool
+  shuffleOf2 p q = not . L.null . shuffleOf2' p q
+
+  -- |'shuffleOf2'' 'p' 'q' 'r'
+  --
+  -- >>> shuffleOf2' (mk [1,3,2]) (mk [3,1,2]) (mk [1,5,3,6,2,4])
+  -- [([1,5,3],[6,2,4]),([1,6,2],[5,3,4])]
+  -- >>> mk [1,3,2] == mk [1,5,3] && mk [3,1,2] == mk [6,2,4] -- check first solution
+  -- True
+  -- >>> mk [1,3,2] == mk [1,6,2] && mk [3,1,2] == mk [5,3,4] -- check second solution
+  -- True
+  shuffleOf2' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> [(PP.Perm.Pattern, PP.Perm.Pattern)]
+  shuffleOf2' p q r = L.map proj . L.filter test $ L.map ((A.***) shape shape) ps
+    where
+      ps       = PP.Combi.partitions (PP.Perm.toList r) (PP.Perm.len p) (PP.Perm.len q)
+      shape xs = (xs, PP.Perm.mk xs)
+      test s   = p == (T.snd . T.fst) s && q == (T.snd . T.snd) s
+      proj s   = ((T.fst . T.fst) s, (T.fst . T.snd) s)
+
+  -- |'shuffleOf2''' 'p' 'q' 'r'
+  --
+  -- >>> shuffleOf2'' (mk [1,3,2]) (mk [3,1,2]) (mk [1,5,3,6,2,4])
+  -- Just ([1,5,3],[6,2,4])
+  shuffleOf2'' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> Maybe (PP.Perm.Pattern, PP.Perm.Pattern)
+  shuffleOf2'' p q = PP.Utils.List.safeHead . shuffleOf2' p q
 
 
   -- |'shuffle2' 'p' 'q' return all distinct permutations that can be be obtained by

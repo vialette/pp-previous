@@ -3,6 +3,7 @@ module Data.Algorithm.PP.Perm
   T
 , Perm
 , FPerm
+, Pattern
 
 , identity
 , fromList
