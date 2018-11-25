@@ -53,6 +53,18 @@ where
   compareX :: Point -> Point -> Ordering
   compareX (Point (x1,_)) (Point (x2,_)) = x1 `compare` x2
 
+  (@<-) :: Point -> Point -> Bool
+  (Point (x1,_)) @<- (Point (x2,_)) = x1 < x2
+
+  (@>-) :: Point -> Point -> Bool
+  (Point (x1,_)) @>- (Point (x2,_)) = x1 > x2
+
+  (@<|) :: Point -> Point -> Bool
+  (Point (_,y1)) @<| (Point (_,y2)) = y1 < y2
+
+  (@>|) :: Point -> Point -> Bool
+  (Point (_,y1)) @>| (Point (_,y2)) = y1 > y2
+
   -- |'compareY' 'p1' 'p2' compare the points 'p1' and 'p2' on their y-coordinates.
   compareY :: Point -> Point -> Ordering
   compareY (Point (_,y1)) (Point (_,y2)) = y1 `compare` y2
