@@ -8,7 +8,7 @@ where
 
   data SepTree = PlusNode SepTree SepTree
                | MinusNode SepTree SepTree
-               | Leaf PP.Perm.T
+               | Leaf PP.Perm.Y
                deriving (Show)
 
   -- |'mk' 'p' returns a separating tree of the permutation 'p' if it is separable.

@@ -42,12 +42,12 @@ where
   -- upDownAlternatings n
 
   -- |
-  upDownAlternating' :: [(PP.Perm.T,PP.Perm.T,PP.Perm.T)] -> Bool
+  upDownAlternating' :: [(PP.Perm.Y,PP.Perm.Y,PP.Perm.Y)] -> Bool
   upDownAlternating' []                 = True
   upDownAlternating' ((i, j, k) : ijks) = i < j && j > k && downUpAlternating' ijks
 
   -- |
-  downUpAlternating' :: [(PP.Perm.T,PP.Perm.T,PP.Perm.T)] -> Bool
+  downUpAlternating' :: [(PP.Perm.Y,PP.Perm.Y,PP.Perm.Y)] -> Bool
   downUpAlternating' []                 = True
   downUpAlternating' ((i, j, k) : ijks) = i > j && j < k && upDownAlternating' ijks
 

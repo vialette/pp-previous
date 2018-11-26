@@ -1,10 +1,16 @@
-module Data.Algorithm.PP.Geometry
+module Data.Algorithm.PP.Geometry.Point
 (
   -- * Type
   Point(..)
 
   -- * Making
 , mk
+
+  -- * Comparing
+, (@<-)
+, (@>-)
+, (@<|)
+, (@>|)
 
   -- * Testing
 , diagonal
@@ -17,54 +23,54 @@ module Data.Algorithm.PP.Geometry
 )
 where
 
-  newtype Point = Point (Int, Int) deriving (Eq, Ord)
+  newtype Point = Point { getCoordinates :: (Int, Int) } deriving (Eq, Ord)
 
   instance Show Point  where
-    show (Point (x,y)) = "(" ++ show x ++ "," ++ show y ++ ")"
+    show Point { getCoordinates = (x,y) } = "(" ++ show x ++ "," ++ show y ++ ")"
 
   -- |'mk' 'x' 'y' makes a point with given coordinates.
   mk :: Int -> Int -> Point
-  mk x y = (Point (x,y))
+  mk x y = Point { getCoordinates = (x,y) }
 
   -- |'diagonal' 'p' return 'True' if 'x' == 'y', where 'x' and 'y' are the two
   -- coordinates of the point 'p'.
   diagonal :: Point -> Bool
-  diagonal (Point (x,y)) = x == y
+  diagonal Point { getCoordinates = (x,y) } = x == y
 
   -- |'aboveDiagonal' 'p' return 'True' if 'x' < 'y', where 'x' and 'y' are the two
   -- coordinates of the point 'p'.
   aboveDiagonal :: Point -> Bool
-  aboveDiagonal (Point (x,y)) = x == y
+  aboveDiagonal Point { getCoordinates = (x,y) } = x == y
 
   -- |'belowDiagonal' 'p' return 'True' if 'x' > 'y', where 'x' and 'y' are the two
   -- coordinates of the point 'p'.
   belowDiagonal :: Point -> Bool
-  belowDiagonal (Point (x,y)) = x == y
+  belowDiagonal Point { getCoordinates = (x,y) } = x == y
 
   -- |'getX' 'p' returns the x-coordinate of the point 'p'.
   getX :: Point -> Int
-  getX = T.fst
+  getX Point { getCoordinates = (x,_) } = x
 
   -- |'getY' 'p' returns the y-coordinate of the point 'p'.
   getY :: Point -> Int
-  getY = T.snd
+  getY Point { getCoordinates = (_,y) } = y
 
   -- |'compareX' 'p1' 'p2' compare the points 'p1' and 'p2' on their x-coordinates.
   compareX :: Point -> Point -> Ordering
-  compareX (Point (x1,_)) (Point (x2,_)) = x1 `compare` x2
+  compareX p1 p2 = getX p1 `compare` getX p2
 
   (@<-) :: Point -> Point -> Bool
-  (Point (x1,_)) @<- (Point (x2,_)) = x1 < x2
+  p1 @<- p2 = getX p1 < getX p2
 
   (@>-) :: Point -> Point -> Bool
-  (Point (x1,_)) @>- (Point (x2,_)) = x1 > x2
-
-  (@<|) :: Point -> Point -> Bool
-  (Point (_,y1)) @<| (Point (_,y2)) = y1 < y2
-
-  (@>|) :: Point -> Point -> Bool
-  (Point (_,y1)) @>| (Point (_,y2)) = y1 > y2
+  p1 @>- p2 = getX p1 > getX p2
 
   -- |'compareY' 'p1' 'p2' compare the points 'p1' and 'p2' on their y-coordinates.
   compareY :: Point -> Point -> Ordering
-  compareY (Point (_,y1)) (Point (_,y2)) = y1 `compare` y2
+  compareY p1 p2 = getX p1 `compare` getX p2
+
+  (@<|) :: Point -> Point -> Bool
+  p1 @<| p2 = getY p1 < getY p2
+
+  (@>|) :: Point -> Point -> Bool
+  p1 @>| p2 = getY p1 > getY p2
