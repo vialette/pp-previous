@@ -3,6 +3,8 @@ module Data.Algorithm.PP.Utils.List
   safeHead
 , safeTail
 
+, groupBy'
+
 , factor
 , factor'
 
@@ -33,6 +35,19 @@ where
   safeTail :: [a] -> Maybe [a]
   safeTail []       = Nothing
   safeTail (_ : xs) = Just xs
+
+  -- |'groupBy''
+  groupBy' :: (a -> a -> Bool) -> [a] -> [[a]]
+  groupBy' _ [] = []
+  groupBy' cmp (x : xs) = (x : ys) : groupBy' cmp zs
+      where
+        (ys, zs) = spanCmp x xs
+          where
+            spanCmp _ [] = ([], [])
+            spanCmp x' (x'' : xs')
+              | x' `cmp` x'' = let (ps, qs) = spanCmp x'' xs' in (x'' : ps, qs)
+              | otherwise  = ([], x'' : xs')
+
 
   -- |'factor' 'xs'
   factor :: Int -> Int -> [a] -> [a]

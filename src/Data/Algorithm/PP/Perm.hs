@@ -31,8 +31,11 @@ module Data.Algorithm.PP.Perm
 
 -- * Composing trivial bijections
 , revComp
+, compRev
+, invRev
 , compInv
 , invComp
+, revInv
 , invRevComp
 
 -- , transpose
@@ -162,21 +165,27 @@ where
     where
       xs = toList p
 
-  -- | 'inv p' returns the inverse of permutation 'p'.
+  -- | 'inv' 'p' returns the inverse of the permutation 'p'.
+  --
+  -- prop> inv (inv p) = p
   --
   -- >>> inv $ mk [1,3,4,2]
   -- [1,4,2,3]
   inv :: Perm -> Perm
   inv = PermImpl . L.map T.snd . L.sort . flip L.zip [1..] . toList
 
-  -- | 'rev' 'p' returns the reverse of permutation 'p'.
+  -- | 'rev' 'p' returns the reverse of the permutation 'p'.
+  --
+  -- prop> rev (rev p) = p
   --
   -- >>> rev $ mk [1,3,4,2]
   -- [2,4,3,1]
   rev :: Perm -> Perm
   rev = PermImpl . L.reverse . toList
 
-  -- | 'comp' 'p' returns the complement of permutation 'p'.
+  -- | 'comp' 'p' returns the complement of the permutation 'p'.
+  --
+  -- prop> comp (comp p) = p
   --
   -- >>> comp $ mk [1,3,4,2]
   -- [4,2,1,3]
@@ -186,26 +195,44 @@ where
       ys = toList p
       m  = F.maximum ys
 
-  -- | 'revComp' 'p' returns the reverse complement of permutation 'p'.
+  -- | 'revComp' 'p' returns the reverse complement of the permutation 'p'.
   --
   -- >>> revComp $ mk [1,3,4,2]
   -- [3,1,2,4]
   revComp :: Perm -> Perm
   revComp = rev . comp
 
-  -- | 'compInv' 'p' returns the complement inverse of permutation 'p'.
+  -- | 'compRev' 'p' returns the complement reverse of the permutation 'p'.
+  --
+  -- prop> revComp p == compRev p
+  compRev :: Perm -> Perm
+  compRev = revComp
+
+  -- | 'compInv' 'p' returns the complement inverse of the permutation 'p'.
   --
   -- >>> compInv $ mk [1,3,4,2]
   -- [4,1,3,2]
   compInv :: Perm -> Perm
   compInv = comp . inv
 
-  -- | 'invComp' 'p' returns the inverse complement of permutation 'p'.
+  -- | 'invRev' 'p' returns the inverset inverse of the permutation 'p'.
+  --
+  -- prop> invRev p == compRev
+  invRev :: Perm -> Perm
+  invRev = comp . inv
+
+  -- | 'invComp' 'p' returns the inverse complement of the permutation 'p'.
   --
   -- >>> invComp $ mk [1,3,4,2]
   -- [3,2,4,1]
   invComp :: Perm -> Perm
   invComp = inv . comp
+
+  -- | 'revInv' 'p' returns the reverse inverse of the permutation 'p'.
+  --
+  -- prop> revInv p == invComp p
+  revInv :: Perm -> Perm
+  revInv = invComp
 
   -- | 'invRevComp' 'p' returns the inverse reverse complement of permutation 'p'.
   --
@@ -294,10 +321,10 @@ where
   -- >>> patterns 6 (mk [2,4,1,3,5])
   -- []
   patterns :: Int -> Perm -> [Pattern]
-  patterns k = PP.Utils.List.uniq . PP.Combi.subsets k . toList
+  patterns k = PP.Combi.subsets k . toList
 
   permPatterns :: Int -> Perm -> [Perm]
-  permPatterns k = L.map mk . patterns k
+  permPatterns k = L.map mk . PP.Utils.List.uniq . patterns k
 
   -- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
   -- such that 'f' 'q' holds.
@@ -324,7 +351,7 @@ where
   -- >>> factors 5 p
   -- []
   factors :: Int -> Perm -> [Pattern]
-  factors k = PP.Utils.List.uniq . PP.Utils.List.chunk k . toList
+  factors k = PP.Utils.List.chunk k . toList
 
   -- |'permFactors' 'k' 'p' returns the list of all permutations of length 'k'
   -- that occur as a factor in the permutation 'p'.
@@ -344,15 +371,13 @@ where
   -- >>> permFactors 5 p
   -- []
   permFactors :: Int -> Perm -> [Perm]
-  permFactors k = L.map mk . factors k
+  permFactors k = L.map mk . PP.Utils.List.uniq . factors k
 
   maxPermFactors :: (Perm -> Bool) -> Perm -> [Perm]
   maxPermFactors f p = select $ L.dropWhile L.null [[q | q <- permFactors k p, f q] | k <- [n,n-1..1]]
     where
       n         = len p
       select xs = if L.null xs then [] else L.head xs
-
-
 
   -- |'inversions' 'p' returns the inversions of the permutation 'p'.
   --
