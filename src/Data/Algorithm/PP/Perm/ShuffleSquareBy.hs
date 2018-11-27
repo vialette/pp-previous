@@ -72,7 +72,7 @@ where
   kShuffleSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
   kShuffleSquareByFree f k p
     | odd k     = True
-    | otherwise = F.all (not . shuffleSquareBy f) $ PP.Perm.permPatterns k p
+    | otherwise = F.all (not . shuffleSquareBy f) $ PP.Perm.patterns' k p
 
   -- |'shuffleSquareByFree' 'f' 'p' retusn 'True' if the permutations 'p' does not
   -- contain any pattern of length at least 4 that is a shuffle square according
@@ -103,4 +103,4 @@ where
         | odd k     = go (k-1)
         | otherwise = if L.null sqs then go (k-2) else sqs
         where
-          sqs  = L.filter (shuffleSquareBy f) $ PP.Perm.permPatterns k p
+          sqs  = L.filter (shuffleSquareBy f) $ PP.Perm.patterns' k p

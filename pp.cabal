@@ -54,6 +54,8 @@ library
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
                      -- , Data.Algorithm.PP.Perm.Complexity
+                     , Data.Algorithm.PP.Perm.ShuffleSquare
+                     , Data.Algorithm.PP.Perm.ShuffleSquareBy
                      , Data.Algorithm.PP.Perm.Square
                      , Data.Algorithm.PP.Perm.SquareBy
                      -- , Data.Algorithm.PP.Perm.Gen.Base
@@ -62,8 +64,6 @@ library
                      -- , Data.Algorithm.PP.Perm.Reversal
                      -- , Data.Algorithm.PP.Perm.Run
                      -- , Data.Algorithm.PP.Perm.Shuffle
-                     -- , Data.Algorithm.PP.Perm.ShuffleSquare
-                     -- , Data.Algorithm.PP.Perm.ShuffleSquareBy
                      , Data.Algorithm.PP.Perm.Small
                      -- , Data.Algorithm.PP.Perm.Stat
                      -- , Data.Algorithm.PP.SepTree
