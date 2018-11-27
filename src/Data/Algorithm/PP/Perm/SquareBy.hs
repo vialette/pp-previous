@@ -19,10 +19,8 @@ where
 
   import qualified Data.Algorithm.PP.Perm as PP.Perm
 
-
   squaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   squaresBy f = L.filter (squareBy f) . PP.Perm.perms
-
 
   nonSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   nonSquaresBy f = L.filter (not . squareBy f) . PP.Perm.perms

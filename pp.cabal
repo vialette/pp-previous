@@ -54,7 +54,8 @@ library
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
                      -- , Data.Algorithm.PP.Perm.Complexity
-                     -- , Data.Algorithm.PP.Perm.Square
+                     , Data.Algorithm.PP.Perm.Square
+                     , Data.Algorithm.PP.Perm.SquareBy
                      -- , Data.Algorithm.PP.Perm.Gen.Base
                      , Data.Algorithm.PP.Perm.Prop
                      , Data.Algorithm.PP.Perm.Rank
