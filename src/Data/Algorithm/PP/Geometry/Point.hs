@@ -8,17 +8,15 @@ module Data.Algorithm.PP.Geometry.Point
   -- * Constructing
 , mk
 , mks
-, mksX
-, mksY
 , symm
 
   -- * Comparing
 , (@<-)
 , (@>-)
-, compX
+, cmpX
 , (@<|)
 , (@>|)
-, compY
+, cmpY
 , domBy
 , aboveOf
 , belowOf
@@ -31,8 +29,8 @@ module Data.Algorithm.PP.Geometry.Point
 , belowDiag
 
   -- * Accessing
-, xCoord
-, yCoord
+, getX
+, getY
 )
 where
 
@@ -58,14 +56,6 @@ where
   mks :: [X] -> [Y] -> [Point]
   mks = L.zipWith mk
 
-  -- |'mksX' 'xs'
-  mksX :: [X] -> [Point]
-  mksX xs = L.zipWith mk xs [1..]
-
-  -- |'mksY' 'ys'
-  mksY :: [Y] -> [Point]
-  mksY = L.zipWith mk [1..]
-
   -- |'symm' 'p'
   symm :: Point -> Point
   symm Point { getCoords = (x, y) } = Point { getCoords = (y, x) }
@@ -85,37 +75,37 @@ where
   belowDiag :: Point -> Bool
   belowDiag Point { getCoords = (x,y) } = x > y
 
-  -- |'xCoord' 'p' returns the x-coordinate of the point 'p'.
-  xCoord :: Point -> X
-  xCoord Point { getCoords = (x,_) } = x
+  -- |'getX' 'p' returns the x-coordinate of the point 'p'.
+  getX :: Point -> X
+  getX Point { getCoords = (x,_) } = x
 
-  -- |'yCoord' 'p' returns the y-coordinate of the point 'p'.
-  yCoord :: Point -> Y
-  yCoord Point { getCoords = (_,y) } = y
+  -- |'getY' 'p' returns the y-coordinate of the point 'p'.
+  getY :: Point -> Y
+  getY Point { getCoords = (_,y) } = y
 
-  -- |'compX' 'p1' 'p2' compare the points 'p1' and 'p2' on their x-coordinates.
-  compX :: Point -> Point -> Ordering
-  compX p1 p2 = xCoord p1 `compare` xCoord p2
+  -- |'cmpX' 'p1' 'p2' compare the points 'p1' and 'p2' on their x-coordinates.
+  cmpX :: Point -> Point -> Ordering
+  cmpX p1 p2 = getX p1 `compare` getX p2
 
   -- |'p1' '@<-' 'p2'
   (@<-) :: Point -> Point -> Bool
-  p1 @<- p2 = xCoord p1 < xCoord p2
+  p1 @<- p2 = getX p1 < getX p2
 
   -- |'p1' '@>-' 'p2'
   (@>-) :: Point -> Point -> Bool
-  p1 @>- p2 = xCoord p1 > xCoord p2
+  p1 @>- p2 = getX p1 > getX p2
 
-  -- |'compY' 'p1' 'p2' compare the points 'p1' and 'p2' on their y-coordinates.
-  compY :: Point -> Point -> Ordering
-  compY p1 p2 = xCoord p1 `compare` xCoord p2
+  -- |'cmpY' 'p1' 'p2' compare the points 'p1' and 'p2' on their y-coordinates.
+  cmpY :: Point -> Point -> Ordering
+  cmpY p1 p2 = getY p1 `compare` getY p2
 
   -- |'p1' '@<|' 'p2'
   (@<|) :: Point -> Point -> Bool
-  p1 @<| p2 = yCoord p1 < yCoord p2
+  p1 @<| p2 = getY p1 < getY p2
 
   -- |'p1' '@>|' 'p2'
   (@>|) :: Point -> Point -> Bool
-  p1 @>| p2 = yCoord p1 > yCoord p2
+  p1 @>| p2 = getY p1 > getY p2
 
   -- |Alias for '(@>|)'.
   aboveOf :: Point -> Point -> Bool

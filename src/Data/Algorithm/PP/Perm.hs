@@ -1,7 +1,7 @@
 module Data.Algorithm.PP.Perm
 (
   -- * Types
-, Perm
+  Perm
 , FPerm
 , Pattern
 
@@ -15,7 +15,7 @@ module Data.Algorithm.PP.Perm
 
   -- * Transforming
 , toList
-, toPoints
+, getPoints
 , coords
 
   -- * Generating
@@ -57,6 +57,9 @@ module Data.Algorithm.PP.Perm
 , maxfactors'
 
 , inversions
+
+  -- * Displaying
+, grid
 )
 where
 
@@ -81,26 +84,26 @@ where
 
   -- |
   instance Show Perm where
-    show = show . L.map getY . getPoints
+    show = show . L.map PP.Geometry.Point.getY . getPoints
 
   -- |'fromList' 'xs'
   fromList :: (Ord a) => [a] -> Perm
   fromList = mk
 
-  fromListUnsafe :: (Ord a) => [a] -> Perm
-  fromList = Perm . PP.Geometry.Point.mksY
-
-  -- Used to convert a lists of points to a pattern.
-  fromPoints :: [Point] -> [Pattern]
-  fromPoints = Perm
-
   -- | 'mk' 'xs'
   mk :: (Foldable t, Ord a) => t a -> Perm
-  mk = Perm . PP.Geometry.Point.mksY . reduce . F.toList
+  mk = Perm . PP.Geometry.Point.mks [1..] . reduce . F.toList
+
+  fromListUnsafe :: [Y] -> Perm
+  fromListUnsafe = fromPointsUnsafe . PP.Geometry.Point.mks [1..]
+
+  -- Used to convert a lists of points to a pattern.
+  fromPointsUnsafe :: [Point] -> Pattern
+  fromPointsUnsafe = Perm
 
   -- | 'toList' 'p' returns the list of the elements of permutation 'p'.
   toList :: Perm -> [Y]
-  toList = PP.Geometry.Point.yCoords . getPoints
+  toList = L.map PP.Geometry.Point.getY . getPoints
 
   -- | 'coords' 'p' returns the permutation 'p' as pairs of integers.
   --
@@ -109,7 +112,7 @@ where
   --- >>> :type coords (mk [1,3,4,2])
   -- coords (mk [1,3,4,2]) :: [(Data.Algorithm.PP.Perm.X, Data.Algorithm.PP.Perm.Y)]
   coords :: Perm -> [(X, Y)]
-  coords = L.map PP.Geometry.Point.coords . getPoints
+  coords = L.map PP.Geometry.Point.getCoords . getPoints
 
   -- Reduce a list of elements.
   reduce :: (Ord a) => [a] -> [Y]
@@ -123,7 +126,7 @@ where
   -- >>> identity 4
   -- [1,2,3,4]
   identity :: Int -> Perm
-  identity n = Perm . PP.Geometry.Point.mksY [1 .. n]
+  identity n = fromPointsUnsafe $ PP.Geometry.Point.mks [1..n] [1..n]
 
   -- | Rturn the empty permutation.
   empty :: Perm
@@ -153,7 +156,7 @@ where
   -- >>> inv $ mk [1,3,4,2]
   -- [1,4,2,3]
   inv :: Perm -> Perm
-  inv = fromListUnsafe . L.map PP.Geometry.Point.xCoord . L.sortBy PP.Geometry.Point.cmpX . L.map PP.Geometry.Point.symm . getPoints
+  inv = fromListUnsafe . L.map PP.Geometry.Point.getX . L.sortBy PP.Geometry.Point.cmpX . L.map PP.Geometry.Point.symm . getPoints
 
   -- | 'rev' 'p' returns the reverse of the permutation 'p'.
   --
@@ -171,9 +174,10 @@ where
   -- >>> comp $ mk [1,3,4,2]
   -- [4,2,1,3]
   comp :: Perm -> Perm
-  comp p = fromListUnsafe $ fmap (\y -> m-y+1)
+  comp p = fromListUnsafe $ fmap (\y -> m-y+1) ys
     where
-      m  = F.maximum (toList p)
+      ys = toList p
+      m  = F.maximum ys
 
   -- | 'revComp' 'p' returns the reverse complement of the permutation 'p'.
   --
@@ -252,7 +256,7 @@ where
   -- >>> [prefix i p | i <- [1..len p]]
   -- [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
   prefix :: Int -> Perm -> Pattern
-  prefix k = L.take k . toPoints
+  prefix k = fromPointsUnsafe . L.take k . getPoints
 
   -- |'prefixes' 'p' returns all the prefixes of the permutation 'p' as
   -- permutations.
@@ -261,7 +265,7 @@ where
   -- >>> prefixes p
   -- [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
   prefixes :: Perm -> [Pattern]
-  prefixes = L.tail . L.inits . toPoints
+  prefixes = L.map fromPointsUnsafe . L.tail . L.inits . getPoints
 
   -- 'suffix' 'k' 'p' returns the suffix of length 'k' of the permutation 'p' as
   -- a permutation.
@@ -270,7 +274,7 @@ where
   -- >>> [suffix i p | i <- [1..len p]]
   -- [[1],[2,1],[1,3,2],[3,1,4,2],[3,4,1,5,2],[2,4,5,1,6,3]]
   suffix :: Int -> Perm -> Pattern
-  suffix k p = L.drop (n-k) $ toPoints p
+  suffix k p = fromPointsUnsafe . L.drop (n-k) $ getPoints p
     where
       n = len p
 
@@ -281,7 +285,7 @@ where
   -- >>> suffixes p
   -- [[2,4,5,1,6,3],[3,4,1,5,2],[3,1,4,2],[1,3,2],[2,1],[1]]
   suffixes :: Perm -> [Pattern]
-  suffixes = L.map mk . L.init . L.tails . toPoints
+  suffixes = L.map fromPointsUnsafe . L.init . L.tails . getPoints
 
   -- | 'patterns' 'k' 'p' returns all distinct permutations of length 'k' that
   -- occurs in permutation 'p'.
@@ -301,7 +305,7 @@ where
   -- >>> patterns 6 (mk [2,4,1,3,5])
   -- []
   patterns :: Int -> Perm -> [Pattern]
-  patterns k = L.map fromPoints . PP.Combi.subsets k . toPoints
+  patterns k = L.map fromPointsUnsafe . PP.Combi.subsets k . getPoints
 
   -- |'patterns'' 'k' 'p'
   patterns' :: Int -> Perm -> [Perm]
@@ -332,7 +336,7 @@ where
   -- >>> factors 5 p
   -- []
   factors :: Int -> Perm -> [Pattern]
-  factors k = L.map fromPoints . PP.Utils.List.chunk k . toPoints
+  factors k = L.map fromPointsUnsafe . PP.Utils.List.chunk k . getPoints
 
   -- |'factors'' 'k' 'p' returns the list of all permutations of length 'k'
   -- that occur as a factor in the permutation 'p'.
@@ -366,3 +370,27 @@ where
   -- [(5,3),(5,2),(5,4),(3,2),(6,4)]
   inversions :: Perm -> [(Y, Y)]
   inversions = L.map (\[i, j] -> (i, j)) . L.filter (\[i, j] -> i > j) . PP.Combi.subsets 2 . toList
+
+  -- |'grid' 'p'
+  --
+  -- >>> putStr . grid  $ PP.Perm.mk [5,1,6,4,2,3]
+  -- +---+---+---+---+---+---+
+  -- |   |   | o |   |   |   |
+  -- +---+---+---+---+---+---+
+  -- | o |   |   |   |   |   |
+  -- +---+---+---+---+---+---+
+  -- |   |   |   | o |   |   |
+  -- +---+---+---+---+---+---+
+  -- |   |   |   |   |   | o |
+  -- +---+---+---+---+---+---+
+  -- |   |   |   |   | o |   |
+  -- +---+---+---+---+---+---+
+  -- |   | o |   |   |   |   |
+  -- +---+---+---+---+---+---+
+  grid :: Perm -> String
+  grid p = aux . L.map (row . PP.Geometry.Point.getX) . L.sortBy (flip PP.Geometry.Point.cmpY) $ getPoints p
+    where
+      n     = len p
+      sep   = ('+' :) $ F.concat (L.replicate n "---+") ++ "\n"
+      row x = ('|' :) $ F.concat [F.concat (L.replicate (x-1) "   |"), " o |", F.concat (L.replicate (n-x) "   |"), "\n"]
+      aux ss = sep ++ L.intercalate sep ss ++ sep
