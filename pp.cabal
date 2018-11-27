@@ -57,7 +57,7 @@ library
                      -- , Data.Algorithm.PP.Perm.Square
                      -- , Data.Algorithm.PP.Perm.Gen.Base
                      , Data.Algorithm.PP.Perm.Prop
-                     -- , Data.Algorithm.PP.Perm.Rank
+                     , Data.Algorithm.PP.Perm.Rank
                      -- , Data.Algorithm.PP.Perm.Reversal
                      -- , Data.Algorithm.PP.Perm.Run
                      -- , Data.Algorithm.PP.Perm.Shuffle
