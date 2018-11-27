@@ -17,7 +17,7 @@ where
 
   import qualified Data.Algorithm.PP.Perm         as PP.Perm
 
-  -- |
+  -- |'p' '/+/' 'q'
   (/+/) :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
   p /+/ q = PP.Perm.mk (xs ++ ys)
     where
@@ -25,11 +25,11 @@ where
       np  = L.length xs
       ys = L.map (+np) $ PP.Perm.toList q
 
-  -- |
+  -- | Alias for '/+/'.
   directSum :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
   directSum = (/+/)
 
-  -- |
+  -- |'p' '/-/' 'q'
   (/-/) :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
   p /-/ q = PP.Perm.mk (xs ++ ys)
     where
@@ -37,11 +37,11 @@ where
       xs = L.map (+nq) $ PP.Perm.toList p
       ys = PP.Perm.toList q
 
-  -- |
+  -- | Alias for '/-/'.
   skewSum :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
   skewSum = (/+/)
 
-  -- |
+  -- |'p' '/./' 'q'
   (/./) :: PP.Perm.Perm -> PP.Perm.Perm -> Maybe PP.Perm.Perm
   p /./ q
     | np == nq  = Just . PP.Perm.mk . L.map T.snd . L.sortBy cmpFst . L.zipWith (T.curry proj) ips . L.sortBy cmpSnd $ iqs
@@ -55,6 +55,6 @@ where
       ips        = L.zip [1..] $ PP.Perm.toList p
       iqs        = L.zip [1..] $ PP.Perm.toList q
 
-  -- |
+  -- | Alias for '/./'.
   dot :: PP.Perm.Perm -> PP.Perm.Perm -> Maybe PP.Perm.Perm
   dot = (/./)

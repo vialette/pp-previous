@@ -1,9 +1,7 @@
 module Data.Algorithm.PP.Perm.Complexity
 (
   complexity
-, hComplexity
 , complexityStat
-, hComplexityStat
 
 , maxComplexity
 , maxComplexityStat
@@ -20,30 +18,21 @@ where
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.List
 
-  -- |The 'complexity' 'k' 'n' function returns the list of all permutations of length
-  -- 'k' that occurs in permutation 'p'.
+  -- |The 'complexity' 'k' 'p' function returns the list of all permutations of length
+  -- 'k' that occur in the permutation 'p'.
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>> import qualified Data.Algorithm.PP.Perm.Complexity as Complexity
-  -- >>>
-  -- >>> Complexity.complexity 1 (Perm.mk [1,4,2,5,3])
+  -- >>> complexity 1 (mk [1,4,2,5,3])
   -- [[1]]
-  -- >>> Complexity.complexity 2 (Perm.mk [1,4,2,5,3])
+  -- >>> complexity 2 (mk [1,4,2,5,3])
   -- [[1,2],[2,1]]
-  -- >>> Complexity.complexity 4 (Perm.mk [1,4,2,5,3])
+  -- >>> complexity 3 (mk [1,4,2,5,3])
   -- [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2]]
-  -- >>> Complexity.complexity 4 (Perm.mk [1,4,2,5,3])
+  -- >>> complexity 4 (mk [1,4,2,5,3])
   -- [[1,2,4,3],[1,3,2,4],[1,3,4,2],[1,4,2,3],[3,1,4,2]]
-  -- >>> Complexity.complexity 5 (Perm.mk [1,4,2,5,3])
+  -- >>> complexity 5 (mk [1,4,2,5,3])
   -- [[1,4,2,5,3]]
   complexity :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
   complexity k = PP.List.uniq . L.map PP.Perm.mk . PP.Combi.subsets k . PP.Perm.toList
-
-  hComplexity :: PP.Perm.Perm -> [PP.Perm.Perm]
-  hComplexity p = complexity k p
-    where
-      n = PP.Perm.len p
-      k = n `div` 2
 
   -- |The 'complexityStat' 'n' 'p' function returns the number of permutations of length
   -- 'k' that occurs in permutation 'p'.
@@ -51,33 +40,24 @@ where
   -- >>> import qualified Data.Algorithm.PP.Perm as Perm
   -- >>> import qualified Data.Algorithm.PP.Perm.Complexity as Complexity
   -- >>>
-  -- >>> Complexity.complexityStat 1 (Perm.mk [1,4,2,5,3])
+  -- >>> complexityStat 1 (mk [1,4,2,5,3])
   -- 1
-  -- >>> Complexity.complexityStat 2 (Perm.mk [1,4,2,5,3])
+  -- >>> complexityStat 2 (mk [1,4,2,5,3])
   -- 2
-  -- >>> Complexity.complexityStat 4 (Perm.mk [1,4,2,5,3])
+  -- >>> complexityStat 4 (mk [1,4,2,5,3])
   -- 5
-  -- >>> Complexity.complexityStat 4 (Perm.mk [1,4,2,5,3])
+  -- >>> complexityStat 4 (mk [1,4,2,5,3])
   -- 5
-  -- >>> Complexity.complexityStat 5 (Perm.mk [1,4,2,5,3])
+  -- >>> complexityStat 5 (mk [1,4,2,5,3])
   -- 1
   complexityStat :: Int -> PP.Perm.Perm -> Int
   complexityStat k = L.length . complexity k
-
-  hComplexityStat :: PP.Perm.Perm -> Int
-  hComplexityStat p = complexityStat k p
-    where
-      n = PP.Perm.len p
-      k = n `div` 2
 
   -- | The 'maxComplexity' 'k' 'n' function returns a pair ('m', 'ps'), where 'm' is
   -- the maximum number of permutations of length 'k' a permutation of length 'n'
   -- can contain and 'ps' is the list of all permutations of length 'k' that
   -- contain 'm' distinct permutations of length 'k'.
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>> import qualified Data.Algorithm.PP.Perm.Complexity as Complexity
-  -- >>>
   -- >>> maxComplexity 1 3
   -- (1,[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]])
   -- >>> maxComplexity 2 3
