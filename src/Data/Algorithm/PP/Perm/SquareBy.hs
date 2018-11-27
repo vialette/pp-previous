@@ -19,12 +19,15 @@ where
 
   import qualified Data.Algorithm.PP.Perm as PP.Perm
 
+  -- |'squaresBy' 'f' 'n'
   squaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   squaresBy f = L.filter (squareBy f) . PP.Perm.perms
 
+  -- |'nonSquaresBy' 'f' 'n'
   nonSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   nonSquaresBy f = L.filter (not . squareBy f) . PP.Perm.perms
 
+  -- |'squaresByFree' 'f' n
   squaresByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   squaresByFree f = L.filter (squareByFree f) . PP.Perm.perms
 
@@ -67,7 +70,7 @@ where
   kSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
   kSquareByFree f k p
     | odd k     = True
-    | otherwise = F.all (not . squareBy f) $ PP.Perm.permFactors k p
+    | otherwise = F.all (not . squareBy f) $ PP.Perm.factors' k p
 
   -- |'squareByFree' 'f' 'p' return 'True' if the permutation 'p' does not contain
   -- a factor 'q' of length at least 4 such that 'squareBy' 'f' 'q' is 'True'.
