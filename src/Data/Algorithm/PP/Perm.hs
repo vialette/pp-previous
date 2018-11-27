@@ -1,11 +1,12 @@
 module Data.Algorithm.PP.Perm
 (
   -- * Types
-  X
-, Y
 , Perm
 , FPerm
 , Pattern
+
+  -- * Points
+, module Data.Algorithm.PP.Geometry.Point
 
   -- * Making
 , identity
@@ -15,14 +16,13 @@ module Data.Algorithm.PP.Perm
   -- * Transforming
 , toList
 , toPoints
-, toPoints'
+, coords
 
   -- * Generating
 , perms
 
   -- Querying
 , len
-, at
 
 -- * Trivial bijections
 , inv
@@ -49,12 +49,12 @@ module Data.Algorithm.PP.Perm
 , suffixes
 
 , patterns
-, permPatterns
-, maxPermPatterns
+, patterns'
+, maxpatterns'
 
 , factors
-, permFactors
-, maxPermFactors
+, factors'
+, maxfactors'
 
 , inversions
 )
@@ -65,64 +65,51 @@ where
   import qualified Data.Tuple     as T
   import Data.Function (on)
 
+  import Data.Algorithm.PP.Geometry.Point (X, Y, Point)
   import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Combi          as PP.Combi
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-  -- |
-  type X = Int
-
-  -- |
-  type Y = Int
-
   -- |'Perm' type
-  newtype Perm = PermImpl { getElems :: [Y] } deriving (Eq, Ord)
+  newtype Perm = Perm { getPoints :: [Point] } deriving (Eq, Ord)
+
+  -- |
+  type Pattern = Perm
 
   -- |
   type FPerm = Perm -> Perm
 
   -- |
-  type Pattern = [Y]
-
-  -- |
   instance Show Perm where
-    show = show . getElems
+    show = show . L.map getY . getPoints
 
-  -- |'fromList' 'xs' makes a permutation from the list 'xs'.
-  -- Duplicate elements in 'xs' are ordered from left to right.
-  --
-  -- >>> fromList "acba"
-  -- [1,4,3,2]
-  -- >>> fromList [2,9,7,2]
-  -- [1,4,3,2]
+  -- |'fromList' 'xs'
   fromList :: (Ord a) => [a] -> Perm
-  fromList = PermImpl . reduce
+  fromList = mk
 
-  -- | Alias for 'fromList'.
-  mk :: (Ord a) => [a] -> Perm
-  mk = fromList
+  fromListUnsafe :: (Ord a) => [a] -> Perm
+  fromList = Perm . PP.Geometry.Point.mksY
+
+  -- Used to convert a lists of points to a pattern.
+  fromPoints :: [Point] -> [Pattern]
+  fromPoints = Perm
+
+  -- | 'mk' 'xs'
+  mk :: (Foldable t, Ord a) => t a -> Perm
+  mk = Perm . PP.Geometry.Point.mksY . reduce . F.toList
 
   -- | 'toList' 'p' returns the list of the elements of permutation 'p'.
   toList :: Perm -> [Y]
-  toList = getElems
+  toList = PP.Geometry.Point.yCoords . getPoints
 
-  -- | 'toPoints' 'p' returns the permutation 'p' as points.
+  -- | 'coords' 'p' returns the permutation 'p' as pairs of integers.
   --
-  -- >>> toPoints (mk [1,3,4,2])
+  -- >>> coords (mk [1,3,4,2])
   -- [(1,1),(2,3),(3,4),(4,2)]
-  --- >>> :type toPoints (mk [1,3,4,2])
-  -- toPoints (mk [1,3,4,2]) :: [Data.Algorithm.PP.Geometry.Point.Point]
-  toPoints :: Perm -> [PP.Geometry.Point.Point]
-  toPoints = L.zipWith PP.Geometry.Point.mk [1..] . toList
-
-  -- | 'toPoints'' 'p' returns the permutation 'p' as pairs of integers.
-  --
-  -- >>> toPoints' (mk [1,3,4,2])
-  -- [(1,1),(2,3),(3,4),(4,2)]
-  --- >>> :type toPoints' (mk [1,3,4,2])
-  -- toPoints' (mk [1,3,4,2]) :: [(Data.Algorithm.PP.Perm.X, Data.Algorithm.PP.Perm.Y)]
-  toPoints' :: Perm -> [(X, Y)]
-  toPoints' = L.map PP.Geometry.Point.getCoordinates . toPoints
+  --- >>> :type coords (mk [1,3,4,2])
+  -- coords (mk [1,3,4,2]) :: [(Data.Algorithm.PP.Perm.X, Data.Algorithm.PP.Perm.Y)]
+  coords :: Perm -> [(X, Y)]
+  coords = L.map PP.Geometry.Point.coords . getPoints
 
   -- Reduce a list of elements.
   reduce :: (Ord a) => [a] -> [Y]
@@ -136,11 +123,11 @@ where
   -- >>> identity 4
   -- [1,2,3,4]
   identity :: Int -> Perm
-  identity n = PermImpl [1 .. n]
+  identity n = Perm . PP.Geometry.Point.mksY [1 .. n]
 
   -- | Rturn the empty permutation.
   empty :: Perm
-  empty = PermImpl []
+  empty = Perm []
 
   -- | 'perms' 'n' returns all permutations of length 'n'.
   --
@@ -153,17 +140,11 @@ where
   -- >>> perms 3
   -- [[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
   perms :: Int -> [Perm]
-  perms n = L.map PermImpl $ L.permutations [1..n]
+  perms n = L.map fromListUnsafe $ L.permutations [1..n]
 
   -- | 'len' 'p' returns the length of the permutation 'p'.
   len :: Perm -> Int
-  len = L.length . toList
-
-  -- | 'p `at` i' returns the element at position 'i' in permutation 'p'.
-  at :: Perm -> Int -> Y
-  at p i = xs L.!! i
-    where
-      xs = toList p
+  len = L.length . getPoints
 
   -- | 'inv' 'p' returns the inverse of the permutation 'p'.
   --
@@ -172,7 +153,7 @@ where
   -- >>> inv $ mk [1,3,4,2]
   -- [1,4,2,3]
   inv :: Perm -> Perm
-  inv = PermImpl . L.map T.snd . L.sort . flip L.zip [1..] . toList
+  inv = fromListUnsafe . L.map PP.Geometry.Point.xCoord . L.sortBy PP.Geometry.Point.cmpX . L.map PP.Geometry.Point.symm . getPoints
 
   -- | 'rev' 'p' returns the reverse of the permutation 'p'.
   --
@@ -181,7 +162,7 @@ where
   -- >>> rev $ mk [1,3,4,2]
   -- [2,4,3,1]
   rev :: Perm -> Perm
-  rev = PermImpl . L.reverse . toList
+  rev = fromListUnsafe . L.reverse . toList
 
   -- | 'comp' 'p' returns the complement of the permutation 'p'.
   --
@@ -190,10 +171,9 @@ where
   -- >>> comp $ mk [1,3,4,2]
   -- [4,2,1,3]
   comp :: Perm -> Perm
-  comp p = PermImpl $ fmap (\y -> m - y + 1) ys
+  comp p = fromListUnsafe $ fmap (\y -> m-y+1)
     where
-      ys = toList p
-      m  = F.maximum ys
+      m  = F.maximum (toList p)
 
   -- | 'revComp' 'p' returns the reverse complement of the permutation 'p'.
   --
@@ -251,7 +231,7 @@ where
   -- >>> extendLeft $ mk [2,1,3]
   -- [[1,3,2,4],[2,3,1,4],[3,2,1,4],[4,2,1,3]]
   extendLeft :: Perm -> [Perm]
-  extendLeft p = L.map mk [k : f k ys | k <- [1..len p+1]]
+  extendLeft p = L.map fromListUnsafe [k : f k ys | k <- [1..len p+1]]
     where
       ys  = toList p
       f k = F.foldr (\y acc -> (if y<k then y else y+1) : acc) []
@@ -271,8 +251,8 @@ where
   -- >>> p = mk [2,4,5,1,6,3]
   -- >>> [prefix i p | i <- [1..len p]]
   -- [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
-  prefix :: Int -> Perm -> Perm
-  prefix k = mk . L.take k . toList
+  prefix :: Int -> Perm -> Pattern
+  prefix k = L.take k . toPoints
 
   -- |'prefixes' 'p' returns all the prefixes of the permutation 'p' as
   -- permutations.
@@ -280,8 +260,8 @@ where
   -- >>> p = mk [2,4,5,1,6,3]
   -- >>> prefixes p
   -- [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
-  prefixes :: Perm -> [Perm]
-  prefixes = L.map mk . L.tail . L.inits . toList
+  prefixes :: Perm -> [Pattern]
+  prefixes = L.tail . L.inits . toPoints
 
   -- 'suffix' 'k' 'p' returns the suffix of length 'k' of the permutation 'p' as
   -- a permutation.
@@ -289,8 +269,8 @@ where
   -- >>> p = mk [2,4,5,1,6,3]
   -- >>> [suffix i p | i <- [1..len p]]
   -- [[1],[2,1],[1,3,2],[3,1,4,2],[3,4,1,5,2],[2,4,5,1,6,3]]
-  suffix :: Int -> Perm -> Perm
-  suffix k p = mk . L.drop (n-k) $ toList p
+  suffix :: Int -> Perm -> Pattern
+  suffix k p = L.drop (n-k) $ toPoints p
     where
       n = len p
 
@@ -300,8 +280,8 @@ where
   -- >>> p = mk [2,4,5,1,6,3]
   -- >>> suffixes p
   -- [[2,4,5,1,6,3],[3,4,1,5,2],[3,1,4,2],[1,3,2],[2,1],[1]]
-  suffixes :: Perm -> [Perm]
-  suffixes = L.map mk . L.init . L.tails . toList
+  suffixes :: Perm -> [Pattern]
+  suffixes = L.map mk . L.init . L.tails . toPoints
 
   -- | 'patterns' 'k' 'p' returns all distinct permutations of length 'k' that
   -- occurs in permutation 'p'.
@@ -321,15 +301,16 @@ where
   -- >>> patterns 6 (mk [2,4,1,3,5])
   -- []
   patterns :: Int -> Perm -> [Pattern]
-  patterns k = PP.Combi.subsets k . toList
+  patterns k = L.map fromPoints . PP.Combi.subsets k . toPoints
 
-  permPatterns :: Int -> Perm -> [Perm]
-  permPatterns k = L.map mk . PP.Utils.List.uniq . patterns k
+  -- |'patterns'' 'k' 'p'
+  patterns' :: Int -> Perm -> [Perm]
+  patterns' k = L.map (fromList . toList) . patterns k
 
   -- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
   -- such that 'f' 'q' holds.
-  maxPermPatterns :: (Perm -> Bool) -> Perm -> [Perm]
-  maxPermPatterns f p = select $ L.dropWhile L.null [[q | q <- permPatterns k p, f q] | k <- [n,n-1..1]]
+  maxpatterns' :: (Perm -> Bool) -> Perm -> [Perm]
+  maxpatterns' f p = select $ L.dropWhile L.null [[q | q <- patterns' k p, f q] | k <- [n,n-1..1]]
     where
       n         = len p
       select ys = if L.null ys then [] else L.head ys
@@ -351,30 +332,30 @@ where
   -- >>> factors 5 p
   -- []
   factors :: Int -> Perm -> [Pattern]
-  factors k = PP.Utils.List.chunk k . toList
+  factors k = L.map fromPoints . PP.Utils.List.chunk k . toPoints
 
-  -- |'permFactors' 'k' 'p' returns the list of all permutations of length 'k'
+  -- |'factors'' 'k' 'p' returns the list of all permutations of length 'k'
   -- that occur as a factor in the permutation 'p'.
   -- permutation 'p'.
   --
   -- >>> p = mk [2,4,1,3]
-  -- >>> permFactors 0 p
+  -- >>> factors' 0 p
   -- []
-  -- >>> permFactors 1 p
+  -- >>> factors' 1 p
   -- [[1],[1],[1],[1]]
-  -- >>> permFactors 2 p
+  -- >>> factors' 2 p
   -- [[1,2],[1,2],[2,1]]
-  -- >>> permFactors 3 p
+  -- >>> factors' 3 p
   -- [[2,3,1],[3,1,2]]
-  -- >>> permFactors 4 p
+  -- >>> factors' 4 p
   -- [[2,4,1,3]]
-  -- >>> permFactors 5 p
+  -- >>> factors' 5 p
   -- []
-  permFactors :: Int -> Perm -> [Perm]
-  permFactors k = L.map mk . PP.Utils.List.uniq . factors k
+  factors' :: Int -> Perm -> [Perm]
+  factors' k = L.map (mk . toList) . factors k
 
-  maxPermFactors :: (Perm -> Bool) -> Perm -> [Perm]
-  maxPermFactors f p = select $ L.dropWhile L.null [[q | q <- permFactors k p, f q] | k <- [n,n-1..1]]
+  maxfactors' :: (Perm -> Bool) -> Perm -> [Perm]
+  maxfactors' f p = select $ L.dropWhile L.null [[q | q <- factors' k p, f q] | k <- [n,n-1..1]]
     where
       n         = len p
       select xs = if L.null xs then [] else L.head xs
