@@ -53,20 +53,20 @@ library
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
-                     -- , Data.Algorithm.PP.Perm.Complexity
+                     , Data.Algorithm.PP.Perm.Complexity
                      , Data.Algorithm.PP.Perm.ShuffleSquare
                      , Data.Algorithm.PP.Perm.ShuffleSquareBy
                      , Data.Algorithm.PP.Perm.Square
                      , Data.Algorithm.PP.Perm.SquareBy
-                     -- , Data.Algorithm.PP.Perm.Gen.Base
+                     , Data.Algorithm.PP.Perm.Gen.Base
                      , Data.Algorithm.PP.Perm.Prop
                      , Data.Algorithm.PP.Perm.Rank
-                     -- , Data.Algorithm.PP.Perm.Reversal
-                     -- , Data.Algorithm.PP.Perm.Run
-                     -- , Data.Algorithm.PP.Perm.Shuffle
+                     , Data.Algorithm.PP.Perm.Reversal
+                     , Data.Algorithm.PP.Perm.Run
+                     , Data.Algorithm.PP.Perm.Shuffle
                      , Data.Algorithm.PP.Perm.Small
-                     -- , Data.Algorithm.PP.Perm.Stat
-                     -- , Data.Algorithm.PP.SepTree
+                     , Data.Algorithm.PP.Perm.Stat
+                     , Data.Algorithm.PP.SepTree
 
   -- Modules included in this library but not exported.
   other-modules:       Data.Algorithm.PP.Utils.List

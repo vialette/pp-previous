@@ -7,13 +7,12 @@ where
   import qualified Control.Arrow as A
   import qualified Data.Foldable as F
   import qualified Data.List     as L
-  import qualified Data.List.Split as L.Split
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Combi      as PP.Combi
+  import Data.Algorithm.PP.Geometry.Point ((@<|))
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
   -- |'ascendingRuns' 'p'
   ascendingRuns :: PP.Perm.Perm -> [PP.Perm.Pattern]
-  ascendingRuns = PP.Utils.List.groupBy' (<) . PP.Perm.toList
+  ascendingRuns = L.map PP.Perm.fromPointsUnsafe . PP.Utils.List.groupBy' (@<|) . PP.Perm.getPoints

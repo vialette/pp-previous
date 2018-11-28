@@ -39,12 +39,7 @@ where
   -- >>> mk [1,3,2] == mk [1,6,2] && mk [3,1,2] == mk [5,3,4] -- check second solution
   -- True
   shuffleOf2' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> [(PP.Perm.Pattern, PP.Perm.Pattern)]
-  shuffleOf2' p q r = L.map proj . L.filter test $ L.map ((A.***) shape shape) ps
-    where
-      ps       = PP.Combi.partitions (PP.Perm.toList r) (PP.Perm.len p) (PP.Perm.len q)
-      shape xs = (xs, PP.Perm.mk xs)
-      test s   = p == (T.snd . T.fst) s && q == (T.snd . T.snd) s
-      proj s   = ((T.fst . T.fst) s, (T.fst . T.snd) s)
+  shuffleOf2' p q r = L.filter (\(p', q') ->  p == p' && q == q') $ PP.Perm.partitions r (PP.Perm.len p) (PP.Perm.len q)
 
   -- |'shuffleOf2''' 'p' 'q' 'r'
   --

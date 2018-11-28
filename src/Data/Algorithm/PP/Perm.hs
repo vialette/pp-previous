@@ -10,8 +10,9 @@ module Data.Algorithm.PP.Perm
 
   -- * Making
 , identity
-, fromList
 , mk
+, fromListUnsafe
+, fromPointsUnsafe
 
   -- * Transforming
 , toList
@@ -51,18 +52,20 @@ module Data.Algorithm.PP.Perm
 , patterns
 , patterns'
 , maxpatterns'
-
 , factors
 , factors'
 , maxfactors'
+, partitions
 
 , inversions
 
   -- * Displaying
 , grid
+, grid'
 )
 where
 
+  import qualified Control.Arrow  as A
   import qualified Data.List      as L
   import qualified Data.Foldable  as F
   import qualified Data.Tuple     as T
@@ -86,11 +89,9 @@ where
   instance Show Perm where
     show = show . L.map PP.Geometry.Point.getY . getPoints
 
-  -- |'fromList' 'xs'
-  fromList :: (Ord a) => [a] -> Perm
-  fromList = mk
-
   -- | 'mk' 'xs'
+  --
+  -- >>>
   mk :: (Foldable t, Ord a) => t a -> Perm
   mk = Perm . PP.Geometry.Point.mks [1..] . reduce . F.toList
 
@@ -309,7 +310,7 @@ where
 
   -- |'patterns'' 'k' 'p'
   patterns' :: Int -> Perm -> [Perm]
-  patterns' k = L.map (fromList . toList) . patterns k
+  patterns' k = L.map (mk . toList) . patterns k
 
   -- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
   -- such that 'f' 'q' holds.
@@ -364,6 +365,15 @@ where
       n         = len p
       select xs = if L.null xs then [] else L.head xs
 
+  -- |'partitions' 'p' 'k' 'l' returns all partitions ('qk','ql') of the permutation
+  -- 'p' such that '|qk|=k' and '|ql|=l'
+  --
+  -- >>>
+  partitions :: Perm -> Int -> Int -> [(Pattern, Pattern)]
+  partitions p k l = L.map ((A.***) fromPointsUnsafe fromPointsUnsafe) $ PP.Combi.partitions ps k l
+    where
+      ps = getPoints p
+
   -- |'inversions' 'p' returns the inversions of the permutation 'p'.
   --
   -- >>> inversions (mk [1,5,3,2,6,4])
@@ -394,3 +404,6 @@ where
       sep   = ('+' :) $ F.concat (L.replicate n "---+") ++ "\n"
       row x = ('|' :) $ F.concat [F.concat (L.replicate (x-1) "   |"), " o |", F.concat (L.replicate (n-x) "   |"), "\n"]
       aux ss = sep ++ L.intercalate sep ss ++ sep
+
+  grid' :: Perm -> String
+  grid' p = ""
