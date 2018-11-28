@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Stat
+Description : Various statistics on permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Here is a longer description of this module, containing some
+commentary with @some markup@.
+-}
 module Data.Algorithm.PP.Perm.Stat
 (
   fixedPoints
@@ -41,17 +52,19 @@ where
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
+  -- |'fixedPoints' 'p' returns the fixed points in the permutation 'p'.
   --
-
-  -- |'fixedPoints' 'p'
+  -- >>> fixedPoints (mk [4,2,3,1,6,5,7,8])
+  -- [(2,2),(3,3),(7,7),(8,8)]
   fixedPoints :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
   fixedPoints = L.filter PP.Geometry.Point.diag. PP.Perm.getPoints
 
-  -- |'fixedPointsStat' 'p'
+  -- |'fixedPointsStat' 'p' returns the number of fixed points in the permutation
+  -- 'p'.
   --
-  -- >>> fixedPointsStat (mk [3,2,1,6,5,4])
-  -- 2
-  -- >>> fixedPointsStat (mk [3,1,5,6,2,4])
+  -- >>> fixedPointsStat (mk [4,2,3,1,6,5,7,8])
+  -- [(2,2),(3,3),(7,7),(8,8)]
+  -- >>> fixedPointsStat (mk [3,1,5,6,2,4,8,7])
   -- 0
   fixedPointsStat :: PP.Perm.Perm -> Int
   fixedPointsStat = L.length . fixedPoints
@@ -158,19 +171,19 @@ where
 
   -- |'leftToRightMinima' 'p'
   --
-  -- >>> leftToRightMaxima (mk [3,1,5,2,6,4])
-  -- [(1,3),(3,5),(5,6)]
+  -- >>> leftToRightMaxima (mk [4,2,3,1,6,5,7,8])
+  -- [(1,4),(5,6),(7,7),(8,8)]
   leftToRightMaxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  leftToRightMaxima = L.reverse . F.foldr f [] . PP.Perm.getPoints
+  leftToRightMaxima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
     where
       f p [] = [p]
       f p acc@(p' : _)
         | p @>| p'  = p : acc
         | otherwise = acc
 
-  -- |'leftToRightMinima' 'p'
+  -- |'leftToRightMaximaStat' 'p'
   --
-  -- >>> leftToRightMaximaStat (mk [3,1,5,2,6,4])
+  -- >>> leftToRightMaximaStat (mk [4,2,3,1,6,5,7,8])
   -- 3
   leftToRightMaximaStat :: PP.Perm.Perm -> Int
   leftToRightMaximaStat = L.length . leftToRightMaxima
