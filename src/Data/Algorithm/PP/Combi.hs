@@ -19,8 +19,8 @@ where
 
   -- 'partitions' 'xs' 'nl' 'nr' return all possible partitions of 'xs' into 'ns'
   -- and 'nr' elements.
-  partitions :: Eq a => [a] -> Int -> Int -> [([a], [a])]
-  partitions xs nl nr
+  partitions :: Eq a => Int -> Int -> [a] -> [([a], [a])]
+  partitions nl nr xs
     | nl + nr /= L.length xs = []
     | otherwise              = [(xs', xs L.\\ xs') | xs' <- subsets nl xs]
 
@@ -31,5 +31,5 @@ where
   balPartitions (x : xs) = PP.List.uniq $ fmap f ps
     where
       f p = (x : T.fst p, T.snd p)
-      ps  = partitions xs (k-1) k
+      ps  = partitions (k-1) k xs
       k   = 1 + L.length xs `div` 2
