@@ -38,14 +38,14 @@ where
   -- True
   -- >>> mk [1,3,2] == mk [1,6,2] && mk [3,1,2] == mk [5,3,4] -- check second solution
   -- True
-  shuffleOf2' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> [(PP.Perm.Pattern, PP.Perm.Pattern)]
-  shuffleOf2' p q r = L.filter (\(p', q') ->  p == p' && q == q') $ PP.Perm.partitions r (PP.Perm.len p) (PP.Perm.len q)
+  shuffleOf2' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> [(PP.Perm.Patt, PP.Perm.Patt)]
+  shuffleOf2' p q = L.filter (\(p', q') -> PP.Perm.orderIso p p' && PP.Perm.orderIso q q') . PP.Perm.partitions (PP.Perm.len p) (PP.Perm.len q)
 
   -- |'shuffleOf2''' 'p' 'q' 'r'
   --
   -- >>> shuffleOf2'' (mk [1,3,2]) (mk [3,1,2]) (mk [1,5,3,6,2,4])
   -- Just ([1,5,3],[6,2,4])
-  shuffleOf2'' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> Maybe (PP.Perm.Pattern, PP.Perm.Pattern)
+  shuffleOf2'' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> Maybe (PP.Perm.Patt, PP.Perm.Patt)
   shuffleOf2'' p q = PP.Utils.List.safeHead . shuffleOf2' p q
 
 
@@ -73,4 +73,4 @@ where
   -- >>> shuffle [mk [1,2], mk [2,1]]
   -- [[1,3,4,2],[1,3,4,2],[1,3,2,4],[3,1,4,2],[3,1,2,4],[3,1,2,4]]
   shuffle :: [PP.Perm.Perm] -> [PP.Perm.Perm]
-  shuffle = L.map PP.Perm.mk . PP.Utils.List.shuffle . L.map PP.Perm.toList
+  shuffle = L.map PP.Perm.mkPerm . PP.Utils.List.shuffle . L.map PP.Perm.getList

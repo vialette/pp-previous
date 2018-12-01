@@ -34,9 +34,9 @@ where
   -- |'shuffleSquareRootsBy' 'f' 'p' returns all square roots of the permutation 'p'
   -- according to the bijection 'f'.
   shuffleSquareRootsBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> [PP.Perm.Perm]
-  shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.map trans . PP.Combi.balPartitions . PP.Perm.toList
+  shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.map trans . PP.Combi.balPartitions . PP.Perm.getList
     where
-      trans = PP.Perm.mk A.*** (f . PP.Perm.mk)
+      trans = PP.Perm.mkPerm A.*** (f . PP.Perm.mkPerm)
       test  = T.uncurry (==)
       proj1 = T.fst
 

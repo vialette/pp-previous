@@ -31,26 +31,26 @@ where
   --
   -- >>> ascendingRuns (mk [4,6,2,1,3,8,5,7])
   -- [[4,6],[2],[1,3,8],[5,7]]
-  ascendingRuns :: PP.Perm.Perm -> [PP.Perm.Pattern]
-  ascendingRuns = L.map PP.Perm.fromPointsUnsafe . PP.Utils.List.groupBy' (@<|) . PP.Perm.getPoints
+  ascendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
+  ascendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' (@<|) . PP.Perm.getPoints
 
   -- |'longestAscendingRun' 'p'
   --
   -- >>> longestAscendingRun (mk [4,6,2,1,3,8,5,7])
   -- [1,3,8]
-  longestAscendingRun :: PP.Perm.Perm -> PP.Perm.Pattern
+  longestAscendingRun :: PP.Perm.Perm -> PP.Perm.Patt
   longestAscendingRun = F.maximumBy (compare `on` PP.Perm.len) . ascendingRuns
 
   -- |'descendingRuns' 'p'
   --
   -- >>> descendingRuns (mk [4,6,2,1,3,8,5,7])
   -- [[4],[6,2,1],[3],[8,5],[7]]
-  descendingRuns :: PP.Perm.Perm -> [PP.Perm.Pattern]
-  descendingRuns = L.map PP.Perm.fromPointsUnsafe . PP.Utils.List.groupBy' (@>|) . PP.Perm.getPoints
+  descendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
+  descendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' (@>|) . PP.Perm.getPoints
 
   -- |'longestDescendingRun' 'p'
   --
   -- >>> longestDescendingRun (mk [4,6,2,1,3,8,5,7])
   -- [6,2,1]
-  longestDescendingRun :: PP.Perm.Perm -> PP.Perm.Pattern
+  longestDescendingRun :: PP.Perm.Perm -> PP.Perm.Patt
   longestDescendingRun = F.maximumBy (compare `on` PP.Perm.len) . descendingRuns

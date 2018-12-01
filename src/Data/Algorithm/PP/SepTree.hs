@@ -4,17 +4,18 @@ module Data.Algorithm.PP.SepTree
 )
 where
 
-  import qualified Data.Algorithm.PP.Perm as PP.Perm
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
 
   data SepTree = PlusNode SepTree SepTree
                | MinusNode SepTree SepTree
-               | Leaf PP.Perm.Y
+               | Leaf PP.Geometry.Point.Y
                deriving (Show)
 
   -- |'mk' 'p' returns a separating tree of the permutation 'p' if it is separable.
   -- Otherwise, the functions returns 'Nothing'.
   mk :: PP.Perm.Perm -> Maybe SepTree
-  mk = go [] . PP.Perm.toList
+  mk = go [] . PP.Perm.getList
     where
       go s  [] = go' s
       go [] (x : xs) = go [(x, Leaf x, x)] xs

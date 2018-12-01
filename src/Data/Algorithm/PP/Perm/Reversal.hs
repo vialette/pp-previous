@@ -19,7 +19,7 @@ where
 
   -- |'reversal' 'i' 'j' 'p'
   reversal :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
-  reversal i j = PP.Perm.mk . PP.Utils.List.reversal i j . PP.Perm.toList
+  reversal i j = PP.Perm.mkPerm . PP.Utils.List.reversal i j . PP.Perm.getList
 
   -- |'prefixReversal' 'm' 'p'
   prefixReversal :: Int -> PP.Perm.Perm -> PP.Perm.Perm
@@ -35,7 +35,7 @@ where
   -- >>> dReversal (mk [4,2,6,4,3,1])
   -- [4,2,6,5,3,1],[5,6,2,4,3,1],[3,4,2,6,5,1],[2,4,3,6,5,1],[4,2,3,6,5,1],[6,3,2,4,5,1],[1,5,4,2,3,6]]
   dReversal :: PP.Perm.Perm -> [PP.Perm.Perm]
-  dReversal = L.map PP.Perm.mk . L.reverse . aux [] . PP.Perm.toList
+  dReversal = L.map PP.Perm.mkPerm . L.reverse . aux [] . PP.Perm.getList
     where
       aux acc []         = acc
       aux acc (1 : xs)   = (1 : xs) : acc

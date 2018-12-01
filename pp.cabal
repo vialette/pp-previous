@@ -54,8 +54,6 @@ library
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
                      , Data.Algorithm.PP.Perm.Complexity
-                     , Data.Algorithm.PP.Perm.Internal
-                     , Data.Algorithm.PP.Perm.Internal.Type
                      , Data.Algorithm.PP.Perm.ShuffleSquare
                      , Data.Algorithm.PP.Perm.ShuffleSquareBy
                      , Data.Algorithm.PP.Perm.Square
@@ -71,8 +69,9 @@ library
                      , Data.Algorithm.PP.SepTree
 
   -- Modules included in this library but not exported.
-  other-modules:       Data.Algorithm.PP.Utils.List
-                     , Data.Algorithm.PP.Combi
+  other-modules:       Data.Algorithm.PP.Combi
+                     , Data.Algorithm.PP.Utils.List
+                     , Data.Algorithm.PP.Utils.Maybe
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:

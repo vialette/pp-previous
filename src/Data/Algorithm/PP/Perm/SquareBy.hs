@@ -52,12 +52,12 @@ where
   -- >>> (mk [3,4,1]) == comp (mk [5,2,6])
   -- True
   squareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
-  squareBy f p = aux $ PP.Perm.toList p
+  squareBy f p = aux $ PP.Perm.getList p
     where
       n = PP.Perm.len p
       aux xs
         | odd n     = False
-        | otherwise = uncurry (==) . (A.***) PP.Perm.mk (f . PP.Perm.mk) $ L.splitAt (n `div` 2) xs
+        | otherwise = uncurry (==) . (A.***) PP.Perm.mkPerm (f . PP.Perm.mkPerm) $ L.splitAt (n `div` 2) xs
 
   -- |'nonSquaresBy' 'f' 'p' returns 'True' if the permutation 'p' is not the
   -- concatenation of two factors 'q' and 'r' such that 'q' and 'f r' are
@@ -70,7 +70,7 @@ where
   kSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
   kSquareByFree f k p
     | odd k     = True
-    | otherwise = F.all (not . squareBy f) $ PP.Perm.factors' k p
+    | otherwise = F.all (not . squareBy f . PP.Perm.mkPerm . PP.Perm.getList) $ PP.Perm.factors k p
 
   -- |'squareByFree' 'f' 'p' return 'True' if the permutation 'p' does not contain
   -- a factor 'q' of length at least 4 such that 'squareBy' 'f' 'q' is 'True'.

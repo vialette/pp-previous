@@ -20,7 +20,7 @@ where
   avoid qs = dispatchAvoid (L.sort qs)
 
   -- |'avoid213'231'
-  avoid213'231 p = go 1 (PP.Perm.len p) $ PP.Perm.toList p
+  avoid213'231 p = go 1 (PP.Perm.len p) $ PP.Perm.getList p
     where
       go _ _ [] = True
       go minX maxX (x : xs)

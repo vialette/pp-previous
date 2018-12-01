@@ -32,7 +32,7 @@ where
   -- >>> complexity 5 (mk [1,4,2,5,3])
   -- [[1,4,2,5,3]]
   complexity :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
-  complexity k = PP.List.uniq . L.map PP.Perm.mk . PP.Combi.subsets k . PP.Perm.toList
+  complexity k = PP.List.uniq . L.map PP.Perm.mkPerm . PP.Combi.subsets k . PP.Perm.getList
 
   -- |The 'complexityStat' 'n' 'p' function returns the number of permutations of length
   -- 'k' that occurs in permutation 'p'.

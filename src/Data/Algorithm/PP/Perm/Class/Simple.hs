@@ -13,7 +13,7 @@ where
 
   -- |'isSimple' 'p' returns 'True' is the permutation 'p' is simple.
   isSimple :: PP.Perm.Perm -> Bool
-  isSimple = F.all check . L.tail . F.concatMap (L.reverse . L.inits) . L.tails . PP.Perm.toList
+  isSimple = F.all check . L.tail . F.concatMap (L.reverse . L.inits) . L.tails . PP.Perm.getList
     where
       check []  = True
       check [_] = True

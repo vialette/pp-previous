@@ -15,15 +15,16 @@ where
   import qualified Data.Tuple as T
   import Data.Function (on)
 
-  import qualified Data.Algorithm.PP.Perm         as PP.Perm
+  import qualified Data.Algorithm.PP.Utils.Maybe as PP.Utils.Maybe
+  import qualified Data.Algorithm.PP.Perm        as PP.Perm
 
   -- |'p' '/+/' 'q'
   (/+/) :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
-  p /+/ q = PP.Perm.mk (xs ++ ys)
+  p /+/ q = PP.Perm.mkPerm (xs ++ ys)
     where
-      xs = PP.Perm.toList p
+      xs = PP.Perm.getList p
       np  = L.length xs
-      ys = L.map (+np) $ PP.Perm.toList q
+      ys = L.map (+np) $ PP.Perm.getList q
 
   -- | Alias for '/+/'.
   directSum :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
@@ -31,11 +32,11 @@ where
 
   -- |'p' '/-/' 'q'
   (/-/) :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
-  p /-/ q = PP.Perm.mk (xs ++ ys)
+  p /-/ q = PP.Perm.mkPerm (xs ++ ys)
     where
       nq = L.length ys
-      xs = L.map (+nq) $ PP.Perm.toList p
-      ys = PP.Perm.toList q
+      xs = L.map (+nq) $ PP.Perm.getList p
+      ys = PP.Perm.getList q
 
   -- | Alias for '/-/'.
   skewSum :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm
@@ -43,17 +44,14 @@ where
 
   -- |'p' '/./' 'q'
   (/./) :: PP.Perm.Perm -> PP.Perm.Perm -> Maybe PP.Perm.Perm
-  p /./ q
-    | np == nq  = Just . PP.Perm.mk . L.map T.snd . L.sortBy cmpFst . L.zipWith (T.curry proj) ips . L.sortBy cmpSnd $ iqs
-    | otherwise = Nothing
+  p /./ q = PP.Utils.Maybe.whenMaybe (PP.Perm.len p == PP.Perm.len q)
+            (PP.Perm.mkPerm . L.map T.snd . L.sortBy cmpFst . L.zipWith (T.curry proj) ips $ L.sortBy cmpSnd iqs)
     where
-      np         = PP.Perm.len p
-      nq         = PP.Perm.len q
       cmpFst     = compare `on` T.fst
       cmpSnd     = compare `on` T.snd
       proj (x,y) = (T.fst y, T.snd x)
-      ips        = L.zip [1..] $ PP.Perm.toList p
-      iqs        = L.zip [1..] $ PP.Perm.toList q
+      ips        = L.zip [1..] $ PP.Perm.getList p
+      iqs        = L.zip [1..] $ PP.Perm.getList q
 
   -- | Alias for '/./'.
   dot :: PP.Perm.Perm -> PP.Perm.Perm -> Maybe PP.Perm.Perm

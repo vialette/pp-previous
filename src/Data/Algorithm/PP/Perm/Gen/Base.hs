@@ -29,7 +29,7 @@ where
   -- >>> oscillatingIncreasing 10
   -- [3,1,5,2,7,4,9,6,10,8]
   oscillatingIncreasing :: Int-> PP.Perm.Perm
-  oscillatingIncreasing n = PP.Perm.mk . L.take n $ F.concat [[2*k+2, 2*k-1] | k <- [1..]]
+  oscillatingIncreasing n = PP.Perm.mkPerm . L.take n $ F.concat [[2*k+2, 2*k-1] | k <- [1..]]
 
   -- |'oscillatingIncreasings' return the infinite list of all oscillanting increasing
   -- permutations.
@@ -49,7 +49,7 @@ where
   -- >>> simpleAlternatingWedgeType1 12
   -- [7,5,8,4,9,3,10,2,11,1,12,6]
   simpleAlternatingWedgeType1 :: Int -> PP.Perm.Perm
-  simpleAlternatingWedgeType1 n = PP.Perm.mk $ PP.Utils.List.perfectShuffle xs ys ++ [kDec+1]
+  simpleAlternatingWedgeType1 n = PP.Perm.mkPerm $ PP.Utils.List.perfectShuffle xs ys ++ [kDec+1]
     where
       (kInc, kDec) = f (n-1)
       xs           = [kDec+2..n]
