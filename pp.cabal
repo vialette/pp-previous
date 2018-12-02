@@ -64,6 +64,7 @@ library
                      , Data.Algorithm.PP.Perm.Run
                      , Data.Algorithm.PP.Perm.Shuffle
                      , Data.Algorithm.PP.Perm.Small
+                     , Data.Algorithm.PP.Perm.Sort
                      , Data.Algorithm.PP.Perm.Stat
                      , Data.Algorithm.PP.SepTree
                      , Data.Algorithm.PP.StdYoungTableau
