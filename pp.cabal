@@ -67,9 +67,11 @@ library
                      , Data.Algorithm.PP.Perm.Small
                      , Data.Algorithm.PP.Perm.Stat
                      , Data.Algorithm.PP.SepTree
+                     , Data.Algorithm.PP.StdYoungTableau
 
   -- Modules included in this library but not exported.
   other-modules:       Data.Algorithm.PP.Combi
+                     , Data.Algorithm.PP.Utils.Int
                      , Data.Algorithm.PP.Utils.List
                      , Data.Algorithm.PP.Utils.Maybe
 
