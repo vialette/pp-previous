@@ -21,9 +21,8 @@ where
 
   import qualified Data.Foldable as F
   import qualified Data.List     as L
-
-  import Data.Algorithm.PP.Geometry.Point ((@<|), (@>|))
   import Data.Function (on)
+
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
@@ -32,7 +31,10 @@ where
   -- >>> ascendingRuns (mk [4,6,2,1,3,8,5,7])
   -- [[4,6],[2],[1,3,8],[5,7]]
   ascendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
-  ascendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' (@<|) . PP.Perm.getPoints
+  --ascendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' (@<|) . PP.Perm.getPoints
+  ascendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' f . PP.Perm.getPoints
+    where
+      f (_, y1) (_, y2) = y1 < y2
 
   -- |'longestAscendingRun' 'p'
   --
@@ -46,7 +48,9 @@ where
   -- >>> descendingRuns (mk [4,6,2,1,3,8,5,7])
   -- [[4],[6,2,1],[3],[8,5],[7]]
   descendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
-  descendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' (@>|) . PP.Perm.getPoints
+  descendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' f . PP.Perm.getPoints
+    where
+      f (_, y1) (_, y2) = y1 > y2
 
   -- |'longestDescendingRun' 'p'
   --

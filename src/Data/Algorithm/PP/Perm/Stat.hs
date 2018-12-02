@@ -47,8 +47,6 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import Data.Algorithm.PP.Geometry.Point ((@<-), (@>-), (@<|), (@>|))
-  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
@@ -56,8 +54,8 @@ where
   --
   -- >>> fixedPoints (mk [4,2,3,1,6,5,7,8])
   -- [(2,2),(3,3),(7,7),(8,8)]
-  fixedPoints :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  fixedPoints = L.filter PP.Geometry.Point.diag. PP.Perm.getPoints
+  fixedPoints :: PP.Perm.Perm -> [PP.Perm.Point]
+  fixedPoints = L.filter (uncurry (==)) . PP.Perm.getPoints
 
   -- |'fixedPointsStat' 'p' returns the number of fixed points in the permutation
   -- 'p'.
@@ -75,8 +73,11 @@ where
   --
   -- >>> ascents (mk [3,1,5,6,2,4])
   -- [(2,1),(3,5),(5,2)]
-  ascents :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  ascents = L.map T.fst . L.filter (uncurry (@<-)) . PP.Utils.List.chunk2 . PP.Perm.getPoints
+  ascents :: PP.Perm.Perm -> [PP.Perm.Point]
+  --ascents = L.map T.fst . L.filter (uncurry (@<-)) . PP.Utils.List.chunk2 . PP.Perm.getPoints
+  ascents = L.map T.fst . L.filter f . PP.Utils.List.chunk2 . PP.Perm.getPoints
+    where
+      f (p, p') = T.snd p < T.snd p'
 
   -- |'ascentsStat' 'p'.
   --
@@ -91,8 +92,10 @@ where
   --
   -- >>> descents (mk [3,1,5,6,2,4])
   -- [(1,3),(4,6)]
-  descents :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  descents =  L.map T.fst . L.filter (uncurry (@>-)) . PP.Utils.List.chunk2 . PP.Perm.getPoints
+  descents :: PP.Perm.Perm -> [PP.Perm.Point]
+  descents =  L.map T.fst . L.filter f . PP.Utils.List.chunk2 . PP.Perm.getPoints
+    where
+      f (p, p') = T.snd p > T.snd p'
 
   -- |'descentsStat' 'p'.
   --
@@ -104,16 +107,20 @@ where
   -- |'excedances' 'p'
   --
   -- >>>
-  excedances :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  excedances = L.filter PP.Geometry.Point.aboveDiag . PP.Perm.getPoints
+  excedances :: PP.Perm.Perm -> [PP.Perm.Point]
+  excedances = L.filter f . PP.Perm.getPoints
+    where
+      f (x, y) = x < y
 
   -- |'excedancesStat' 'p'
   excedancesStat :: PP.Perm.Perm -> Int
   excedancesStat = L.length . excedances
 
   -- |'weakExcedances' 'p'
-  weakExcedances :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-  weakExcedances =  L.filter (\p -> PP.Geometry.Point.aboveDiag p || PP.Geometry.Point.diag p) . PP.Perm.getPoints
+  weakExcedances :: PP.Perm.Perm -> [PP.Perm.Point]
+  weakExcedances =  L.filter f . PP.Perm.getPoints
+    where
+      f (x, y) = x <= y
 
   -- |'excedancesStat' 'p'
   weakExcedancesStat :: PP.Perm.Perm -> Int
@@ -123,11 +130,11 @@ where
   --
   -- >>> peaks (mk [4,6,1,3,2,5])
   -- [(2,6),(4,3)]
-  peaks :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  peaks :: PP.Perm.Perm -> [PP.Perm.Point]
   peaks = L.map proj2 . L.filter f . PP.Utils.List.chunk3 . PP.Perm.getPoints
     where
-      f (p1, p2, p3)  = p1 @<| p2 && p2 @>| p3
-      proj2 (_, j, _) = j
+      f ((_, y1), (_, y2), (_, y3)) = y1 < y2 && y2 > y3
+      proj2 (_, p2, _)              = p2
 
   -- |'peaksStat' 'p'
   --
@@ -137,7 +144,7 @@ where
   peaksStat = L.length . peaks
 
   -- |Alias for 'peaks'.
-  maxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  maxima :: PP.Perm.Perm -> [PP.Perm.Point]
   maxima = peaks
 
   -- | Alias for 'peaksStat'.
@@ -148,11 +155,11 @@ where
   --
   -- >>> valleys (mk [3,1,5,2,6,4])
   -- [(2,1),(4,2)]
-  valleys :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  valleys :: PP.Perm.Perm -> [PP.Perm.Point]
   valleys = L.map proj2 . L.filter f . PP.Utils.List.chunk3 . PP.Perm.getPoints
     where
-      f (p1, p2, p3)  = p1 @>| p2 && p2 @<| p3
-      proj2 (_, j, _) = j
+      f ((_, y1), (_, y2), (_, y3)) = y1 > y2 && y2 < y3
+      proj2 (_, p2, _)              = p2
 
   -- |'valleysStat' 'p'
   --
@@ -162,7 +169,7 @@ where
   valleysStat = L.length . valleys
 
   -- | Alias for 'valleys'.
-  minima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  minima :: PP.Perm.Perm -> [PP.Perm.Point]
   minima = valleys
 
   -- | Alias for 'valleysStat'.
@@ -173,13 +180,13 @@ where
   --
   -- >>> leftToRightMaxima (mk [4,2,3,1,6,5,7,8])
   -- [(1,4),(5,6),(7,7),(8,8)]
-  leftToRightMaxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  leftToRightMaxima :: PP.Perm.Perm -> [PP.Perm.Point]
   leftToRightMaxima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
     where
       f p [] = [p]
       f p acc@(p' : _)
-        | p @>| p'  = p : acc
-        | otherwise = acc
+        | T.snd p > T.snd p' = p : acc
+        | otherwise          = acc
 
   -- |'leftToRightMaximaStat' 'p'
   --
@@ -192,7 +199,7 @@ where
   --
   -- >>> rightToLeftMaxima (mk [3,1,5,2,6,4])
   -- [(2,6),(1,4)]
-  rightToLeftMaxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
+  rightToLeftMaxima :: PP.Perm.Perm -> [PP.Perm.Point]
   rightToLeftMaxima = L.reverse . leftToRightMaxima . PP.Perm.rev
 
   -- |'rightToLeftMaximaStat' 'p'

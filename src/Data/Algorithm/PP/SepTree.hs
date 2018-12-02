@@ -4,12 +4,11 @@ module Data.Algorithm.PP.SepTree
 )
 where
 
-  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
 
   data SepTree = PlusNode SepTree SepTree
                | MinusNode SepTree SepTree
-               | Leaf PP.Geometry.Point.Y
+               | Leaf Int
                deriving (Show)
 
   -- |'mk' 'p' returns a separating tree of the permutation 'p' if it is separable.

@@ -23,26 +23,30 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-
   import Data.Algorithm.PP.Utils.Int (numDigits)
-  import Data.Algorithm.PP.Geometry.Point (X, Y, Point)
-  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
 
-  data StdYoungTableau = StdYoungTableau { getRows :: [[Y]] } deriving (Show)
+  type Row = [Int]
 
+  data StdYoungTableau = StdYoungTableau { getRows :: [Row] } deriving (Show)
+
+  -- |'empty'
   empty :: StdYoungTableau
   empty = StdYoungTableau []
 
+  -- |'shapeR' 't'
   shapeR :: StdYoungTableau -> [Int]
   shapeR = L.map L.length . getRows
 
+  -- |'shapeC' 't'
   shapeC :: StdYoungTableau -> [Int]
   shapeC = L.map L.length . L.transpose . getRows
 
+  -- |'size' 't'
   size :: StdYoungTableau -> Int
   size = sum . shapeR
 
+  --
   replace :: [Int] -> Int -> ([Int], Int);
   replace [] _ = error "no element greater than y in the list"
   replace (x : xs) e
@@ -51,6 +55,7 @@ where
       where
          (xs', e') = replace xs e
 
+  --
   insert :: [[Int]] -> [[Int]] -> Int -> Int -> ([[Int]],[[Int]]);
   insert [] [] e i = ([[e]], [[i]])
   insert (xs : xss) (ys : yss) e i
@@ -60,6 +65,7 @@ where
         (xs', e')    = replace xs e
         (xss', yss') = insert xss yss e' i
 
+  -- |'robinsonSchensted' 'p'
   robinsonSchensted :: PP.Perm.Perm -> (StdYoungTableau, StdYoungTableau)
   robinsonSchensted = (StdYoungTableau A.*** StdYoungTableau) . aux [] [] 1 . PP.Perm.getList
     where
@@ -69,6 +75,7 @@ where
         where
           (xs', ys') = insert xs ys e i
 
+  -- |'draw' 't'
   draw :: StdYoungTableau -> String
   draw t = L.intercalate "\n" . aux $ getRows t
     where

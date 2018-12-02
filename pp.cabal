@@ -48,8 +48,7 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Data.Algorithm.PP.Geometry.Point
-                     , Data.Algorithm.PP.Perm
+  exposed-modules:     Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine

@@ -4,16 +4,17 @@ module Data.Algorithm.PP.Perm
   Perm
 , Patt
 , FPerm
+, Point
 
 -- * Building
 , mkPerm
+, mkPermUnsafe
 , mkPatt
 , identity
 
 -- * Transforming
 , getPoints
 , getList
-, getCoords
 
 -- * Comparing
 , orderIso
@@ -73,18 +74,20 @@ where
   import qualified Data.Tuple    as T
   import Data.Function (on)
 
-  import Data.Algorithm.PP.Geometry.Point (X, Y, Point)
-  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+  -- import Data.Algorithm.PP.Geometry.Point (X, Y, Point)
+  --import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Combi          as PP.Combi
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
+  -- |'Point' type
+  type Point = (Int, Int)
 
   -- |'Seq' type
-  newtype P a = P { getPoints :: [PP.Geometry.Point.Point] }
+  newtype P a = P { getPoints :: [Point] }
 
   -- |
   instance Show (P a) where
-    show = show . L.map PP.Geometry.Point.getY . getPoints
+    show = show . L.map T.snd . getPoints
 
   -- |
   instance Eq (P a) where
@@ -112,14 +115,18 @@ where
 
   type FPerm = Perm -> Perm
 
-  -- | 'mkPerm' 'ps'
+  -- | 'mkPerm' 'xs'
   --
   -- >>>
   mkPerm :: (Foldable t, Ord a) => t a -> Perm
-  mkPerm = P . PP.Geometry.Point.mks [1..] . reduce . F.toList
+  mkPerm = mkPermUnsafe . reduce . F.toList
+
+  -- |'mkPermUnsafe' 'xs'
+  mkPermUnsafe :: [Int] -> Perm
+  mkPermUnsafe = P . L.zip [1..]
 
   -- Reduce a list of elements.
-  reduce :: (Ord a) => [a] -> [Y]
+  reduce :: (Ord a) => [a] -> [Int]
   reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zip [1..]
     where
       cmpFstSnd = compare `on` (T.fst . T.snd)
@@ -132,18 +139,10 @@ where
   mkPatt = P
 
   -- | 'getList' 'p' returns the list of the elements of permutation 'p'.
-  getList :: P a -> [Y]
-  getList = L.map PP.Geometry.Point.getY . getPoints
+  getList :: P a -> [Int]
+  getList = L.map T.snd . getPoints
 
-  -- | 'coords' 'p' returns the permutation 'p' as pairs of integers.
-  --
-  -- >>> coords (mk [1,3,4,2])
-  -- [(1,1),(2,3),(3,4),(4,2)]
-  --- >>> :type coords (mk [1,3,4,2])
-  -- coords (mk [1,3,4,2]) :: [(Data.Algorithm.PP.Perm.X, Data.Algorithm.PP.Perm.Y)]
-  getCoords :: P a -> [(X, Y)]
-  getCoords = L.map PP.Geometry.Point.getCoords . getPoints
-
+  -- |'orderIso' 'p' 'q'
   orderIso :: Perm -> Patt -> Bool
   orderIso p = (==) p . P . getPoints
 
@@ -260,7 +259,7 @@ where
   --
   -- >>> inversions (mk [1,5,3,2,6,4])
   -- [(5,3),(5,2),(5,4),(3,2),(6,4)]
-  inversions :: P a -> [(Y, Y)]
+  inversions :: P a -> [(Int, Int)]
   inversions = L.map (\[i, j] -> (i, j)) . L.filter (\[i, j] -> i > j) . PP.Combi.subsets 2 . getList
 
   -- | 'identity' 'n' returns the identity permutation of length 'n'.
@@ -268,7 +267,7 @@ where
   -- >>> identity 4
   -- [1,2,3,4]
   identity :: Int -> Perm
-  identity n = mkPerm $ PP.Geometry.Point.mks [1..n] [1..n]
+  identity n = mkPermUnsafe [1..n]
 
   -- | 'perms' 'n' returns all permutations of length 'n'.
   --
@@ -281,7 +280,7 @@ where
   -- >>> perms 3
   -- [[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
   perms :: Int -> [Perm]
-  perms n = L.map mkPerm $ L.permutations [1..n]
+  perms n = L.map mkPermUnsafe $ L.permutations [1..n]
 
   -- | 'inv' 'p' returns the inverse of the permutation 'p'.
   --
@@ -290,7 +289,7 @@ where
   -- >>> inv $ mk [1,3,4,2]
   -- [1,4,2,3]
   inv :: Perm -> Perm
-  inv = mkPerm . L.map PP.Geometry.Point.getX . L.sortBy PP.Geometry.Point.cmpX . L.map PP.Geometry.Point.symm . getPoints
+  inv = P . L.sortOn T.fst . L.map (\ (x, y) -> (y, x)) . getPoints
 
   -- | 'rev' 'p' returns the reverse of the permutation 'p'.
   --
@@ -299,7 +298,7 @@ where
   -- >>> rev $ mk [1,3,4,2]
   -- [2,4,3,1]
   rev :: Perm -> Perm
-  rev = mkPerm . L.reverse . getList
+  rev = mkPermUnsafe . L.reverse . getList
 
   -- | 'comp' 'p' returns the complement of the permutation 'p'.
   --
@@ -308,7 +307,7 @@ where
   -- >>> comp $ mk [1,3,4,2]
   -- [4,2,1,3]
   comp :: Perm -> Perm
-  comp p = mkPerm $ fmap (\y -> m-y+1) ys
+  comp p = mkPermUnsafe $ fmap (\y -> m-y+1) ys
     where
       ys = getList p
       m  = F.maximum ys
@@ -369,7 +368,7 @@ where
   -- >>> extendLeft $ mk [2,1,3]
   -- [[1,3,2,4],[2,3,1,4],[3,2,1,4],[4,2,1,3]]
   extendLeft :: Perm -> [Perm]
-  extendLeft p = L.map mkPerm [k : f k ys | k <- [1..len p+1]]
+  extendLeft p = L.map mkPermUnsafe [k : f k ys | k <- [1..len p+1]]
     where
       ys  = getList p
       f k = F.foldr (\y acc -> (if y<k then y else y+1) : acc) []
@@ -400,11 +399,11 @@ where
   -- |   | o |   |   |   |   |
   -- +---+---+---+---+---+---+
   grid :: Perm -> String
-  grid p = aux . L.map (row . PP.Geometry.Point.getX) . L.sortBy (flip PP.Geometry.Point.cmpY) $ getPoints p
+  grid p = aux . L.map (row . T.fst) . L.reverse . L.sortOn T.snd $ getPoints p
     where
-      n     = len p
-      sep   = ('+' :) $ F.concat (L.replicate n "---+") ++ "\n"
-      row x = ('|' :) $ F.concat [F.concat (L.replicate (x-1) "   |"), " o |", F.concat (L.replicate (n-x) "   |"), "\n"]
+      n      = len p
+      sep    = ('+' :) $ F.concat (L.replicate n "---+") ++ "\n"
+      row x  = ('|' :) $ F.concat [F.concat (L.replicate (x-1) "   |"), " o |", F.concat (L.replicate (n-x) "   |"), "\n"]
       aux ss = sep ++ L.intercalate sep ss ++ sep
 
   grid' :: Perm -> String

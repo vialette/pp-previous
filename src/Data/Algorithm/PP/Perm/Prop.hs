@@ -16,7 +16,6 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
@@ -29,7 +28,6 @@ where
   increasing :: PP.Perm.Perm -> Bool
   increasing = F.any (uncurry (<)) . PP.Utils.List.chunk2 . PP.Perm.getList
 
-
   -- |'decreasing' 'p' returns 'True' if the permutation 'p' is decreasing.
   decreasing :: PP.Perm.Perm -> Bool
   decreasing = F.any (uncurry (>)) . PP.Utils.List.chunk2 . PP.Perm.getList
@@ -39,16 +37,13 @@ where
   monotone :: PP.Perm.Perm -> Bool
   monotone p = increasing p || decreasing p
 
-  -- upDownAlternatings :: Int -> [PP.Perm.Perm]
-  -- upDownAlternatings n
-
   -- |
-  upDownAlternating' :: [(PP.Geometry.Point.Y, PP.Geometry.Point.Y, PP.Geometry.Point.Y)] -> Bool
+  upDownAlternating' :: [(Int, Int, Int)] -> Bool
   upDownAlternating' []                 = True
   upDownAlternating' ((i, j, k) : ijks) = i < j && j > k && downUpAlternating' ijks
 
   -- |
-  downUpAlternating' :: [(PP.Geometry.Point.Y, PP.Geometry.Point.Y, PP.Geometry.Point.Y)] -> Bool
+  downUpAlternating' :: [(Int, Int, Int)] -> Bool
   downUpAlternating' []                 = True
   downUpAlternating' ((i, j, k) : ijks) = i > j && j < k && upDownAlternating' ijks
 
