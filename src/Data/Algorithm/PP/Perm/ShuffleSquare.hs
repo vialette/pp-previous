@@ -9,6 +9,7 @@ module Data.Algorithm.PP.Perm.ShuffleSquare
 , shuffleSquare
 , simpleShuffleSquare
 , extremalShuffleSquare
+, extremalShuffleSquares
 , kShuffleSquare
 , maxShuffleSquareRootsMult
 , kShuffleSquareFree
@@ -27,6 +28,7 @@ where
 
   import Data.Maybe
   import qualified Control.Arrow      as A
+  import qualified Data.Foldable      as F
   import qualified Data.List          as L
   import qualified Data.IntMap.Strict as IntMap
   import qualified Data.Tuple         as T
@@ -37,36 +39,45 @@ where
   import qualified Data.Algorithm.PP.Utils.List           as PP.Utils.List
 
 
-  -- |'shuffleSquareRoots' 'p' return the list of all shuffleSquare root permutations of 'p'
-  -- (i.e., all permutation 'q' such that permutation 'p' is the disjoint union
+  -- |'shuffleSquareRoots' 'p' returns the list of all shuffle square roots of the
+  -- permutation 'p'
+  -- (i.e., all permutation 'q' such that the permutation 'p' is the disjoint union
   -- of 'q' and 'q').
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>>
-  -- >>> shuffleSquareRoots $ Perm.mk [3,1,4,2,5,6]
+  -- \[
+  -- \forall p \in S_{n},
+  -- \quad
+  -- \texttt{ shuffleSquareRoots } p
+  -- \;=\;
+  -- \left\{q : p \in q \bullet q\right\}
+  -- \]
+  --
+  -- >>> shuffleSquareRoots (mkPerm [3,1,4,2,5,6])
   -- [[1,2,3],[2,1,3]]
-  -- >>> shuffleSquareRoots $ Perm.mk [6,3,1,5,4,2]
+  -- >>> shuffleSquareRoots (mkPerm [6,3,1,5,4,2])
   -- [[3,2,1]]
-  -- >>> shuffleSquareRoots $ Perm.mk [6,2,3,1,5,4]
+  -- >>> shuffleSquareRoots (mkPerm [6,2,3,1,5,4])
   -- []
   shuffleSquareRoots :: PP.Perm.Perm -> [PP.Perm.Perm]
   shuffleSquareRoots = PP.Perm.ShuffleSquareBy.shuffleSquareRootsBy id
 
-  -- |'squareRootsStat' 'p' return the number of distinct shuffleSquare roots of the
+  -- |'squareRootsStat' 'p' returns the number of distinct shuffle square roots of the
   -- permutation 'p'.
   --
-  -- >>> shuffleSquareRootsStat $ Perm.mk [3,1,4,2,5,6]
+  -- \[
+  -- \forall p \in S_{n},
+  -- \quad
+  -- \texttt{ shuffleSquareRootsStat } p
+  -- \;=\;
+  -- \left|\left\{q : p \in q \bullet q\right\}\right|
+  -- \]
+  --
+  -- >>> shuffleSquareRootsStat (mkPerm [3,1,4,2,5,6])
   -- 3
-  -- >>> shuffleSquareRoots $ Perm.mk [3,1,4,2,5,6]
-  -- [[1,2,3],[2,1,3]]
-  -- >>> shuffleSquareRootsStat $ Perm.mk [6,3,1,5,4,2]
+  -- >>> shuffleSquareRootsStat (mkPerm [6,3,1,5,4,2])
   -- 1
-  -- >>> shuffleSquareRoots $ Perm.mk [6,3,1,5,4,2]
-  -- [[3,2,1]]
-  -- >>> shuffleSquareRootsStat $ Perm.mk [6,2,3,1,5,4]
+  -- >>> shuffleSquareRootsStat (mkPerm [6,2,3,1,5,4])
   -- 0
-  -- >>> shuffleSquareRoots $ Perm.mk [6,2,3,1,5,4]
-  -- []
   shuffleSquareRootsStat ::  PP.Perm.Perm -> Int
   shuffleSquareRootsStat = PP.Perm.ShuffleSquareBy.shuffleSquareRootsByStat id
 
@@ -74,42 +85,55 @@ where
   shuffleSquareRootsMult ::  PP.Perm.Perm -> Int
   shuffleSquareRootsMult = PP.Perm.ShuffleSquareBy.shuffleSquareRootsByMult id
 
-  -- | 'isShuffleSquare' 'p' returns 'True' if and only if the permutation 'p' is shuffleSquare.
+  -- | 'shuffleSquare' 'p' returns 'True' if the permutation 'p' is a square according
+  -- to the shuffle operator.
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>>
-  -- >>> isShuffleSquare $ Perm.mk [3,4,2,4]
+  -- \[
+  -- \forall p \in S_{2n},
+  -- \quad
+  -- \texttt{shuffleSquare} \; p
+  -- \;\Leftrightarrow\;
+  -- \exists q \in S_{n},\; p \in q \bullet q
+  -- \]
+  --
+  -- >>> shuffleSquare (mkPerm [3,4,2,4])
   -- True
-  -- >>> shuffleSquareRoots $ Perm.mk [3,4,2,4] -- find its shuffleSquare roots
-  -- [[1,2]]
-  -- >>> isShuffleSquare $ Perm.mk [3,2,1,4]
+  -- >>> shuffleSquare (mkPerm [3,2,1,4])
   -- False
-  -- >>> shuffleSquareRoots $ Perm.mk [3,2,1,4] -- find its shuffleSquare roots
-  -- []
   shuffleSquare :: PP.Perm.Perm -> Bool
   shuffleSquare = PP.Perm.ShuffleSquareBy.shuffleSquareBy id
 
-  -- |'isSimpleShuffleSquare' 'p' returns 'True' if and only if the permutation 'p' has
+  -- |'simpleShuffleSquare' 'p' returns 'True' if the permutation 'p' has
   -- exactly one shuffleSquare root.
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>>
-  -- >>> isSimpleShuffleSquare $ Perm.mk [2,1,3,4]
+  -- \[
+  -- \begin{align*}
+  -- \forall p \in S_{n},
+  -- \quad
+  -- \texttt{ simpleShuffleSquare } p
+  -- &\;\Leftrightarrow\;
+  -- \left|\left\{q : q \in \texttt{ shuffleSquareRoots } p\right\}\right| = 1 \\
+  -- &\;\Leftrightarrow\;
+  -- \texttt{ shuffleSquareRootsStat } p = 1
+  -- \end{align*}
+  -- \]
+  --
+  -- >>> simpleShuffleSquare (mkPerm [2,1,3,4])
   -- True
-  -- >>> shuffleSquareRoots $ Perm.mk [2,1,3,4]
+  -- >>> shuffleSquareRoots (mkPerm [2,1,3,4])
   -- [[1,2]]
-  -- >>> isSimpleShuffleSquare $ Perm.mk [2,1,4,3]
+  -- >>> simpleShuffleSquare (mkPerm [2,1,4,3])
   -- False
-  -- >>> shuffleSquareRoots $ Perm.mk [2,1,4,3]
+  -- >>> shuffleSquareRoots (mkPerm [2,1,4,3])
   -- [[1,2],[2,1]]
-  -- >>> isSimpleShuffleSquare $ Perm.mk [6,2,3,1,5,4]
+  -- >>> simpleShuffleSquare (mkPerm [6,2,3,1,5,4])
   -- False
-  -- >>> shuffleSquareRoots $ Perm.mk [6,2,3,1,5,4]
+  -- >>> shuffleSquareRoots (mkPerm [6,2,3,1,5,4])
   -- []
   simpleShuffleSquare :: PP.Perm.Perm -> Bool
   simpleShuffleSquare = PP.Perm.ShuffleSquareBy.simpleShuffleSquareBy id
 
-  -- 'isKShuffleSquare' 'k' 'p' return 'True' if and only if the permutation 'p' has
+  -- 'isKShuffleSquare' 'k' 'p' return 'True' if the permutation 'p' has
   -- 'k' distinct shuffleSquare roots.
   kShuffleSquare :: Int -> PP.Perm.Perm -> Bool
   kShuffleSquare = PP.Perm.ShuffleSquareBy.kShuffleSquareBy id
@@ -122,8 +146,16 @@ where
       m        = IntMap.fromList database
       k        = maximum . L.map shuffleSquareRootsStat $ PP.Perm.perms n
 
-  -- | 'isExtremalShuffleSquare' 'p' returns 'True' if and only if the permutation 'p'
+  -- | 'extremalShuffleSquare' 'p' returns 'True' if the permutation 'p'
   -- has the maximum number of permutations.
+  --
+  -- \[
+  -- \forall p \in S_{2n},
+  -- \quad
+  -- \texttt{extremalShuffleSquare} \; p
+  -- \;\Leftrightarrow\;
+  -- \not\exists q \in S_{2n},\; \texttt{shuffleSquareRootsStat}\;p < \texttt{shuffleSquareRootsStat}\;q
+  -- \]
   extremalShuffleSquare :: PP.Perm.Perm -> Bool
   extremalShuffleSquare p = k == k'
     where
@@ -131,12 +163,30 @@ where
       k  = shuffleSquareRootsStat p
       k' = maxShuffleSquareRootsMult n
 
+  extremalShuffleSquares :: Int -> (Int, [PP.Perm.Perm])
+  extremalShuffleSquares = F.foldr f (0, []) . shuffleSquares
+    where
+      f p (mult, acc)
+        | k > mult              = (k, [p])
+        | k == mult && mult > 0 = (mult, p : acc)
+        | otherwise             = (mult, acc)
+          where
+            k = shuffleSquareRootsStat p
+
   kShuffleSquareFree :: Int -> PP.Perm.Perm -> Bool
   kShuffleSquareFree = PP.Perm.ShuffleSquareBy.kShuffleSquareByFree id
 
   -- |'shuffleSquareByFree' 'f' 'p' retusn 'True' if the permutations 'p' does not
-  -- contain any pattern of length at least 4 that is a shuffle square according
-  -- to the bijection 'f'.
+  -- contain any pattern of length at least 4 that is a shuffle square
+  --
+  -- \[
+  -- \forall p \in S_{2n},
+  -- \quad
+  -- \texttt{shuffleSquareFree} \; p
+  -- \;\Leftrightarrow\;
+  -- \not\exists q \in S_{2k},\;k \geq 2,\;
+  -- q \preceq p \;\text{and}\;\texttt{shuffleSquare}\;q
+  -- \]
   shuffleSquareFree :: PP.Perm.Perm -> Bool
   shuffleSquareFree = PP.Perm.ShuffleSquareBy.shuffleSquareByFree id
 
@@ -155,19 +205,18 @@ where
   nonShuffleSquares :: Int -> [PP.Perm.Perm]
   nonShuffleSquares = PP.Perm.ShuffleSquareBy.nonShuffleSquaresBy id
 
-  -- |'subShuffleSquares' 'p' return the longest shuffleSquare subpermutations of permutation 'p'.
+  -- |'subShuffleSquares' 'p' return the longest shuffle square subpermutations
+  -- of the permutation 'p'.
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>>
-  -- >>> isShuffleSquare $ Perm.mk [6,7,5,4,3,2,8,1]
+  -- >>> isShuffleSquare (mkPerm [6,7,5,4,3,2,8,1])
   -- False
-  -- >>> subShuffleSquares $ Perm.mk [6,7,5,4,3,2,8,1]
+  -- >>> subShuffleSquares (mkPerm [6,7,5,4,3,2,8,1])
   -- [[4,5,3,2,6,1],[5,6,4,3,2,1],[6,5,4,3,2,1]]
-  -- >>> all isShuffleSquare . subShuffleSquares $ Perm.mk [6,7,5,4,3,2,8,1]
+  -- >>> all isShuffleSquare . subShuffleSquares $ mkPerm [6,7,5,4,3,2,8,1]
   -- True
-  -- >>> isShuffleSquare $ Perm.mk [3,6,2,5,4,7,1,8]
+  -- >>> isShuffleSquare (mkPerm [3,6,2,5,4,7,1,8])
   -- True
-  -- >>> subShuffleSquares $ Perm.mk [3,6,2,5,4,7,1,8]
+  -- >>> subShuffleSquares (mkPerm [3,6,2,5,4,7,1,8])
   -- [[3,6,2,5,4,7,1,8]]
   subShuffleSquares :: PP.Perm.Perm -> [PP.Perm.Perm]
   subShuffleSquares = PP.Perm.ShuffleSquareBy.subShuffleSquaresBy id

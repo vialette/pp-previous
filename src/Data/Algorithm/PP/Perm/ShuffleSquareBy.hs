@@ -33,6 +33,15 @@ where
 
   -- |'shuffleSquareRootsBy' 'f' 'p' returns all square roots of the permutation 'p'
   -- according to the bijection 'f'.
+  --
+  -- \[
+  -- \forall p \in S_{n}, \;
+  -- \forall f : S_{n} \to S_{n},
+  -- \quad
+  -- \texttt{ shuffleSquareRootsBy } f \; p
+  -- \;=\;
+  -- \left\{q : p \in q \bullet f \; q\right\}
+  -- \]
   shuffleSquareRootsBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> [PP.Perm.Perm]
   shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.map trans . PP.Combi.balPartitions . PP.Perm.getList
     where

@@ -7,12 +7,13 @@ module Data.Algorithm.PP.Perm.Complexity
 , maxComplexityStat
 , maxComplexityStat'
 
-, maxComplexityGen
+, maxComplexity'
 )
 where
 
-  import qualified Data.List  as L
-  import qualified Data.Tuple as T
+  import qualified Data.Foldable as F
+  import qualified Data.List     as L
+  import qualified Data.Tuple    as T
 
   import qualified Data.Algorithm.PP.Combi      as PP.Combi
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
@@ -65,22 +66,21 @@ where
   -- >>> maxComplexity 3 3
   -- (1,[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]])
   maxComplexity :: Int -> Int -> (Int, [PP.Perm.Perm])
-  maxComplexity k = maxComplexityGen k . PP.Perm.perms
+  maxComplexity k = maxComplexity' k . PP.Perm.perms
 
-  -- >>> Complexity.maxComplexityGen 3 (Perm.perms 5)
+  -- >>> Complexity.maxComplexity' 3 (Perm.perms 5)
   -- (6,[[2,5,3,1,4],[4,1,3,5,2]])
-  -- >>> Complexity.maxComplexityGen 3 (Perm.perms 5) == Complexity.maxComplexity 3 5
+  -- >>> Complexity.maxComplexity' 3 (Perm.perms 5) == Complexity.maxComplexity 3 5
   -- True
-  maxComplexityGen :: Int -> [PP.Perm.Perm] -> (Int, [PP.Perm.Perm])
-  maxComplexityGen k = go 0 []
+  maxComplexity' :: Int -> [PP.Perm.Perm] -> (Int, [PP.Perm.Perm])
+  maxComplexity' k = F.foldr f (0, [])
     where
-      go m acc []       = (m, L.sort acc)
-      go m acc (p : ps) = aux (complexityStat k p)
-        where
-          aux m'
-            | m' > m    = go m' [p]       ps
-            | m' == m   = go m  (p : acc) ps
-            | otherwise = go m  acc       ps
+      f p (maxSoFar, acc)
+        | k > maxSoFar  = (k, [p])
+        | k == maxSoFar = (maxSoFar, p : acc)
+        | otherwise     = (maxSoFar, acc)
+          where
+            k = complexity k p
 
   -- | The 'maxComplexityStat' 'k' 'n' function returns
   -- the maximum number of permutations of length 'k' a permutation of length 'n'

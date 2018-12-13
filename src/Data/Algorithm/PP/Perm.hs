@@ -93,7 +93,7 @@ where
   instance Eq (P a) where
     p == q = f p == f q
       where
-        f = getList. mkPerm . getPoints
+        f = getPoints. mkPerm . getList
 
   -- |
   instance Ord (P a) where
