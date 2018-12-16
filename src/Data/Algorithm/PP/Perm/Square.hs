@@ -39,9 +39,9 @@ where
   -- |'square' 'p' returns 'True' if the permutation 'p' is the concatenation
   -- of two order-isomorphic factors 'q' and 'r'.
   --
-  -- >>> square (mk [1,2,3,4])
+  -- >>> square (mkPerm [1,2,3,4])
   -- True
-  -- >>> square (mk [2,1,3,4])
+  -- >>> square (mkPerm [2,1,3,4])
   -- False
   square :: PP.Perm.Perm -> Bool
   square = PP.Perm.SquareBy.squareBy id
@@ -49,9 +49,9 @@ where
   -- |'nonSquare' 'p' returns 'True' if the permutation 'p' is not the concatenation
   -- of two order-isomorphic factors 'q' and 'r'.
   --
-  -- >>> square (mk [1,2,3,4])
+  -- >>> square (mkPerm [1,2,3,4])
   -- False
-  -- >>> square (mk [2,1,3,4])
+  -- >>> square (mkPerm [2,1,3,4])
   -- True
   nonSquare :: PP.Perm.Perm -> Bool
   nonSquare = not . square
@@ -60,11 +60,11 @@ where
   -- a square factor of length 'k'. The function trivially returns 'False' in case
   -- 'k' is odd.
   --
-  -- >>> kSquareFree 2 (mk [3,5,6,2,1,4])
+  -- >>> kSquareFree 2 (mkPerm [3,5,6,2,1,4])
   -- False
-  -- >>> kSquareFree 4 (mk [3,5,6,2,1,4])
+  -- >>> kSquareFree 4 (mkPerm [3,5,6,2,1,4])
   -- True
-  -- >>> kSquareFree 6 (mk [3,5,6,2,1,4])
+  -- >>> kSquareFree 6 (mkPerm [3,5,6,2,1,4])
   -- True
   kSquareFree :: Int -> PP.Perm.Perm -> Bool
   kSquareFree = PP.Perm.SquareBy.kSquareByFree id
@@ -72,9 +72,9 @@ where
   -- |'squareFree' 'p' returns 'True' if the permutation 'p' does not contain
   -- a square factor of length at least 4.
   --
-  -- >>> squareFree (mk [3,5,6,2,1,4])
+  -- >>> squareFree (mkPerm [3,5,6,2,1,4])
   -- True
-  -- >>> squareFree (mk [3,5,4,6,2,1])
+  -- >>> squareFree (mkPerm [3,5,4,6,2,1])
   -- False
   squareFree :: PP.Perm.Perm -> Bool
   squareFree = PP.Perm.SquareBy.squareByFree id

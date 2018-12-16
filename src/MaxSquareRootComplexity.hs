@@ -6,25 +6,24 @@ module Main where
   import qualified System.IO          as IO
 
   import Data.Algorithm.PP.Perm
-  import Data.Algorithm.PP.Perm.Complexity
   import Data.Algorithm.PP.Perm.ShuffleSquare
 
   stringToInt :: String -> Int
   stringToInt s = read s :: Int
 
-  f :: Int -> [Perm] -> (Int, [Perm])
-  f k = F.foldr aux (0, [])
+  maxSquareRootComplexity :: Int -> (Int, [Perm])
+  maxSquareRootComplexity = F.foldr aux (0, []) . shuffleSquares
     where
       aux p (maxSoFar, acc)
         | m > maxSoFar  = (m, [p])
         | m == maxSoFar = (maxSoFar, p : acc)
         | otherwise     = (maxSoFar, acc)
           where
-            m = complexityStat k p
+            m = shuffleSquareRootsStat p
 
   main :: IO ()
   main = do
     args <- Environment.getArgs
-    let n = stringToInt( L.head args)
-    let res = [(n, f (n `div` 2) (shuffleSquares n)) | n <- [2,4..n]]
-    mapM_ (IO.putStr . show) res
+    let from = stringToInt $ L.head args
+    let to   = stringToInt . L.head $ L.tail args
+    mapM_ IO.putStr [show (n, maxSquareRootComplexity n) ++ "\n\n" | n <- [from,from+2..to]]

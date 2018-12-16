@@ -40,7 +40,7 @@ module Data.Algorithm.PP.Perm
 
   -- * Generating
 , perms
-
+, lexPerms
 
 -- * Trivial bijections
 , inv
@@ -74,8 +74,6 @@ where
   import qualified Data.Tuple    as T
   import Data.Function (on)
 
-  -- import Data.Algorithm.PP.Geometry.Point (X, Y, Point)
-  --import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Combi          as PP.Combi
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
@@ -93,13 +91,13 @@ where
   instance Eq (P a) where
     p == q = f p == f q
       where
-        f = getPoints. mkPerm . getList
+        f = getPoints . mkPerm . getList
 
   -- |
   instance Ord (P a) where
     p `compare` q = f p `compare` f q
       where
-        f = getList. mkPerm . getPoints
+        f = getPoints . mkPerm . getList
 
   -- |'Span' type
   data Span
@@ -281,6 +279,9 @@ where
   -- [[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
   perms :: Int -> [Perm]
   perms n = L.map mkPermUnsafe $ L.permutations [1..n]
+
+  lexPerms :: Int ->[Perm]
+  lexPerms _ = []
 
   -- | 'inv' 'p' returns the inverse of the permutation 'p'.
   --
