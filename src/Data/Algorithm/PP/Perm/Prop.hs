@@ -22,7 +22,7 @@ where
   -- |'derangement' 'p' return 'True' if the permutation 'p' is a derangement
   -- (i.e. 'p' is a permutation that has no fixed points).
   derangement :: PP.Perm.Perm -> Bool
-  derangement = F.all (T.uncurry (/=)) . L.zip [1..] . PP.Perm.getList
+  derangement = F.all (T.uncurry (/=)) . PP.Perm.getPoints
 
   -- | 'increasing' 'p' returns 'True' if the permutation 'p' is increasing.
   increasing :: PP.Perm.Perm -> Bool

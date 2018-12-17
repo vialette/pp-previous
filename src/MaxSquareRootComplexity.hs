@@ -12,7 +12,7 @@ module Main where
   stringToInt s = read s :: Int
 
   maxSquareRootComplexity :: Int -> (Int, [Perm])
-  maxSquareRootComplexity = F.foldr aux (0, []) . shuffleSquares
+  maxSquareRootComplexity = F.foldr' aux (0, []) . shuffleSquares
     where
       aux p (maxSoFar, acc)
         | m > maxSoFar  = (m, [p])

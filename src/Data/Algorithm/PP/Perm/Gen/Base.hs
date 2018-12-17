@@ -39,10 +39,6 @@ where
   oscillatingIncreasings :: [PP.Perm.Perm]
   oscillatingIncreasings = [oscillatingIncreasing n | n <- [1..]]
 
-  f n
-    | even n    = (n `div` 2, n `div` 2)
-    | otherwise = (1 + (n `div` 2), n `div` 2)
-
   -- |'simpleAlternatingWedgeType1' 'n' return the simple alternating wedge type 1
   -- permutations of length 'n'.
   --
@@ -51,7 +47,7 @@ where
   simpleAlternatingWedgeType1 :: Int -> PP.Perm.Perm
   simpleAlternatingWedgeType1 n = PP.Perm.mkPerm $ PP.Utils.List.perfectShuffle xs ys ++ [kDec+1]
     where
-      (kInc, kDec) = f (n-1)
+      (kInc, kDec) = if even (n-1) then (n `div` 2, n `div` 2) else (1 + (n `div` 2), n `div` 2)
       xs           = [kDec+2..n]
       ys           = [kDec,kDec-1..1]
 

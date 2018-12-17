@@ -49,6 +49,7 @@ cabal-version:       >=1.10
 library
   -- Modules exported by the library.
   exposed-modules:     Data.Algorithm.PP.Combi
+                     , Data.Algorithm.PP.Geometry.Point
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Class.Simple
@@ -66,7 +67,7 @@ library
                      , Data.Algorithm.PP.Perm.Shuffle
                      , Data.Algorithm.PP.Perm.Small
                      , Data.Algorithm.PP.Perm.Sort
-                     , Data.Algorithm.PP.Perm.Stat
+                     , Data.Algorithm.PP.Perm.Statistics
                      , Data.Algorithm.PP.SepTree
                      , Data.Algorithm.PP.StdYoungTableau
                      , Data.Algorithm.PP.Utils.Int

@@ -9,7 +9,7 @@ Stability   : experimental
 Here is a longer description of this module, containing some
 commentary with @some markup@.
 -}
-module Data.Algorithm.PP.Perm.Stat
+module Data.Algorithm.PP.Perm.Statistics
 (
   fixedPoints
 , fixedPointsStat

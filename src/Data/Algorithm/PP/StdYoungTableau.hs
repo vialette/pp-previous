@@ -76,6 +76,28 @@ where
           (xs', ys') = insert xs ys e i
 
   -- |'draw' 't'
+  --
+  -- >>> (t1, t2) = robinsonSchensted (mkPerm [5,8,1,6,7,4,9,2,3])
+  -- >>> putStr $ draw t1
+  -- +---+---+---+---+
+  -- | 1 | 2 | 3 | 9 |
+  -- +---+---+---+---+
+  -- | 4 | 6 | 7 |
+  -- +---+---+---+
+  -- | 5 |
+  -- +---+
+  -- | 8 |
+  -- +---+
+  -- >>> putStr $ draw t2
+  -- +---+---+---+---+
+  -- | 1 | 2 | 5 | 7 |
+  -- +---+---+---+---+
+  -- | 3 | 4 | 9 |
+  -- +---+---+---+
+  -- | 6 |
+  -- +---+
+  -- | 8 |
+  -- +---+
   draw :: StdYoungTableau -> String
   draw t = L.intercalate "\n" . aux $ getRows t
     where

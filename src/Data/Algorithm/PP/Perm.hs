@@ -74,11 +74,9 @@ where
   import qualified Data.Tuple    as T
   import Data.Function (on)
 
+  import Data.Algorithm.PP.Geometry.Point
   import qualified Data.Algorithm.PP.Combi          as PP.Combi
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
-
-  -- |'Point' type
-  type Point = (Int, Int)
 
   -- |'Seq' type
   newtype P a = P { getPoints :: [Point] }
@@ -111,11 +109,20 @@ where
   -- |'Patt' type
   type Patt = P Sub
 
+  -- |'Perm' to 'Perm' function type.
   type FPerm = Perm -> Perm
 
-  -- | 'mkPerm' 'xs'
+  -- | 'mkPerm' 'xs' constructs a permutation
   --
-  -- >>>
+  -- >>> mkPerm ['a','c','e','d','b']
+  -- [1,3,5,4,2]
+  -- >>> mkPerm (take 5 ['a'..])
+  -- [1,2,3,4,5]
+  --
+  -- Left to right
+  --
+  -- >>> mkPerm . take 5 $ repeat 'a'
+  -- [1,2,3,4,5]
   mkPerm :: (Foldable t, Ord a) => t a -> Perm
   mkPerm = mkPermUnsafe . reduce . F.toList
 
@@ -385,7 +392,7 @@ where
 
   -- |'grid' 'p'
   --
-  -- >>> putStr . grid  $ PP.Perm.mk [5,1,6,4,2,3]
+  -- >>> putStr $ grid  (mkPerm [5,1,6,4,2,3])
   -- +---+---+---+---+---+---+
   -- |   |   | o |   |   |   |
   -- +---+---+---+---+---+---+
@@ -398,6 +405,20 @@ where
   -- |   |   |   |   | o |   |
   -- +---+---+---+---+---+---+
   -- |   | o |   |   |   |   |
+  -- +---+---+---+---+---+---+
+  -- >>> putStr $ grid  (identity 6)
+  -- +---+---+---+---+---+---+
+  -- |   |   |   |   |   | o |
+  -- +---+---+---+---+---+---+
+  -- |   |   |   |   | o |   |
+  -- +---+---+---+---+---+---+
+  -- |   |   |   | o |   |   |
+  -- +---+---+---+---+---+---+
+  -- |   |   | o |   |   |   |
+  -- +---+---+---+---+---+---+
+  -- |   | o |   |   |   |   |
+  -- +---+---+---+---+---+---+
+  -- | o |   |   |   |   |   |
   -- +---+---+---+---+---+---+
   grid :: Perm -> String
   grid p = aux . L.map (row . T.fst) . L.reverse . L.sortOn T.snd $ getPoints p
