@@ -5,14 +5,18 @@ module Data.Algorithm.PP.Perm.Rank
 
 , rank2
 , unrank2
+
+, rand
 )
 where
 
+  import System.Random
   import Data.Array ((!), (//))
   import qualified Data.Array as Array
   import qualified Data.List  as L
 
-  import qualified Data.Algorithm.PP.Perm as PP.Perm
+  import qualified Data.Algorithm.PP.Perm       as PP.Perm
+  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
   mkArray :: [a] -> Array.Array Int a
   mkArray xs = Array.array (0, n-1) $ L.zip [0..] xs
@@ -109,3 +113,17 @@ where
     | otherwise = Array.elems a
       where
         s = r `div` product [1..n-1]
+
+  randRank :: Array.Array Int Int -> (PP.Perm.Perm -> Int) -> PP.Perm.Perm -> Int
+  randRank a f = (!) a . f
+
+  randUnrank :: Array.Array Int Int -> (Int -> Int -> Maybe PP.Perm.Perm) -> Int -> Int -> Maybe PP.Perm.Perm
+  randUnrank a f n = f n . (!) a
+
+  rand :: RandomGen g => g -> Int -> ((PP.Perm.Perm -> Int, Int -> Int -> Maybe PP.Perm.Perm), g)
+  rand g n = ((randRank a rank2, randUnrank a' unrank2), g')
+    where
+      b        = product [1..n]
+      (xs, g') = PP.Utils.List.randomShuffle g [0..b-1]
+      a        = Array.array (0, b-1) $ L.zip [0..] xs
+      a'       = Array.array (0, b-1) $ L.zip xs    [0..]

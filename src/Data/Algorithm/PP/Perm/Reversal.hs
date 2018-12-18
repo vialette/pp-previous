@@ -10,6 +10,7 @@ module Data.Algorithm.PP.Perm.Reversal
 )
 where
 
+  import qualified Data.Foldable as F
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
@@ -61,15 +62,12 @@ where
   -- [[3,6,5,1,4,2],[5,6,3,1,4,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
   -- [[5,6,4,1,3,2],[3,1,4,6,5,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
   dReversalRadiusFull :: Int -> (Int, [PP.Perm.Perm])
-  dReversalRadiusFull = aux 0 [] . L.map dReversal . PP.Perm.Gen.Base.derangements
+  dReversalRadiusFull = F.foldr' f (0, []) . fmap ((\ ps -> (L.length ps - 1, L.head ps)) . dReversal) . PP.Perm.Gen.Base.derangements
     where
-      aux m acc []  = (m-1, acc)
-      aux m acc (ps : pss)
-        | m == m'   = aux m  (L.head ps : acc) pss
-        | m >  m'   = aux m  acc               pss
-        | otherwise = aux m' [L.head ps]       pss
-          where
-            m' = L.length ps
+      f (m, p) (maxSoFar, acc)
+        | m > maxSoFar  = (m,         [p])
+        | m == maxSoFar = (maxSoFar , p : acc)
+        | otherwise     = (maxSoFar , acc)
 
   -- |'dReversalRadius' 'n' return the radius
   --

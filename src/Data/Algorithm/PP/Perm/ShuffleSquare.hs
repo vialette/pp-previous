@@ -41,7 +41,7 @@ where
 
   -- |'shuffleSquareRoots' 'p' returns the list of all shuffle square roots of the
   -- permutation 'p'
-  -- (i.e., all permutation 'q' such that the permutation 'p' is the disjoint union
+  -- (i.e., all permutations 'q' such that the permutation 'p' is the disjoint union
   -- of 'q' and 'q').
   --
   -- \[
@@ -104,7 +104,7 @@ where
   shuffleSquare = PP.Perm.ShuffleSquareBy.shuffleSquareBy id
 
   -- |'simpleShuffleSquare' 'p' returns 'True' if the permutation 'p' has
-  -- exactly one shuffleSquare root.
+  -- exactly one shuffle square root.
   --
   -- \[
   -- \begin{align*}

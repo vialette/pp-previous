@@ -19,12 +19,19 @@ module Data.Algorithm.PP.Utils.List
 , reversal
 , reversal'
 , prefixReversal
+
+  -- * Random
+, randomShuffle
 )
 where
 
-  import qualified Data.Foldable as F
-  import qualified Data.List     as L
-  import qualified Data.Set      as S
+  import System.Random
+  import qualified Control.Arrow   as A
+  import qualified Data.Foldable   as F
+  import qualified Data.List       as L
+  import Data.Map.Strict ((!))
+  import qualified Data.Map.Strict as M
+  import qualified Data.Set        as S
 
   -- |'safeHead' 'xs'
   safeHead :: [a] -> Maybe a
@@ -99,24 +106,33 @@ where
   -- >>> perfectShuffle [1,2] [5,6,7,8]
   -- [1,5,2,6,7,8]
   perfectShuffle :: [a] -> [a] -> [a]
-  perfectShuffle xs ys = xys ++ zs
+  perfectShuffle = aux []
     where
-      nX  = L.length xs
-      nY  = L.length ys
-      k   = min nX nY
-      xs' = L.take k xs
-      ys' = L.take k ys
-      xys = F.foldMap (\(x,y) -> [x,y]) $ zip xs' ys'
-      zs  = if nX < nY then L.drop k ys else L.drop k xs
+      aux acc []       ys = L.reverse acc ++ ys
+      aux acc (x : xs) ys = aux (x : acc) ys xs
 
+  -- reversal i j xs returns the elements of xs between position i and i+j
   reversal :: Int -> Int -> [a] -> [a]
   reversal i j xs = ps ++ L.reverse ys ++ ss
     where
       (ps, ss') = L.splitAt i xs
-      (ys, ss)  = L.splitAt (j-i+1) ss'
+      (ys, ss)  = L.splitAt j ss'
 
   reversal' :: Int -> Int -> [a] -> [a]
   reversal' i m = reversal i (i+m-1)
 
   prefixReversal :: Int -> [a] -> [a]
   prefixReversal m = reversal 0 (m-1)
+
+
+  step :: RandomGen g => Int -> (M.Map Int a, g) ->  (M.Map Int a, g)
+  step i (m, g) = ((M.insert j (m ! i) . M.insert i (m ! j)) m, g')
+    where
+      (j, g') = randomR (1, i) g
+
+  randomShuffle :: RandomGen g => g -> [a] -> ([a], g)
+  randomShuffle g [] = ([], g)
+  randomShuffle g xs = A.first M.elems $ foldr step initial [1..n]
+    where
+      n              = L.length xs
+      initial        = (M.fromList $ L.zip [1..] xs, g)

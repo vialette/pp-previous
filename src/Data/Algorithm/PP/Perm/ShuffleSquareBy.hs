@@ -32,7 +32,7 @@ where
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
   -- |'shuffleSquareRootsBy' 'f' 'p' returns all square roots of the permutation 'p'
-  -- according to the bijection 'f'.
+  -- according to the function 'f'.
   --
   -- \[
   -- \forall p \in S_{n}, \;
@@ -49,7 +49,17 @@ where
       test  = T.uncurry (==)
       proj1 = T.fst
 
-  -- |'shuffleSquareRootsByStat' 'f' 'p'
+  -- |'shuffleSquareRootsByStat' 'f' 'p' returns the number of distinct square roots
+  -- of the permutation 'p' according to the function 'f'.
+  --
+  -- \[
+  -- \forall n \in \mathbb{N}, \;
+  -- \forall f : S_{n} \to S_{n},
+  -- \quad
+  -- \texttt{ shuffleSquareRootsByStat } f \; p
+  -- \;=\;
+  -- \left|\left\{q : p \in q \bullet f \; q\right\}\right|
+  -- \]
   shuffleSquareRootsByStat :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Int
   shuffleSquareRootsByStat f = L.length . shuffleSquareRootsBy f
 
