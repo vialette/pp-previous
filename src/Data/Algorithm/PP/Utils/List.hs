@@ -74,11 +74,11 @@ where
   chunk :: Int -> [a] -> [[a]]
   chunk n = L.takeWhile ((== n) . L.length) . L.transpose . L.take n . L.iterate L.tail
 
-  chunk2 :: [a] -> [(a,a)]
-  chunk2 = L.map (\[x,y] -> (x, y)) . chunk 2
+  chunk2 :: [a] -> [(a, a)]
+  chunk2 = L.map (\[x, y] -> (x, y)) . chunk 2
 
-  chunk3 :: [a] -> [(a,a,a)]
-  chunk3 = L.map (\[x,y,z] -> (x, y, z)) . chunk 3
+  chunk3 :: [a] -> [(a, a, a)]
+  chunk3 = L.map (\[x, y, z] -> (x, y, z)) . chunk 3
 
   shuffle2 :: [a] -> [a] -> [[a]]
   shuffle2 []       []       = [[]]
@@ -124,15 +124,14 @@ where
   prefixReversal :: Int -> [a] -> [a]
   prefixReversal m = reversal 0 (m-1)
 
-
-  step :: RandomGen g => Int -> (M.Map Int a, g) ->  (M.Map Int a, g)
-  step i (m, g) = ((M.insert j (m ! i) . M.insert i (m ! j)) m, g')
+  randomShuffleStep :: RandomGen g => Int -> (M.Map Int a, g) ->  (M.Map Int a, g)
+  randomShuffleStep i (m, g) = ((M.insert j (m ! i) . M.insert i (m ! j)) m, g')
     where
       (j, g') = randomR (1, i) g
 
-  randomShuffle :: RandomGen g => g -> [a] -> ([a], g)
-  randomShuffle g [] = ([], g)
-  randomShuffle g xs = A.first M.elems $ foldr step initial [1..n]
+  randomShuffle :: RandomGen g => [a] -> g -> ([a], g)
+  randomShuffle [] g = ([], g)
+  randomShuffle xs g = A.first M.elems $ foldr randomShuffleStep initial [1..n]
     where
-      n              = L.length xs
-      initial        = (M.fromList $ L.zip [1..] xs, g)
+      n       = L.length xs
+      initial = (M.fromList $ L.zip [1..] xs, g)

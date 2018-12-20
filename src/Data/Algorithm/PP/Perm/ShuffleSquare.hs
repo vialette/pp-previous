@@ -33,11 +33,9 @@ where
   import qualified Data.IntMap.Strict as IntMap
   import qualified Data.Tuple         as T
 
-  import qualified Data.Algorithm.PP.Combi                as PP.Combi
   import qualified Data.Algorithm.PP.Perm                 as PP.Perm
   import qualified Data.Algorithm.PP.Perm.ShuffleSquareBy as PP.Perm.ShuffleSquareBy
   import qualified Data.Algorithm.PP.Utils.List           as PP.Utils.List
-
 
   -- |'shuffleSquareRoots' 'p' returns the list of all shuffle square roots of the
   -- permutation 'p'

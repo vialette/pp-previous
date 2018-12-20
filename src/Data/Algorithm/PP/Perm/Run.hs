@@ -24,17 +24,16 @@ where
   import qualified Data.Tuple    as T
   import Data.Function (on)
 
-  import qualified Data.Algorithm.PP.Perm       as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |'ascendingRuns' 'p'
   --
   -- >>> ascendingRuns (mkPerm [4,6,2,1,3,8,5,7])
   -- [[4,6],[2],[1,3,8],[5,7]]
   ascendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
-  ascendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' f . PP.Perm.getPoints
-    where
-      f (_, y1) (_, y2) = y1 < y2
+  ascendingRuns = fmap PP.Perm.mkPatt . PP.Utils.List.groupBy' PP.Geometry.Point.isStrictlyBelowOf . PP.Perm.getPoints
 
   -- |'longestAscendingRun' 'p'
   --
@@ -50,7 +49,7 @@ where
   descendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
   descendingRuns = L.map PP.Perm.mkPatt . PP.Utils.List.groupBy' f . PP.Perm.getPoints
     where
-      f p1 p2 = T.snd p1 > T.snd p2
+      f p1 p2 = PP.Geometry.Point.getY p1 > PP.Geometry.Point.getY p2
 
   -- |'longestDescendingRun' 'p'
   --

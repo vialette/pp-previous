@@ -27,9 +27,9 @@ where
   import qualified Data.List      as L
   import qualified Data.Tuple     as T
 
-  import qualified Data.Algorithm.PP.Combi      as PP.Combi
-  import qualified Data.Algorithm.PP.Perm       as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |'shuffleSquareRootsBy' 'f' 'p' returns all square roots of the permutation 'p'
   -- according to the function 'f'.
@@ -43,7 +43,7 @@ where
   -- \left\{q : p \in q \bullet f \; q\right\}
   -- \]
   shuffleSquareRootsBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> [PP.Perm.Perm]
-  shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.map trans . PP.Combi.balPartitions . PP.Perm.getList
+  shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.map trans . PP.Utils.Foldable.balPartitions . PP.Perm.getList
     where
       trans = PP.Perm.mkPerm A.*** (f . PP.Perm.mkPerm)
       test  = T.uncurry (==)

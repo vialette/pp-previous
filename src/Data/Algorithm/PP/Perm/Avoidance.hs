@@ -20,7 +20,7 @@ where
   avoid qs = dispatchAvoid (L.sort qs)
 
   -- |'avoid213'231'
-  avoid213'231 p = go 1 (PP.Perm.len p) $ PP.Perm.getList p
+  avoid_213_231 p = go 1 (PP.Perm.len p) $ PP.Perm.getList p
     where
       go _ _ [] = True
       go minX maxX (x : xs)
@@ -32,12 +32,12 @@ where
   dispatchAvoid :: [PP.Perm.Perm] -> PP.Perm.Perm -> Bool
   dispatchAvoid [] _ = True
   dispatchAvoid qs p
-    | qs == [PP.Perm.Small.p123] = True
-    | qs == [PP.Perm.Small.p132] = True
-    | qs == [PP.Perm.Small.p213] = True
-    | qs == [PP.Perm.Small.p231] = True
-    | qs == [PP.Perm.Small.p312] = True
-    | qs == [PP.Perm.Small.p321] = True
-    | qs == [PP.Perm.Small.p213, PP.Perm.Small.p231] = avoid213'231 p
-    | qs == [PP.Perm.Small.p2413, PP.Perm.Small.p3142] = True
+    | qs == [PP.Perm.Small.p_123] = True
+    | qs == [PP.Perm.Small.p_132] = True
+    | qs == [PP.Perm.Small.p_213] = True
+    | qs == [PP.Perm.Small.p_231] = True
+    | qs == [PP.Perm.Small.p_312] = True
+    | qs == [PP.Perm.Small.p_321] = True
+    | qs == [PP.Perm.Small.p_213, PP.Perm.Small.p_231] = avoid_213_231 p
+    | qs == [PP.Perm.Small.p_2413, PP.Perm.Small.p_3142] = True
     | otherwise                  = False

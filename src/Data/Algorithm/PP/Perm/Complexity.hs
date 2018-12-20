@@ -17,10 +17,9 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Combi          as PP.Combi
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
   import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |The 'complexity' 'k' 'p' function returns the list of all permutations of length
   -- 'k' that occur in the permutation 'p'.
@@ -36,7 +35,7 @@ where
   -- >>> complexity 5 (mkPerm [1,4,2,5,3])
   -- [[1,4,2,5,3]]
   complexity :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
-  complexity k = PP.Utils.List.uniq . L.map PP.Perm.mkPerm . PP.Combi.subsets k . PP.Perm.getList
+  complexity k = PP.Utils.List.uniq . L.map PP.Perm.mkPerm . PP.Utils.Foldable.subsets k . PP.Perm.getList
 
   -- |The 'complexityStat' 'n' 'p' function returns the number of permutations of length
   -- 'k' that occurs in permutation 'p'.

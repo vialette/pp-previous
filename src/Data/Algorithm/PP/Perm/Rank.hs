@@ -151,10 +151,10 @@ where
   -- [(0,Just [1,3,2]),(1,Just [3,1,2]),(2,Just [3,2,1]),(3,Just [2,3,1]),(4,Just [2,1,3]),(5,Just [1,2,3])]
   -- >>> let n = 3 in and [i == (rank . fromJust . unrank n) i | i <- [0..product [1..n]-1]]
   -- True
-  rand :: RandomGen g => g -> Int -> ((PP.Perm.Perm -> Int, Int -> Int -> Maybe PP.Perm.Perm), g)
-  rand g n = ((randRank a rank2, randUnrank a' unrank2), g')
+  rand :: RandomGen g => Int -> g -> ((PP.Perm.Perm -> Int, Int -> Int -> Maybe PP.Perm.Perm), g)
+  rand n g = ((randRank a rank2, randUnrank a' unrank2), g')
     where
       b        = product [1..n]
-      (xs, g') = PP.Utils.List.randomShuffle g [0..b-1]
+      (xs, g') = PP.Utils.List.randomShuffle [0..b-1] g
       a        = Array.array (0, b-1) $ L.zip [0..] xs
       a'       = Array.array (0, b-1) $ L.zip xs    [0..]

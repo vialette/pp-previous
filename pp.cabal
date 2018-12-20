@@ -48,8 +48,7 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Data.Algorithm.PP.Combi
-                     , Data.Algorithm.PP.Geometry.Point
+  exposed-modules:     Data.Algorithm.PP.Geometry.Point
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Class.Simple
@@ -60,6 +59,7 @@ library
                      , Data.Algorithm.PP.Perm.Square
                      , Data.Algorithm.PP.Perm.SquareBy
                      , Data.Algorithm.PP.Perm.Gen.Base
+                     , Data.Algorithm.PP.Perm.Gen.Random
                      , Data.Algorithm.PP.Perm.Prop
                      , Data.Algorithm.PP.Perm.Rank
                      , Data.Algorithm.PP.Perm.Reversal

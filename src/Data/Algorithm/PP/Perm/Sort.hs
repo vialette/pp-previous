@@ -1,7 +1,7 @@
 module Data.Algorithm.PP.Perm.Sort
 (
   stackSort
-, stackSortable
+, isStackSortable
 )
 where
 
@@ -54,7 +54,19 @@ where
   -- stackSort([2,3,1]) = False
   -- stackSort([3,1,2]) = True
   -- stackSort([1,3,2]) = True
-  stackSortable :: PP.Perm.Perm -> Bool
-  stackSortable p = stackSort p == PP.Perm.identity n
+  isStackSortable :: PP.Perm.Perm -> Bool
+  isStackSortable p = stackSort p == PP.Perm.identity n
     where
       n = PP.Perm.len p
+
+  dequeSort :: PP.Perm.Perm -> PP.Perm.Perm
+  dequeSort p = p
+
+  isDequeSortable :: PP.Perm.Perm -> Bool
+  isDequeSortable = PP.Perm.isIdentity . dequeSort
+
+  parallelQueues2Sort :: PP.Perm.Perm -> PP.Perm.Perm
+  parallelQueues2Sort p = p
+
+  isParallelQueues2Sortable :: PP.Perm.Perm -> Bool
+  isParallelQueues2Sortable = PP.Perm.isIdentity . parallelQueues2Sort

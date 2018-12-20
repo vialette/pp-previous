@@ -16,13 +16,14 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |'derangement' 'p' return 'True' if the permutation 'p' is a derangement
   -- (i.e. 'p' is a permutation that has no fixed points).
   derangement :: PP.Perm.Perm -> Bool
-  derangement = F.all (T.uncurry (/=)) . PP.Perm.getPoints
+  derangement = F.all PP.Geometry.Point.isNotOnDiagonal . PP.Perm.getPoints
 
   -- | 'increasing' 'p' returns 'True' if the permutation 'p' is increasing.
   increasing :: PP.Perm.Perm -> Bool

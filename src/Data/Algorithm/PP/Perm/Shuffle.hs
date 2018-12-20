@@ -18,7 +18,6 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Combi      as PP.Combi
   import qualified Data.Algorithm.PP.Perm       as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
@@ -39,7 +38,9 @@ where
   -- >>> mkPerm [1,3,2] == mkPerm [1,6,2] && mkPerm [3,1,2] == mkPerm [5,3,4] -- check second solution
   -- True
   shuffleOf2' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> [(PP.Perm.Patt, PP.Perm.Patt)]
-  shuffleOf2' p q = L.filter (\(p', q') -> PP.Perm.orderIso p p' && PP.Perm.orderIso q q') . PP.Perm.partitions (PP.Perm.len p) (PP.Perm.len q)
+  shuffleOf2' p q = L.filter f . PP.Perm.partitions (PP.Perm.len p) (PP.Perm.len q)
+    where
+      f (p', q') = PP.Perm.orderIso p p' && PP.Perm.orderIso q q'
 
   -- |'shuffleOf2''' 'p' 'q' 'r'
   --
