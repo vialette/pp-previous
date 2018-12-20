@@ -34,6 +34,7 @@ where
   import qualified Data.Tuple         as T
 
   import qualified Data.Algorithm.PP.Perm                 as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Generator       as PP.Perm.Generator
   import qualified Data.Algorithm.PP.Perm.ShuffleSquareBy as PP.Perm.ShuffleSquareBy
   import qualified Data.Algorithm.PP.Utils.List           as PP.Utils.List
 
@@ -142,7 +143,7 @@ where
     where
       database = [(2, 1), (4, 2), (6, 3), (8, 7), (10, 10)]
       m        = IntMap.fromList database
-      k        = maximum . L.map shuffleSquareRootsStat $ PP.Perm.perms n
+      k        = maximum . L.map shuffleSquareRootsStat $ PP.Perm.Generator.perms n
 
   -- | 'extremalShuffleSquare' 'p' returns 'True' if the permutation 'p'
   -- has the maximum number of permutations.

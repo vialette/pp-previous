@@ -18,8 +18,9 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Perm as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Generator as PP.Perm.Generator
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
   import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 
   -- |'squareBy' 'f' 'p' returns @True@ if the permutation @p@ is @f@-square for some
@@ -99,8 +100,8 @@ where
 
   -- |'nonSquaresBy' 'f' 'n'
   nonSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
-  nonSquaresBy f = L.filter (not . squareBy f) . PP.Perm.perms
+  nonSquaresBy f = L.filter (not . squareBy f) . PP.Perm.Generator.perms
 
   -- |'squaresByFree' 'f' n
   squaresByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
-  squaresByFree f = L.filter (squareByFree f) . PP.Perm.perms
+  squaresByFree f = L.filter (squareByFree f) . PP.Perm.Generator.perms

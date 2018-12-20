@@ -14,9 +14,9 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Perm.Gen.Base as PP.Perm.Gen.Base
-  import qualified Data.Algorithm.PP.Perm          as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List    as PP.Utils.List
+  import qualified Data.Algorithm.PP.Perm.Generator as PP.Perm.Generator
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |'reversal' 'i' 'j' 'p'
   reversal :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
@@ -62,7 +62,7 @@ where
   -- [[3,6,5,1,4,2],[5,6,3,1,4,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
   -- [[5,6,4,1,3,2],[3,1,4,6,5,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
   dReversalRadiusFull :: Int -> (Int, [PP.Perm.Perm])
-  dReversalRadiusFull = F.foldr' f (0, []) . fmap ((\ ps -> (L.length ps - 1, L.head ps)) . dReversal) . PP.Perm.Gen.Base.derangements
+  dReversalRadiusFull = F.foldr' f (0, []) . fmap ((\ ps -> (L.length ps - 1, L.head ps)) . dReversal) . PP.Perm.Generator.derangements
     where
       f (m, p) (maxSoFar, acc)
         | m > maxSoFar  = (m,         [p])

@@ -1,4 +1,4 @@
-module Data.Algorithm.PP.Gen.Avoid
+module Data.Algorithm.PP.Perm.Generator.Avoid
 ()
 where
 

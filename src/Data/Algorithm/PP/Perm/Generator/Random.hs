@@ -1,4 +1,4 @@
-module Data.Algorithm.PP.Perm.Gen.Random
+module Data.Algorithm.PP.Perm.Generator.Random
 (
   rand
 , rands

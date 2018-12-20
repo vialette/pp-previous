@@ -18,6 +18,7 @@ where
   import qualified Data.Tuple    as T
 
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Generator as PP.Perm.Generator
   import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
@@ -74,7 +75,7 @@ where
   -- >>> maxComplexity 3 3
   -- (1,[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]])
   maxComplexity :: Int -> Int -> (Int, [PP.Perm.Perm])
-  maxComplexity k = maxComplexity' k . PP.Perm.perms
+  maxComplexity k = maxComplexity' k . PP.Perm.Generator.perms
 
   -- >>> Complexity.maxComplexity' 3 (Perm.perms 5)
   -- (6,[[2,5,3,1,4],[4,1,3,5,2]])
@@ -116,4 +117,4 @@ where
   maxComplexityStat' k = T.snd . maxComplexity k
 
   pat :: Int -> (Int, [PP.Perm.Perm])
-  pat = PP.Utils.Foldable.maximumBy0 complexityAnyStat . PP.Perm.perms
+  pat = PP.Utils.Foldable.maximumBy0 complexityAnyStat . PP.Perm.Generator.perms

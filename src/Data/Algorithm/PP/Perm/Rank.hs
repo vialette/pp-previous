@@ -18,8 +18,9 @@ where
   import qualified Data.Array as Array
   import qualified Data.List  as L
 
-  import qualified Data.Algorithm.PP.Perm       as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Bijection as PP.Perm.Bijection
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- Array construction auxiliary function.
   mkArray :: [a] -> Array.Array Int a
@@ -56,7 +57,7 @@ where
   rank1 p = rank1' (PP.Perm.len p) a b
     where
       a = mkArray . L.map (\ x -> x-1) $ PP.Perm.getList p
-      b = mkArray . L.map (\ y -> y-1) . PP.Perm.getList $ PP.Perm.inv p
+      b = mkArray . L.map (\ y -> y-1) . PP.Perm.getList $ PP.Perm.Bijection.inv p
 
   -- rank1 auxiliary function
   rank1' :: Int -> Array.Array Int Int -> Array.Array Int Int -> Int
@@ -96,7 +97,7 @@ where
   rank2 p = rank2' (PP.Perm.len p) a b
     where
       a = mkArray . L.map (\ x -> x-1) $ PP.Perm.getList p
-      b = mkArray . L.map (\ y -> y-1) . PP.Perm.getList $ PP.Perm.inv p
+      b = mkArray . L.map (\ y -> y-1) . PP.Perm.getList $ PP.Perm.Bijection.inv p
 
   -- rank2 auxiliary function.
   rank2' :: Int -> Array.Array Int Int -> Array.Array Int Int -> Int

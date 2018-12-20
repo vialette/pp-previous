@@ -45,103 +45,103 @@ where
   import qualified Data.Tuple    as T
 
   -- |'Point' type
-  newtype Point a = Point { getCoordinates :: (a, a) } deriving (Eq, Ord)
+  newtype Point = Point { getCoordinates :: (Int, Int) } deriving (Eq, Ord)
 
-  instance (Show a) => Show (Point a) where
+  instance Show Point where
     show Point { getCoordinates = (x, y) } = "(" ++ show x ++ "," ++ show y ++ ")"
 
-  mk :: a -> a -> Point a
+  mk :: Int -> Int -> Point
   mk x y = Point { getCoordinates = (x, y) }
 
-  mk' :: (a, a) -> Point a
+  mk' :: (Int, Int) -> Point
   mk' = uncurry mk
 
-  symmetric :: Point a -> Point a
+  symmetric :: Point -> Point
   symmetric Point { getCoordinates = (x, y) } = mk y x
 
-  getX :: Point a -> a
+  getX :: Point -> Int
   getX = T.fst . getCoordinates
 
-  getY :: Point a -> a
+  getY :: Point -> Int
   getY = T.snd . getCoordinates
 
-  sortOn :: (Foldable t, Ord b) => (Point a -> b) -> t (Point a) -> [Point a]
+  sortOn :: (Foldable t) => (Point -> Int) -> t Point -> [Point]
   sortOn f = L.sortOn f . F.toList
 
-  sortOnX :: (Foldable t, Ord a) => t (Point a) -> [Point a]
+  sortOnX :: (Foldable t) => t Point -> [Point]
   sortOnX = sortOn getX
 
-  sortOnY :: (Foldable t, Ord a) => t (Point a) -> [Point a]
+  sortOnY :: (Foldable t) => t Point -> [Point]
   sortOnY = sortOn getY
 
-  isOnDiagonal :: (Eq a) => Point a -> Bool
+  isOnDiagonal :: Point -> Bool
   isOnDiagonal p = getX p == getY p
 
-  isNotOnDiagonal :: (Eq a) => Point a -> Bool
+  isNotOnDiagonal :: Point -> Bool
   isNotOnDiagonal = not . isOnDiagonal
 
-  isStrictlyAboveDiagonal :: (Ord a) => Point a -> Bool
+  isStrictlyAboveDiagonal :: Point -> Bool
   isStrictlyAboveDiagonal p = getX p < getY p
 
-  isAboveDiagonal :: (Ord a) => Point a -> Bool
+  isAboveDiagonal :: Point -> Bool
   isAboveDiagonal p = getX p <= getY p
 
-  isStrictlyBelowDiagonal :: (Ord a) => Point a -> Bool
+  isStrictlyBelowDiagonal :: Point -> Bool
   isStrictlyBelowDiagonal p = getX p > getY p
 
-  isBelowDiagonal :: (Ord a) => Point a -> Bool
+  isBelowDiagonal :: Point -> Bool
   isBelowDiagonal p = getX p >= getY p
 
-  -- (@<-@) :: Point a -> Point a -> Bool
+  -- (@<-@) :: Point -> Point -> Bool
   -- p1 @<-@ p2 = getX p1 < getX p2
 
-  isStrictlyOnTheLeftOf :: (Ord a) => Point a -> Point a -> Bool
+  isStrictlyOnTheLeftOf :: Point -> Point -> Bool
   p1 `isStrictlyOnTheLeftOf` p2 = getX p1 < getX p2
 
-  -- (@<=-@) :: Point a -> Point a -> Bool
+  -- (@<=-@) :: Point -> Point -> Bool
   -- p1 @<=-@ p2 = getX p1 <= getX p2
 
-  isOnTheLeftOf :: (Ord a) => Point a -> Point a -> Bool
+  isOnTheLeftOf :: Point -> Point -> Bool
   p1 `isOnTheLeftOf` p2 = getX p1 <= getX p2
 
-  -- (@>-@) :: Point a -> Point a -> Bool
+  -- (@>-@) :: Point -> Point -> Bool
   -- p1 @>-@ p2 = getX p1 > getX p2
 
-  isStrictlyOnTheRighttOf :: (Ord a) => Point a -> Point a -> Bool
+  isStrictlyOnTheRighttOf :: Point -> Point -> Bool
   p1 `isStrictlyOnTheRighttOf` p2 = getX p1 > getX p2
 
-  -- (@>=-@) :: Point a -> Point a -> Bool
+  -- (@>=-@) :: Point -> Point -> Bool
   -- p1 @>=-@ p2 = getX p1 >= getX p2
 
-  isOnTheRightOf :: (Ord a) => Point a -> Point a -> Bool
+  isOnTheRightOf :: Point -> Point -> Bool
   p1 `isOnTheRightOf` p2 = getX p1 > getX p2
 
-  -- (@<|@) :: Point a -> Point a -> Bool
+  -- (@<|@) :: Point -> Point -> Bool
   -- p1 @<|@ p2 = getY p1 < getY p2
 
-  isStrictlyBelowOf :: (Ord a) => Point a -> Point a -> Bool
+  isStrictlyBelowOf :: Point -> Point -> Bool
   p1 `isStrictlyBelowOf` p2 = getY p1 < getY p2
 
-  -- (@<=|@) :: Point a -> Point a -> Bool
+  -- (@<=|@) :: Point -> Point -> Bool
   -- p1 @<=|@ p2 = getY p1 <= getY p2
 
-  isBelowOf :: (Ord a) => Point a -> Point a -> Bool
+  isBelowOf :: Point -> Point -> Bool
   p1 `isBelowOf` p2 = getY p1 <= getY p2
 
-  -- (@>|@) :: Point a -> Point a -> Bool
+  -- (@>|@) :: Point -> Point -> Bool
   -- p1 @>|@ p2 = getY p1 > getY p2
 
-  isStrictlyAboveOf :: (Ord a) => Point a -> Point a -> Bool
+  isStrictlyAboveOf :: Point -> Point -> Bool
   p1 `isStrictlyAboveOf` p2 = getY p1 > getY p2
 
-  -- (@>=|@) :: Point a -> Point a -> Bool
+  -- (@>=|@) :: Point -> Point -> Bool
   -- p1 @>=|@ p2 = getY p1 >= getY p2
 
-  isAboveOf :: (Ord a) => Point a -> Point a -> Bool
+  isAboveOf :: Point -> Point -> Bool
   p1 `isAboveOf` p2 = getY p1 >= getY p2
 
-  isStrictlyDominatedBy :: (Ord a) => Point a -> Point a -> Bool
+  isStrictlyDominatedBy :: Point -> Point -> Bool
   p1 `isStrictlyDominatedBy` p2 = getX p1 < getX p2 && getY p1 < getY p2
 
-  isDominatedBy :: (Ord a) => Point a -> Point a -> Bool
+  isDominatedBy :: Point -> Point -> Bool
   p1 `isDominatedBy` p2 = getX p1 <= getX p2 && getY p1 <= getY p2

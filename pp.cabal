@@ -51,6 +51,9 @@ library
   exposed-modules:     Data.Algorithm.PP.Geometry.Point
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
+                     , Data.Algorithm.PP.Perm.Bijection
+                     , Data.Algorithm.PP.Perm.Bijection.Trivial
+                     , Data.Algorithm.PP.Perm.Bijection.SimionSchmidt
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
                      , Data.Algorithm.PP.Perm.Complexity
@@ -58,8 +61,12 @@ library
                      , Data.Algorithm.PP.Perm.ShuffleSquareBy
                      , Data.Algorithm.PP.Perm.Square
                      , Data.Algorithm.PP.Perm.SquareBy
-                     , Data.Algorithm.PP.Perm.Gen.Base
-                     , Data.Algorithm.PP.Perm.Gen.Random
+                     , Data.Algorithm.PP.Perm.Generator
+                     , Data.Algorithm.PP.Perm.Generator.Alternating
+                     , Data.Algorithm.PP.Perm.Generator.Avoid
+                     , Data.Algorithm.PP.Perm.Generator.Basic
+                     , Data.Algorithm.PP.Perm.Generator.Oscillating
+                     , Data.Algorithm.PP.Perm.Generator.Random
                      , Data.Algorithm.PP.Perm.Prop
                      , Data.Algorithm.PP.Perm.Rank
                      , Data.Algorithm.PP.Perm.Reversal

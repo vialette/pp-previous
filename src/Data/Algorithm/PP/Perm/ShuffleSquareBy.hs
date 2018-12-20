@@ -28,6 +28,7 @@ where
   import qualified Data.Tuple     as T
 
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Generator as PP.Perm.Generator
   import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
@@ -105,13 +106,13 @@ where
   shuffleSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   shuffleSquaresBy f n
     | odd n     = []
-    | otherwise = L.filter (shuffleSquareBy f) $ PP.Perm.perms n
+    | otherwise = L.filter (shuffleSquareBy f) $ PP.Perm.Generator.perms n
 
   -- |'nonShuffleSquaresBy' 'n' returns all non-shuffle-square permutations of length 'n'.
   nonShuffleSquaresBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> [PP.Perm.Perm]
   nonShuffleSquaresBy f n
-    | odd n     = PP.Perm.perms n
-    | otherwise = L.filter (not . shuffleSquareBy f) $ PP.Perm.perms n
+    | odd n     = PP.Perm.Generator.perms n
+    | otherwise = L.filter (not . shuffleSquareBy f) $ PP.Perm.Generator.perms n
 
   -- |'subShuffleSquaresBy' 'p' return the longest shuffle-square subpermutations
   -- of permutation 'p'.

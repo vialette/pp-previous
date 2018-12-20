@@ -9,6 +9,7 @@ module Data.Algorithm.PP.Perm
   -- * Building
 , mkPerm
 , mkPermUnsafe
+, fromPoints
 , fromList
 , mkPatt
 , identity
@@ -35,34 +36,11 @@ module Data.Algorithm.PP.Perm
 , maxPatterns
 
 , partitions
-
 , inversions
-
-
-  -- * Generating
-, perms
-, lexPerms
-
--- * Trivial bijections
-, inv
-, rev
-, comp
-
--- * Composing trivial bijections
-, revComp
-, compRev
-, invRev
-, compInv
-, invComp
-, revInv
-, invRevComp
 
 -- * Querying
 , isIdentity
 
--- * Extending
-, extendLeft
-, extendRight
 
   -- * Displaying
 , grid
@@ -81,7 +59,7 @@ where
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |'Seq' type
-  newtype P a = P { getPoints :: [PP.Geometry.Point.Point Int] }
+  newtype P a = P { getPoints :: [PP.Geometry.Point.Point] }
 
   -- |
   instance Show (P a) where
@@ -139,7 +117,7 @@ where
   -- The points do need to be sorted.
   --
   -- >>> fromPoints []
-  fromPoints :: (Foldable t) => t (PP.Geometry.Point.Point Int) -> Perm
+  fromPoints :: (Foldable t) => t PP.Geometry.Point.Point -> Perm
   fromPoints = mkPerm . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . F.toList
 
   -- Reduce a list of elements.
@@ -152,7 +130,7 @@ where
   -- | 'mkPatt' 'ps'
   --
   -- >>>
-  mkPatt :: [PP.Geometry.Point.Point Int] -> Patt
+  mkPatt :: [PP.Geometry.Point.Point] -> Patt
   mkPatt = P
 
   -- | 'getList' 'p' returns the list of the elements of permutation 'p'.
@@ -289,122 +267,6 @@ where
 
   isIdentity :: P a -> Bool
   isIdentity p = True
-
-  -- | 'perms' 'n' returns all permutations of length 'n'.
-  --
-  -- >>> perms 0
-  -- [[]]
-  -- >>> perms 1
-  -- [[1]]
-  -- >>> perms 2
-  -- [[1,2],[2,1]]
-  -- >>> perms 3
-  -- [[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
-  perms :: Int -> [Perm]
-  perms n = L.map mkPermUnsafe $ L.permutations [1..n]
-
-  lexPerms :: Int ->[Perm]
-  lexPerms _ = []
-
-  -- | 'inv' 'p' returns the inverse of the permutation 'p'.
-  --
-  -- prop> inv (inv p) = p
-  --
-  -- >>> inv $ mk [1,3,4,2]
-  -- [1,4,2,3]
-  inv :: Perm -> Perm
-  inv = P . L.sortOn PP.Geometry.Point.getX . L.map PP.Geometry.Point.symmetric . getPoints
-
-  -- | 'rev' 'p' returns the reverse of the permutation 'p'.
-  --
-  -- prop> rev (rev p) = p
-  --
-  -- >>> rev $ mk [1,3,4,2]
-  -- [2,4,3,1]
-  rev :: Perm -> Perm
-  rev = mkPermUnsafe . L.reverse . getList
-
-  -- | 'comp' 'p' returns the complement of the permutation 'p'.
-  --
-  -- prop> comp (comp p) = p
-  --
-  -- >>> comp $ mk [1,3,4,2]
-  -- [4,2,1,3]
-  comp :: Perm -> Perm
-  comp p = mkPermUnsafe $ fmap (\y -> m-y+1) ys
-    where
-      ys = getList p
-      m  = F.maximum ys
-
-  -- | 'revComp' 'p' returns the reverse complement of the permutation 'p'.
-  --
-  -- >>> revComp $ mk [1,3,4,2]
-  -- [3,1,2,4]
-  revComp :: Perm -> Perm
-  revComp = rev . comp
-
-  -- | 'compRev' 'p' returns the complement reverse of the permutation 'p'.
-  --
-  -- prop> revComp p == compRev p
-  compRev :: Perm -> Perm
-  compRev = revComp
-
-  -- | 'compInv' 'p' returns the complement inverse of the permutation 'p'.
-  --
-  -- >>> compInv $ mk [1,3,4,2]
-  -- [4,1,3,2]
-  compInv :: Perm -> Perm
-  compInv = comp . inv
-
-  -- | 'invRev' 'p' returns the inverset inverse of the permutation 'p'.
-  --
-  -- prop> invRev p == compRev
-  invRev :: Perm -> Perm
-  invRev = comp . inv
-
-  -- | 'invComp' 'p' returns the inverse complement of the permutation 'p'.
-  --
-  -- >>> invComp $ mk [1,3,4,2]
-  -- [3,2,4,1]
-  invComp :: Perm -> Perm
-  invComp = inv . comp
-
-  -- | 'revInv' 'p' returns the reverse inverse of the permutation 'p'.
-  --
-  -- prop> revInv p == invComp p
-  revInv :: Perm -> Perm
-  revInv = invComp
-
-  -- | 'invRevComp' 'p' returns the inverse reverse complement of permutation 'p'.
-  --
-  -- >>> invRevComp $ mk [1,3,4,2]
-  -- [2,3,1,4
-  invRevComp :: Perm -> Perm
-  invRevComp = inv . rev . comp
-
-  -- transpose :: Int -> Int -> Perm -> Perm
-  -- transpose i j = mk $ L.prefix (i-1) xs ++ [xs L.!! i] ++
-
-  -- |'extendLeft' 'p' takes a permutation 'p' of length 'n' and returns all
-  -- permutations of length 'n'+1 which suffix of length 'n' is order-isomorphic
-  -- to 'p'.
-  --
-  -- >>> extendLeft $ mk [2,1,3]
-  -- [[1,3,2,4],[2,3,1,4],[3,2,1,4],[4,2,1,3]]
-  extendLeft :: Perm -> [Perm]
-  extendLeft p = L.map mkPermUnsafe [k : f k ys | k <- [1..len p+1]]
-    where
-      ys  = getList p
-      f k = F.foldr (\y acc -> (if y<k then y else y+1) : acc) []
-
-  -- |'extendRight' 'p' takes a permutation 'p' of length 'n' and returns all
-  -- permutations of length 'n'+1 which prefix of length 'n' is order-isomorphic
-  -- to 'p'.
-  --
-  -- >>> extendRight $ mk [2,1,3]
-  -- [[3,2,4,1],[3,1,4,2],[2,1,4,3],[2,1,3,4]]
-  extendRight :: Perm -> [Perm]
-  extendRight = L.map rev . extendLeft . rev
 
   -- |'grid' 'p'
   --
