@@ -16,7 +16,9 @@ module Data.Algorithm.PP.Geometry.Point
   -- * Sort
 , sortOn
 , sortOnX
+, sortOnDescX
 , sortOnY
+, sortOnDescY
 
   -- * Locate
 , isOnDiagonal
@@ -71,8 +73,14 @@ where
   sortOnX :: (Foldable t) => t Point -> [Point]
   sortOnX = sortOn getX
 
+  sortOnDescX :: (Foldable t) => t Point -> [Point]
+  sortOnDescX = L.reverse . sortOnX
+
   sortOnY :: (Foldable t) => t Point -> [Point]
   sortOnY = sortOn getY
+
+  sortOnDescY :: (Foldable t) => t Point -> [Point]
+  sortOnDescY = L.reverse . sortOnY
 
   isOnDiagonal :: Point -> Bool
   isOnDiagonal p = getX p == getY p

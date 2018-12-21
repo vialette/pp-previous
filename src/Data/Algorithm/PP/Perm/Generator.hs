@@ -1,15 +1,11 @@
 module Data.Algorithm.PP.Perm.Generator
 (
-  module Data.Algorithm.PP.Perm.Generator.Alternating
-, module Data.Algorithm.PP.Perm.Generator.Avoid
-, module Data.Algorithm.PP.Perm.Generator.Basic
-, module Data.Algorithm.PP.Perm.Generator.Oscillating
-, module Data.Algorithm.PP.Perm.Generator.Random
+  module M
 )
 where
 
-  import Data.Algorithm.PP.Perm.Generator.Alternating
-  import Data.Algorithm.PP.Perm.Generator.Avoid
-  import Data.Algorithm.PP.Perm.Generator.Basic
-  import Data.Algorithm.PP.Perm.Generator.Oscillating
-  import Data.Algorithm.PP.Perm.Generator.Random
+  import Data.Algorithm.PP.Perm.Generator.Alternating as M
+  import Data.Algorithm.PP.Perm.Generator.Avoid       as M
+  import Data.Algorithm.PP.Perm.Generator.Basic       as M
+  import Data.Algorithm.PP.Perm.Generator.Oscillating as M
+  import Data.Algorithm.PP.Perm.Generator.Random      as M

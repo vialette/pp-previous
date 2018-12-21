@@ -1,10 +1,8 @@
 module Data.Algorithm.PP.Perm.Rank
 (
-  -- * Algorithm 1 from Myrvold, and Ruskey, IPL, 2001
+  -- * Myrvold, and Ruskey, IPL, 2001
   rank1
 , unrank1
-
-  -- * Algorithm 2 from Myrvold, and Ruskey, IPL, 2001
 , rank2
 , unrank2
 
