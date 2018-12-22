@@ -44,6 +44,7 @@ where
   import qualified Data.Algorithm.PP.Perm.Generator.Basic         as PP.Perm.Generator.Basic
   import qualified Data.Algorithm.PP.Perm.Small                   as PP.Perm.Small
   import qualified Data.Algorithm.PP.Utils.Foldable               as PP.Utils.Foldable
+  import qualified Data.Algorithm.PP.Utils.List                   as PP.Utils.List
 
   -- |'permsAvoiding_123' 'n' returns all 123-avoiding permutations of length 'n'.
   --
@@ -127,13 +128,19 @@ where
 
   -- |'permsAvoiding_123_312' 'n' returns all (123, 312)-avoiding permutations of length 'n'.
   -- Class D.
+  --
+  -- >>> permsAvoiding_123_312 4
+  -- [[1,2,4,3],[2,1,4,3],[1,4,3,2],[4,3,2,1],[1,2,3,4],[2,1,3,4],[1,3,2,4],[3,2,1,4]]
   permsAvoiding_123_312 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_123_312 _ = []
+  permsAvoiding_123_312 = fmap PP.Perm.Bijection.Trivial.comp . permsAvoiding_132_321
 
   -- |'permsAvoiding_123_231' 'n' returns all (123, 231)-avoiding permutations of length 'n'.
   -- Class D.
+  --
+  -- >>> permsAvoiding_123_231 4
+  -- [[2,1,3,4],[2,1,4,3],[3,2,1,4],[4,3,2,1],[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,3,2]]
   permsAvoiding_123_231 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_123_231 _ = []
+  permsAvoiding_123_231 = fmap PP.Perm.Bijection.Trivial.rev . permsAvoiding_132_321
 
   -- |'permsAvoiding_123_321' 'n' returns all (123, 321)-avoiding permutations of length 'n'.
   -- There is no such permutation for @n>4@.
@@ -142,6 +149,8 @@ where
   -- >>> permsAvoiding_123_321 3
   -- [[1,3,2],[2,1,3],[2,3,1],[3,1,2]]
   -- >>> permsAvoiding_123_321 4
+  -- [[3,4,1,2],[2,4,1,3],[3,1,4,2],[2,1,4,3]]
+  -- >>> permsAvoiding_123_321 5
   -- []
   permsAvoiding_123_321 :: Int -> [PP.Perm.Perm]
   permsAvoiding_123_321 n
@@ -154,28 +163,60 @@ where
 
   -- |'permsAvoiding_132_213' 'n' returns all (132, 213)-avoiding permutations of length 'n'.
   -- class B.
+  --
+  -- >>> permsAvoiding_132_213 4
+  -- [[4,3,1,2],[3,4,1,2],[4,1,2,3],[1,2,3,4],[4,3,2,1],[3,4,2,1],[4,2,3,1],[2,3,4,1]]
   permsAvoiding_132_213 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_132_213 _ = []
+  permsAvoiding_132_213 n
+    | n <= 0    = []
+    | n == 1    = PP.Perm.Generator.Basic.perms 1
+    | n == 2    = PP.Perm.Generator.Basic.perms 2
+    | otherwise = PP.Perm.mkPerm <$> aux 3 [[1, 2], [2, 1]]
+      where
+        aux k xss
+          | k > n     = xss
+          | otherwise = aux (k+1) $ concatMap (\ xs -> [k : xs, PP.Utils.List.insertAfterMax k xs]) xss
 
   -- |'permsAvoiding_132_231' 'n' returns all (132, 231)-avoiding permutations of length 'n'.
   -- Class A.
+  --
+  -- >>> permsAvoiding_132_231 4
+  -- [[4,3,2,1],[3,4,2,1],[2,4,3,1],[2,3,4,1],[1,4,3,2],[1,3,4,2],[1,2,4,3],[1,2,3,4]]
   permsAvoiding_132_231 :: Int -> [PP.Perm.Perm]
   permsAvoiding_132_231 = fmap PP.Perm.Bijection.Trivial.invComp . permsAvoiding_213_231
 
   -- |'permsAvoiding_132_312' 'n' returns all (132, 312)-avoiding permutations of length 'n'.
   -- Class A.
+  --
+  -- >>> permsAvoiding_132_312 4
+  -- [[4,3,2,1],[3,4,2,1],[3,2,4,1],[2,3,4,1],[3,2,1,4],[2,3,1,4],[2,1,3,4],[1,2,3,4]]
   permsAvoiding_132_312 :: Int -> [PP.Perm.Perm]
   permsAvoiding_132_312 = fmap PP.Perm.Bijection.Trivial.rev . permsAvoiding_213_231
 
   -- |'permsAvoiding_132_321' 'n' returns all (132, 321)-avoiding permutations of length 'n'.
   -- Class D.
+  --
+  -- >>> permsAvoiding_132_321 4
+  -- [[4,3,1,2],[3,4,1,2],[4,1,2,3],[1,2,3,4],[4,3,2,1],[3,4,2,1],[4,2,3,1],[2,3,4,1]]
   permsAvoiding_132_321 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_132_321 _ = []
+  permsAvoiding_132_321 n
+    | n <= 0    = []
+    | n == 1    = PP.Perm.Generator.Basic.perms 1
+    | n == 2    = PP.Perm.Generator.Basic.perms 2
+    | otherwise = PP.Perm.mkPerm <$> aux 3 [[1, 2], [2, 1]]
+      where
+        aux k xss
+          | k > n     = xss
+          | otherwise = aux (k+1) $ concatMap f xss
+            where
+              f xs
+                | xs == [1,2..(k-1)] = [k : xs, xs ++ [k]]
+                | otherwise          = L.nub [k : xs, PP.Utils.List.insertAfterMax k xs]
 
   -- |'permsAvoiding_213_231' 'n' returns all (213, 231)-avoiding permutations of length 'n'.
   -- Class A.
   --
-  -- >>> permsAvoiding_213_231 3
+  -- >>> permsAvoiding_213_231 4
   -- [[1,2,3,4],[1,2,4,3],[1,4,2,3],[1,4,3,2],[4,1,2,3],[4,1,3,2],[4,3,1,2],[4,3,2,1]]
   permsAvoiding_213_231 :: Int -> [PP.Perm.Perm]
   permsAvoiding_213_231 n = PP.Perm.mkPerm <$> aux [1..n]
@@ -189,18 +230,27 @@ where
 
   -- |'permsAvoiding_213_312' 'n' returns all (213, 312)-avoiding permutations of length 'n'.
   -- Class A.
+  --
+  -- >>> permsAvoiding_213_312 4
+  -- [[1,2,3,4],[1,2,4,3],[1,3,4,2],[1,4,3,2],[2,3,4,1],[2,4,3,1],[3,4,2,1],[4,3,2,1]]
   permsAvoiding_213_312 :: Int -> [PP.Perm.Perm]
   permsAvoiding_213_312 = fmap PP.Perm.Bijection.Trivial.inv . permsAvoiding_213_231
 
   -- |'permsAvoiding_213_321' 'n' returns all (213, 321)-avoiding permutations of length 'n'.
   -- Class D.
+  --
+  -- >>> permsAvoiding_213_321 4
+  -- [[3,4,2,1],[3,4,1,2],[2,3,4,1],[1,2,3,4],[4,3,2,1],[4,3,1,2],[4,2,3,1],[4,1,2,3]]
   permsAvoiding_213_321 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_213_321 _ = []
+  permsAvoiding_213_321 = fmap PP.Perm.Bijection.Trivial.revComp . permsAvoiding_132_321
 
   -- |'permsAvoiding_231_312' 'n' returns all (231, 312)-avoiding permutations of length 'n'.
   -- class B.
+  --
+  -- >>> permsAvoiding_231_312 4
+  -- [[2,1,3,4],[2,1,4,3],[3,2,1,4],[4,3,2,1],[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,3,2]]
   permsAvoiding_231_312 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_231_312 _ = []
+  permsAvoiding_231_312 = fmap PP.Perm.Bijection.Trivial.rev . permsAvoiding_132_213
 
   -- |'permsAvoiding_231_321' 'n' returns all (231, 321)-avoiding permutations of length 'n'.
   -- class C.

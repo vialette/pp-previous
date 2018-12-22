@@ -3,6 +3,8 @@ module Data.Algorithm.PP.Utils.List
   safeHead
 , safeTail
 
+, insertAfterMax
+
 , groupBy'
 
 , factor
@@ -26,6 +28,7 @@ module Data.Algorithm.PP.Utils.List
 where
 
   import System.Random
+  import Data.Maybe
   import qualified Control.Arrow   as A
   import qualified Data.Foldable   as F
   import qualified Data.List       as L
@@ -42,6 +45,11 @@ where
   safeTail :: [a] -> Maybe [a]
   safeTail []       = Nothing
   safeTail (_ : xs) = Just xs
+
+  insertAfterMax :: (Eq a, Ord a) => a-> [a] -> [a]
+  insertAfterMax x xs = xs' ++ [y, x] ++ xs''
+    where
+      (xs', y : xs'') = flip L.splitAt xs . fromJust . flip L.elemIndex xs $ F.maximum xs
 
   -- |'groupBy''
   groupBy' :: (a -> a -> Bool) -> [a] -> [[a]]
