@@ -48,7 +48,8 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Data.Algorithm.PP.Geometry.Point
+  exposed-modules:     Data.Algorithm.PP.Dyck
+                     , Data.Algorithm.PP.Geometry.Point
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Bijection
@@ -63,7 +64,7 @@ library
                      , Data.Algorithm.PP.Perm.SquareBy
                      , Data.Algorithm.PP.Perm.Generator
                      , Data.Algorithm.PP.Perm.Generator.Alternating
-                     , Data.Algorithm.PP.Perm.Generator.Avoid
+                     , Data.Algorithm.PP.Perm.Generator.Avoiding
                      , Data.Algorithm.PP.Perm.Generator.Basic
                      , Data.Algorithm.PP.Perm.Generator.Oscillating
                      , Data.Algorithm.PP.Perm.Generator.Random
