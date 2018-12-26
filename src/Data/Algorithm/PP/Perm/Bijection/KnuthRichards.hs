@@ -16,9 +16,9 @@ where
 
 
   -- |'knuthRichards' 'perm'
-  knuthRichards :: PP.Perm.Perm -> PP.Dyck.LPath ()
-  knuthRichards _ = PP.Perm.mkPerm [] -- PP.Perm.Bijection.Richards.richards . PP.Perm.Bijection.Knuth.knuth
+  knuthRichards :: PP.Perm.Perm -> PP.Perm.Perm
+  knuthRichards _ = PP.Perm.mkPerm [1] -- PP.Perm.Bijection.Richards.richards . PP.Perm.Bijection.Knuth.knuth
 
   -- |'invKnuthRichards' 'perm'
-  invKnuthRichards :: PP.Perm.Perm -> PP.Dyck.LPath ()
-  invKnuthRichards _ = PP.Perm.mkPerm []
+  invKnuthRichards :: PP.Perm.Perm -> PP.Perm.Perm
+  invKnuthRichards _ = PP.Perm.mkPerm [1]

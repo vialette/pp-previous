@@ -7,8 +7,10 @@ where
 
   import qualified Data.Algorithm.PP.Perm            as PP.Perm
 
+  -- |'reifegerste' 'perm'
   reifegerste :: PP.Perm.Perm -> PP.Perm.Perm
-  reifegerste _ = PP.Perm.mkPerm []
+  reifegerste _ = PP.Perm.mkPerm [1]
 
+  -- |'invReifegerste' 'perm'
   invReifegerste :: PP.Perm.Perm -> PP.Perm.Perm
-  invReifegerste _ = PP.Perm.mkPerm []
+  invReifegerste _ = PP.Perm.mkPerm [1]

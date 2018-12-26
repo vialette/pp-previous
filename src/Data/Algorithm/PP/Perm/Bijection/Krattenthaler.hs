@@ -9,7 +9,8 @@ where
 
   -- |'krattenthaler' 'perm'
   krattenthaler :: PP.Perm.Perm -> PP.Perm.Perm
-  krattenthaler _ = PP.Perm.mkPerm []
+  krattenthaler _ = PP.Perm.mkPerm [1]
 
+  -- |'invKrattenthaler' 'perm'
   invKrattenthaler :: PP.Perm.Perm -> PP.Perm.Perm
-  invKrattenthaler _ = PP.Perm.mkPerm []
+  invKrattenthaler _ = PP.Perm.mkPerm [1]

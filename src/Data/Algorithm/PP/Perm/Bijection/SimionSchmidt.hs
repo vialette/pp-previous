@@ -72,7 +72,7 @@ where
   invSimionSchmidt :: PP.Perm.Perm -> PP.Perm.Perm
   invSimionSchmidt perm = PP.Perm.fromPoints (minPoints ++ otherPoints')
     where
-      minPoints    = PP.Perm.Statistics.leftToRightMinima p
+      minPoints    = PP.Perm.Statistics.leftToRightMinima perm
       otherPoints  = PP.Geometry.Point.sortOnY . L.filter (`F.notElem` minPoints) $ PP.Perm.getPoints perm
       otherPoints' = F.concat . T.fst . F.foldl f ([], otherPoints) $ intervals (L.length otherPoints) minPoints
         where

@@ -22,7 +22,7 @@ where
   import qualified Data.Algorithm.PP.Geometry.Point  as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm            as PP.Perm
 
-  -- | 'inv' 'perm' returns the inverse of the permutation 'p'.
+  -- | 'inv' 'perm' returns the inverse of the permutation 'perm'.
   --
   -- prop> inv (inv perm) = perm
   --
@@ -31,7 +31,7 @@ where
   inv :: PP.Perm.Perm -> PP.Perm.Perm
   inv = PP.Perm.mkPermUnsafe . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . fmap PP.Geometry.Point.symmetric . PP.Perm.getPoints
 
-  -- | 'rev' 'p' returns the reverse of the permutation 'p'.
+  -- | 'rev' 'perm' returns the reverse of the permutation 'perm'.
   --
   -- prop> rev (rev perm) = perm
   --
@@ -40,7 +40,7 @@ where
   rev :: PP.Perm.Perm -> PP.Perm.Perm
   rev = PP.Perm.mkPermUnsafe . L.reverse . PP.Perm.getList
 
-  -- | 'comp' 'p' returns the complement of the permutation 'p'.
+  -- | 'comp' 'perm' returns the complement of the permutation 'perm'.
   --
   -- prop> comp (comp perm) = perm
   --
@@ -52,46 +52,46 @@ where
       ys = PP.Perm.getList p
       m  = F.maximum ys
 
-  -- | 'revComp' 'p' returns the reverse complement of the permutation 'p'.
+  -- | 'revComp' 'perm' returns the reverse complement of the permutation 'perm'.
   --
   -- >>> revComp $ mk [1,3,4,2]
   -- [3,1,2,4]
   revComp :: PP.Perm.Perm -> PP.Perm.Perm
   revComp = rev . comp
 
-  -- | 'compRev' 'p' returns the complement reverse of the permutation 'p'.
+  -- | 'compRev' 'perm' returns the complement reverse of the permutation 'perm'.
   --
   -- prop> revComp p == compRev p
   compRev :: PP.Perm.Perm -> PP.Perm.Perm
   compRev = revComp
 
-  -- | 'compInv' 'p' returns the complement inverse of the permutation 'p'.
+  -- | 'compInv' 'perm' returns the complement inverse of the permutation 'perm'.
   --
   -- >>> compInv $ mk [1,3,4,2]
   -- [4,1,3,2]
   compInv :: PP.Perm.Perm -> PP.Perm.Perm
   compInv = comp . inv
 
-  -- | 'invRev' 'p' returns the inverset inverse of the permutation 'p'.
+  -- | 'invRev' 'perm' returns the inverset inverse of the permutation 'perm'.
   --
   -- prop> invRev p == compRev
   invRev :: PP.Perm.Perm -> PP.Perm.Perm
   invRev = comp . inv
 
-  -- | 'invComp' 'p' returns the inverse complement of the permutation 'p'.
+  -- | 'invComp' 'perm' returns the inverse complement of the permutation 'perm'.
   --
   -- >>> invComp $ mk [1,3,4,2]
   -- [3,2,4,1]
   invComp :: PP.Perm.Perm -> PP.Perm.Perm
   invComp = inv . comp
 
-  -- | 'revInv' 'p' returns the reverse inverse of the permutation 'p'.
+  -- | 'revInv' 'perm' returns the reverse inverse of the permutation 'perm'.
   --
   -- prop> revInv p == invComp p
   revInv :: PP.Perm.Perm -> PP.Perm.Perm
   revInv = invComp
 
-  -- | 'invRevComp' 'p' returns the inverse reverse complement of permutation 'p'.
+  -- | 'invRevComp' 'perm' returns the inverse reverse complement of permutation 'perm'.
   --
   -- >>> invRevComp $ mk [1,3,4,2]
   -- [2,3,1,4

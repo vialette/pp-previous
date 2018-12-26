@@ -27,4 +27,4 @@ where
           (left, right) = PP.Utils.List.splitOn maxY xs
 
   invRichards :: PP.Perm.Perm -> PP.Perm.Perm
-  invRichards _ = PP.Perm.mkPerm []
+  invRichards _ = PP.Perm.mkPerm [1]

@@ -53,7 +53,7 @@ library
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Bijection
-                     , Data.Algorithm.PP.Perm.Bijection.ElizaldeDeutsch
+                     , Data.Algorithm.PP.Perm.Bijection.Bijection_321_132.ElizaldeDeutsch
                      , Data.Algorithm.PP.Perm.Bijection.Knuth
                      , Data.Algorithm.PP.Perm.Bijection.KnuthRichards
                      , Data.Algorithm.PP.Perm.Bijection.Krattenthaler

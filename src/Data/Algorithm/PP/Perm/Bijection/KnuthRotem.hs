@@ -63,4 +63,4 @@ where
 
   -- |'invKnuthRotem' 'perm'
   invKnuthRotem :: PP.Perm.Perm -> PP.Perm.Perm
-  invKnuthRotem _ = PP.Perm.mkPerm []
+  invKnuthRotem _ = PP.Perm.mkPerm [1]

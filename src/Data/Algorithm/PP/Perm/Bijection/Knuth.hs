@@ -36,4 +36,4 @@ where
           (left, right) = PP.Utils.List.splitOn maxY xs
 
   invKnuth :: PP.Perm.Perm -> PP.Perm.Perm
-  invKnuth _ = PP.Perm.mkPerm []
+  invKnuth _ = PP.Perm.mkPerm [1]
