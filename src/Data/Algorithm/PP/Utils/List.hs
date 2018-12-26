@@ -3,6 +3,8 @@ module Data.Algorithm.PP.Utils.List
   safeHead
 , safeTail
 
+, splitOn
+
 , insertAfterMax
 
 , groupBy'
@@ -45,6 +47,14 @@ where
   safeTail :: [a] -> Maybe [a]
   safeTail []       = Nothing
   safeTail (_ : xs) = Just xs
+
+  splitOn :: (Ord a) => a -> [a] -> ([a], [a])
+  splitOn x = aux []
+    where
+      aux acc [] = (L.reverse acc, [])
+      aux acc (x' : xs)
+        | x' < x    = aux (x' : acc) xs
+        | otherwise = (L.reverse acc, xs)
 
   insertAfterMax :: (Eq a, Ord a) => a-> [a] -> [a]
   insertAfterMax x xs = xs' ++ [y, x] ++ xs''

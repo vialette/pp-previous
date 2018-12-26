@@ -53,8 +53,17 @@ library
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
                      , Data.Algorithm.PP.Perm.Bijection
-                     , Data.Algorithm.PP.Perm.Bijection.Trivial
+                     , Data.Algorithm.PP.Perm.Bijection.ElizaldeDeutsch
+                     , Data.Algorithm.PP.Perm.Bijection.Knuth
+                     , Data.Algorithm.PP.Perm.Bijection.KnuthRichards
+                     , Data.Algorithm.PP.Perm.Bijection.Krattenthaler
+                     , Data.Algorithm.PP.Perm.Bijection.KnuthRotem
+                     , Data.Algorithm.PP.Perm.Bijection.MansourDengDu
+                     , Data.Algorithm.PP.Perm.Bijection.Reifegerste
+                     , Data.Algorithm.PP.Perm.Bijection.Richards
                      , Data.Algorithm.PP.Perm.Bijection.SimionSchmidt
+                     , Data.Algorithm.PP.Perm.Bijection.Trivial
+                     , Data.Algorithm.PP.Perm.Bijection.West
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
                      , Data.Algorithm.PP.Perm.Complexity

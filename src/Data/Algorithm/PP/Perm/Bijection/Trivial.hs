@@ -22,9 +22,9 @@ where
   import qualified Data.Algorithm.PP.Geometry.Point  as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm            as PP.Perm
 
-  -- | 'inv' 'p' returns the inverse of the permutation 'p'.
+  -- | 'inv' 'perm' returns the inverse of the permutation 'p'.
   --
-  -- prop> inv (inv p) = p
+  -- prop> inv (inv perm) = perm
   --
   -- >>> inv $ mk [1,3,4,2]
   -- [1,4,2,3]
@@ -33,7 +33,7 @@ where
 
   -- | 'rev' 'p' returns the reverse of the permutation 'p'.
   --
-  -- prop> rev (rev p) = p
+  -- prop> rev (rev perm) = perm
   --
   -- >>> rev $ mk [1,3,4,2]
   -- [2,4,3,1]
@@ -42,7 +42,7 @@ where
 
   -- | 'comp' 'p' returns the complement of the permutation 'p'.
   --
-  -- prop> comp (comp p) = p
+  -- prop> comp (comp perm) = perm
   --
   -- >>> comp $ mk [1,3,4,2]
   -- [4,2,1,3]

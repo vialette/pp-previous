@@ -29,6 +29,9 @@ module Data.Algorithm.PP.Perm.Generator.Avoiding
 
   -- * Avoiding a pattern of length 4
 , permsAvoiding_2413_3142
+
+  -- * Avoiding some patterns
+, permsAvoiding
 )
 where
 
@@ -80,7 +83,7 @@ where
   -- >>> permsAvoiding_231 4
   --[[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,2,3],[1,4,3,2],[2,1,3,4],[2,1,4,3],[3,1,2,4],[3,2,1,4],[4,1,2,3],[4,1,3,2],[4,2,1,3],[4,3,1,2],[4,3,2,1]]
   permsAvoiding_231 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_231 = fmap (PP.Perm.mkPerm . F.foldr f [] . PP.Dyck.leftToRightDownLabel) . PP.Dyck.paths
+  permsAvoiding_231 = fmap (PP.Perm.mkPerm . F.foldr f [] . PP.Dyck.getSteps . PP.Dyck.labelLeftToRightDown) . PP.Dyck.paths
     where
       f (PP.Dyck.LUp i)   acc = i : acc
       f (PP.Dyck.LDown _) acc = acc
@@ -272,3 +275,10 @@ where
   -- (aka separable permutations).
   permsAvoiding_2413_3142 :: Int -> [PP.Perm.Perm]
   permsAvoiding_2413_3142 n = []
+
+
+  -- |'permsAvoiding' 'n' 'ps' returns all permutations of length 'n' that avoid the
+  -- permutations of 'ps'.
+  permsAvoiding :: Int -> [PP.Perm.Perm] -> [PP.Perm.Perm]
+  permsAvoiding _ _ = []
+  --permsAvoiding n = F.foldr (L.filter (PP.Perm.Avoidance.avoid p)) (PP.Perm.Generator.Basic.perms n) . L.sort . PP.Utils.List.uniq
