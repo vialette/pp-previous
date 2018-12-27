@@ -48,7 +48,8 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Data.Algorithm.PP.Dyck
+  exposed-modules:     Data.Algorithm.PP.Combinatorics
+                     , Data.Algorithm.PP.Dyck
                      , Data.Algorithm.PP.Geometry.Point
                      , Data.Algorithm.PP.Perm
                      , Data.Algorithm.PP.Perm.Avoidance
@@ -102,6 +103,7 @@ library
                      , containers >=0.5 && <0.6
                      , random >=1.1
                      , array >=0.5
+                     , split >=0.2
 
   -- Directories containing source files.
   hs-source-dirs:      src
@@ -117,6 +119,7 @@ executable pp
                      , containers >=0.5 && <0.6
                      , random >=1.1
                      , array >=0.5
+                     , split >=0.2
 
   --, pqueue>=1.4
   hs-source-dirs:      src
@@ -131,6 +134,7 @@ executable max-complexity
                      , containers >=0.5 && <0.6
                      , random >=1.1
                      , array >=0.5
+                     , split >=0.2
 
   --, pqueue>=1.4
   hs-source-dirs:      src
@@ -145,6 +149,7 @@ executable max-square-root-complexity
                      , containers >=0.5 && <0.6
                      , random >=1.1
                      , array >=0.5
+                     , split >=0.2
 
   --, pqueue>=1.4
   hs-source-dirs:      src

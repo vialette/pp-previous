@@ -5,7 +5,6 @@ module Data.Algorithm.PP.Perm.Bijection.SimionSchmidt
 )
 where
 
-  import Control.Applicative
   import qualified Data.Foldable as F
   import qualified Data.List     as L
   import qualified Data.Tuple    as T

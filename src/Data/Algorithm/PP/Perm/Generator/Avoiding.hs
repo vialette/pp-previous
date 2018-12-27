@@ -40,7 +40,7 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Dyck                         as PP.Dyck
+  import qualified Data.Algorithm.PP.Path.Dyck                    as PP.Path.Dyck
   import qualified Data.Algorithm.PP.Perm                         as PP.Perm
   import qualified Data.Algorithm.PP.Perm.Bijection.Trivial       as PP.Perm.Bijection.Trivial
   import qualified Data.Algorithm.PP.Perm.Bijection.SimionSchmidt as PP.Perm.Bijection.SimionSchmidt
@@ -83,10 +83,10 @@ where
   -- >>> permsAvoiding_231 4
   --[[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,2,3],[1,4,3,2],[2,1,3,4],[2,1,4,3],[3,1,2,4],[3,2,1,4],[4,1,2,3],[4,1,3,2],[4,2,1,3],[4,3,1,2],[4,3,2,1]]
   permsAvoiding_231 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_231 = fmap (PP.Perm.mkPerm . F.foldr f [] . PP.Dyck.getSteps . PP.Dyck.labelLeftToRightDown) . PP.Dyck.paths
+  permsAvoiding_231 = fmap (PP.Perm.mkPerm . F.foldr f [] . PP.Path.Dyck.getSteps . PP.Path.Dyck.labelLeftToRightDown) . PP.Path.Dyck.paths
     where
-      f (PP.Dyck.LUp i)   acc = i : acc
-      f (PP.Dyck.LDown _) acc = acc
+      f (PP.Path.Dyck.LUp i)   acc = i : acc
+      f (PP.Path.Dyck.LDown _) acc = acc
 
   -- |'permsAvoiding_312' 'n' returns all 312-avoiding permutations of length 'n'.
   --
