@@ -21,8 +21,12 @@ module Data.Algorithm.PP.Path.Dyck
 )
 where
 
+  import Control.Applicative ((<$>))
+  import qualified Data.Foldable as F
+  import qualified Data.Traversable as Traversable
   import qualified Data.List.Split as L.Split
 
+  import qualified Data.Algorithm.PP.Combnitatorics as PP.Combnatorics
   import qualified Data.Algorithm.PP.Path as PP.Path
 
   -- |'mk' 'steps'
@@ -48,7 +52,7 @@ where
   -- >>> paths 3
   -- [()()(),()(()),(())(),(()()),((()))]
   paths :: Int -> [PP.Path.Path ()]
-  paths = fmap PP.Path.mk . aux
+  paths = fmap PP.Path.mk . aux 
     where
       aux 0 = [[]]
       aux n = [[PP.Path.UpStep ()] ++ xs ++ [PP.Path.DownStep ()] ++ ys | m <- [0..n-1]
@@ -56,15 +60,19 @@ where
 
   -- |'returnPaths' 'k' 'n' returns all Dyck paths of length 'n' with 'k' returns
   -- to the x-axis (excluding the first and last steps).
+  --
+  -- >>>
   returnPaths :: Int -> Int -> [Path a]
-  returnPaths k n = ps
+  returnPaths k = concatMap f . PP.Combinatorics (k+1)
+    where
+      f xs = (mk . mconcat. fmap getSteps) <$> sequence [paths x | x <- xs]
 
   -- |'noReturnPaths' 'n' returns all Dyck path with no return to the x-axis
   -- (excluding the first and last steps).
   --
   -- >>>
   noReturnPaths :: Int -> [Path a]
-  noReturnPaths = returnPaths 0
+  noReturnPaths = [[PP.Path.UpStep ()] ++ p ++ [PP.Path.DownStep ()] | p <- paths (n-2)]
 
   -- |'startUpStepPaths' 'k' 'n' returns all Dyck path of length 'n' that start
   -- with 'k' up-steps.

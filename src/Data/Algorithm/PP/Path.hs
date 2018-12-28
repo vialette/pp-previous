@@ -8,6 +8,7 @@ module Data.Algorithm.PP.Path
 , mk
 , paths
 , returnPaths
+, noReturnPaths
 , returnPosPaths
 , returnNegPaths
 , startUpStepPaths
@@ -23,7 +24,7 @@ module Data.Algorithm.PP.Path
 , splitAtReturn
 
   -- * Seeing
-, showA
+, showFull
 
   -- * Querying
 , len
@@ -35,14 +36,21 @@ module Data.Algorithm.PP.Path
 )
 where
 
+  import Control.Applicative ((<$>), (<*>))
   import Control.Arrow ((***))
   import qualified Data.Foldable as F
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  data Step a = UpStep a | DownStep a
+  data Step a = UpStep a | DownStep a deriving (Eq, Ord)
 
-  newtype Path a = Path { getSteps :: [Step a]}
+  newtype Path a = Path { getSteps :: [Step a] } deriving (Eq, Ord)
+
+  instance Semigroup (Path a) where
+    p <> p' = mk (getSteps p ++ getSteps p')
+
+  instance Monoid (Path a) where
+      mempty = mk []
 
   instance (Show a) => Show (Step a) where
     show (UpStep _)    = "("
@@ -51,37 +59,96 @@ where
   instance (Show a) => Show (Path a) where
     show = F.concatMap show . getSteps
 
-  -- |'showA' 'p'
-  showA :: (Show a) => Path a -> String
-  showA = F.concatMap f . getSteps
+  -- |'showFull' 'p'
+  showFull :: (Show a) => Path a -> String
+  showFull = F.concatMap f . getSteps
     where
       f (UpStep x)    = '(' : show x
       f (DownStep x)  = ')' : show x
 
-  -- |'mk' 'ss'
+  -- |'mk' 'ss' return a path from a list of steps 'ss'.
   --
   -- >>>
   mk ss = Path { getSteps = ss }
 
-  -- |'paths' 'n'
+  -- |'map' 'f' 'p'
   --
   -- >>>
-  paths :: Int -> [Path a]
-  paths 0 = []
-  paths n = fmap mk . aux n
-    where
-      aux 0 = []
-      aux n' = fmap (UpStep () :) ss ++ fmap (DownStep () :) ss
-        where
-          ss = aux (n'-1)
+  map :: (Step a -> Step b) -> Path a -> Path b
+  map f = mk . fmap f . getSteps
 
-  -- |'returnPaths' 'k' 'n' returns all Dyck paths of length 'n' with 'k' returns
-  -- to the x-axis (exclusing the first and last points).
+  -- |'paths' 'n' returns all paths of length 'n' starting from the x-axis.
   --
   -- >>>
-  returnPaths :: Int -> Int -> [Path a]
+  paths :: Int -> [Path ()]
+  paths 0 = []
+  paths n = mk <$> aux n
+    where
+      aux 0 = [[]]
+      aux n' = (:) <$> [UpStep (), DownStep ()] <*> aux (n'-1)
+
+  -- |'returnPaths' 'k' 'n' returns all positive paths of length 'n' starting
+  -- from the x-axis and ending at the x-axis with 'k' internal returns to the
+  -- x-axis.
+  --
+  -- >>>
+  returnPosPaths :: Int -> Int -> [Path ()]
+  returnPosPaths k n = concatMap f $ PP.Combinatorics.partitions (k+1) n
+    where
+      f xs = (mk . mconcat. fmap getSteps) <$> sequence [returnPosPaths 0 x | x <- xs]
+
+  -- |'returnPaths' 'k' 'n' returns all paths of length 'n' with 'k' returns
+  -- to the x-axis (excluding the first and last points).
+  --
+  -- >>>
+  returnNegPaths :: Int -> Int -> [Path ()]
+  returnNegPaths k = fmap mirror . returnPosPaths k
+
+  -- |'returnPaths' 'k' 'n' returns all paths of length 'n' with 'k' returns
+  -- to the x-axis (excluding the first and last points).
+  --
+  -- >>>
+  returnPaths :: Int -> Int -> [Path ()]
   returnPaths k n = ps
 
+  -- |'returnPaths'' 'k' 'n' returns all paths of length 'n' with 'k' returns
+  -- to the x-axis (excluding the first point) and ending on the x-axis.
+  --
+  -- >>>
+  returnPosPaths' :: Int -> Int -> [Path ()]
+  returnPosPaths' k n = PP.Combinatorics k n
+
+  -- |'returnPaths'' 'k' 'n' returns all paths of length 'n' with 'k' returns
+  -- to the x-axis (excluding the first point) and ending on the x-axis.
+  --
+  -- >>>
+  returnNegPaths' :: Int -> Int -> [Path ()]
+  returnNegPaths' k = fmap mirror . returnPosPaths' k
+
+  -- |'returnPaths'' 'k' 'n' returns all paths of length 'n' with 'k' returns
+  -- to the x-axis (excluding the first point) and ending on the x-axis.
+  --
+  -- >>>
+  returnPaths' :: Int -> Int -> [Path ()]
+  returnPaths' k n = ps
+
+  -- |'noReturnPaths' 'n'
+  --
+  -- >>>
+  noReturnPosPaths :: Int -> [Path ()]
+  noReturnPaths = strictlyPosPaths
+
+  -- |'noReturnPaths' 'n'
+  --
+  -- >>>
+  noReturnNegPaths :: Int -> [Path ()]
+  noReturnNegPaths = strictlyNegPaths
+
+  -- |'noReturnPaths' 'n'
+  --
+  -- >>>
+  noReturnPaths :: Int -> [Path ()]
+  noReturnPaths = noReturnPosPaths `mappend` noReturnNegPaths
 
   -- |'returnNegPaths' 'k' 'n'
   --
@@ -101,33 +168,6 @@ where
   startDownStepPaths :: Int -> Int -> [Path a]
   startDownStepPaths m n = L.replicate k (DownStep ()) ++ paths (n-k)
 
-  -- |'strictlyPosPaths' 'n'
-  --
-  -- >>>
-  strictlyPosPaths :: Int -> [Path a]
-  strictlyPosPaths 0 = []
-  strictlyPosPaths n = fmap mk . aux n 0
-    where
-      aux 0  _ = []
-      aux n' h
-        | h <= 1    = fmap (UpStep () :) (aux (n'-1) 1)
-        | otherwise = fmap (UpStep () :) ss ++ fmap (DownStep () :) ss
-          where
-            ss = aux (n'-1) (h+1)
-
-  -- |'posPaths' 'n'
-  --
-  -- >>>
-  posPaths :: Int -> [Path a]
-  posPaths 0 = []
-  posPaths n = fmap mk . aux n 0
-    where
-      aux 0  _ = []
-      aux n' h
-        | h == 0    = fmap (UpStep () :) (aux (n'-1) 1)
-        | otherwise = fmap (UpStep () :) ss ++ fmap (DownStep () :) ss
-          where
-            ss = aux (n'-1) (h+1)
 
   -- |'strictlyNegPaths' 'n'
   --
@@ -141,6 +181,7 @@ where
   negPaths :: Int -> [Path a]
   negPaths = fmap mirror . posPaths
 
+  --
   flipStep :: Step a -> Step a
   flipStep (UpStep x)   = DownStep x
   flipStep (DownStep x) = UpStep x
