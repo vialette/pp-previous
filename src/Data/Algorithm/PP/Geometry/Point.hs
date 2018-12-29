@@ -6,6 +6,8 @@ module Data.Algorithm.PP.Geometry.Point
   -- * Construction
 , mk
 , mk'
+, zero
+, move
 , symmetric
 
   -- * Querying
@@ -57,6 +59,11 @@ where
 
   mk' :: (Int, Int) -> Point
   mk' = uncurry mk
+
+  -- |'zero' return the (0,0) point.
+  zero = mk 0 0
+
+  move dx dy p = mk (getX + dx) (getY + dy)
 
   symmetric :: Point -> Point
   symmetric Point { getCoordinates = (x, y) } = mk y x
