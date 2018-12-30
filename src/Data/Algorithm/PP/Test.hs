@@ -2,6 +2,7 @@ import Control.Applicative ((<$>), (<*>))
 import Control.Arrow ((***))
 import qualified Data.Foldable as F
 import qualified Data.List as L
+import qualified Data.Tuple as T
 
 data Step a = UpStep a | DownStep a deriving (Show, Eq, Ord)
 
@@ -134,3 +135,10 @@ splitAtReturn = (mk *** mk) . aux [] 0 . getSteps
     aux acc h (s@(DownStep x) : ss)
       | h == 1    = (L.reverse (s : acc), ss)
       | otherwise = aux (s : acc) (h-1) ss
+
+-- splitEvery :: (a -> Bool) -> [a] -> [[a]]
+splitEvery p = (\ (xs, xss) -> if L.null xs then xss else xs : xss) . F.foldr f ([], [])
+  where
+    f x (currentAcc, acc)
+      | p x       = if L.null currentAcc then ([x], acc) else ([x], currentAcc : acc)
+      | otherwise = (x : currentAcc, acc)

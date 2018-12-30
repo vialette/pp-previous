@@ -1,27 +1,46 @@
-module Data.Algorithm.PP.Path.Step
-(
+module Data.Algorithm.PP.Path.Step (
+    -- * Type
+    Step(..)
 
-)
-where
+    -- * Transforming
+  , flipStep
+  , dropParameter
 
-  data Step a = UpStep a | DownStep a deriving (Eq, Ord)
+    -- * Querying
+  , getParameter
+  , isLStep
+  , isRStep
+  ) where
 
-  instance (Show a) => Show (Step a) where
-    show (UpStep _)    = "("
-    show (DownStep _)  = ")"
+-- |Type definition.
+data Step a = LStep a | RStep a deriving (Eq, Ord)
 
-  -- Default UpStep charactr.
-  defaultUpStepChar :: Char
-  defaultUpStepChar = '/'
+-- |Show instance
+instance (Show a) => Show (Step a) where
+  show (LStep _)    = "("
+  show (RStep _)  = ")"
 
-  -- Default DownStep charactr.
-  defaultDownStepChar :: Char
-  defaultDownStepChar = '\\'
+-- |'flipStep' 's' flips the step 's'
+flipStep :: Step a -> Step a
+flipStep (LStep x) = RStep x
+flipStep (RStep x) = LStep x
 
-  -- Default UpStep charactr.
-  defaultUpStepChar :: Char
-  defaultUpStepChar = '|'
+-- |'dropParameter' 's'
+dropParameter :: Step a -> Step ()
+dropParameter (LStep _) = LStep ()
+dropParameter (RStep _) = RStep ()
 
-  -- Default DownStep charactr.
-  defaultRightStepChar :: Char
-  defaultRightStepChar = '-'
+-- |'param' 's'
+getParameter :: Step a -> a
+getParameter (LStep x) = x
+getParameter (RStep x) = x
+
+-- |'isLStep' 's' returns 'True'if the step 's'is an up-step.
+isLStep :: Step a -> Bool
+isLStep (LStep _) = True
+isLStep (RStep _) = False
+
+-- |'isRStep' 's' returns 'True'if the step 's'is a down-step.
+isRStep :: Step a -> Bool
+isRStep (LStep _) = True
+isRStep (RStep _) = False

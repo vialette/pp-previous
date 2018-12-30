@@ -54,6 +54,7 @@ where
   instance Show Point where
     show Point { getCoordinates = (x, y) } = "(" ++ show x ++ "," ++ show y ++ ")"
 
+  -- |'mk' x' 'y' return the point with (x, y) coordinates.
   mk :: Int -> Int -> Point
   mk x y = Point { getCoordinates = (x, y) }
 
@@ -61,37 +62,53 @@ where
   mk' = uncurry mk
 
   -- |'zero' return the (0,0) point.
+  zero :: Point
   zero = mk 0 0
 
-  move dx dy p = mk (getX + dx) (getY + dy)
+  -- |'move' 'dx' 'dy' 'p' returns the point (x+dx, y+dy), where (x,y) are
+  -- the coordinates of the point 'p'.
+  move :: Int -> Int -> Point -> Point
+  move dx dy p = mk (getX p + dx) (getY p + dy)
 
+  -- |'symmetric' 'p' return the point with coordinates (y, x),
+  -- where (x,y) are the coordinates of the point 'p'.
   symmetric :: Point -> Point
   symmetric Point { getCoordinates = (x, y) } = mk y x
 
+  -- |'getX' 'p' return the x-coordinate of the point 'p'.
   getX :: Point -> Int
   getX = T.fst . getCoordinates
 
+  -- |'getY' 'p' return the y-coordinate of the point 'p'.
   getY :: Point -> Int
   getY = T.snd . getCoordinates
 
   sortOn :: (Foldable t) => (Point -> Int) -> t Point -> [Point]
   sortOn f = L.sortOn f . F.toList
 
+  -- |'sortOnX' 'ps' ascending sorts points 'ps' according to their x-ccordinates.
   sortOnX :: (Foldable t) => t Point -> [Point]
   sortOnX = sortOn getX
 
+  -- |'sortOnDescX' 'ps' descending sorts points 'ps' according to their x-ccordinates.
   sortOnDescX :: (Foldable t) => t Point -> [Point]
   sortOnDescX = L.reverse . sortOnX
 
+  -- |'sortOnY' 'ps' ascending sorts points 'ps' according to their y-ccordinates.
   sortOnY :: (Foldable t) => t Point -> [Point]
   sortOnY = sortOn getY
 
+  -- |'sortOnDescY' 'ps' descending sorts points 'ps' according to their y-ccordinates.
   sortOnDescY :: (Foldable t) => t Point -> [Point]
   sortOnDescY = L.reverse . sortOnY
 
+  -- |'isOnDiagonal' 'p' returns 'True' if @x == y@,
+  -- where (x,y) are the coordinates of the point 'p'.
   isOnDiagonal :: Point -> Bool
   isOnDiagonal p = getX p == getY p
 
+  -- |'isNotOnDiagonal' 'p' returns 'True' if @x /= y@,
+  -- where (x,y) are the coordinates of the point 'p'.
   isNotOnDiagonal :: Point -> Bool
   isNotOnDiagonal = not . isOnDiagonal
 

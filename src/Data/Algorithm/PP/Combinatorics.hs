@@ -1,31 +1,9 @@
--- module Data.Algorithm.PP.Combnatorics
--- (
---   evenPartitions
--- )
--- where
-
-  -- |'evenPartitions' 'n' 'k' returns all ordered partitions of @[n]@ into 'k'
-  -- even parts.
-  --
-  -- >>> evenPartitions 1 10
-  -- [[10]]
-  -- >>> evenPartitions 2 10
-  -- [[2,8],[4,6],[6,4],[8,2]]
-  -- >>> evenPartitions 3 10
-  -- [[2,2,6],[2,4,4],[2,6,2],[4,2,4],[4,4,2],[6,2,2]]
-  -- >>> evenPartitions 4 10
-  -- [[2,2,2,4],[2,2,4,2],[2,4,2,2],[4,2,2,2]]
-  -- >>> evenPartitions 5 10
-  -- [[2,2,2,2,2]]
-  -- >>> evenPartitions 6 10
-  -- []
-  evenPartitions :: Int -> Int -> [[Int]]
-  evenPartitions k n
-    | odd n || k <= 0 = []
-    | otherwise       = aux k n
-      where
-        aux 1  n' = [[n']]
-        aux k' n' = [x : xs | x <- [2,4..n'-(2*(k'-1))], xs <- aux (k'-1) (n'-x)]
+module Data.Algorithm.PP.Combnatorics
+(
+  partitions
+, evenPartitions
+)
+where
 
   -- |'partitions' 'k' 'n' returns all ordered partitions of @[n]@into 'k' parts.
   --
@@ -50,3 +28,26 @@
       where
         aux 1  n' = [[n']]
         aux k' n' = [x : xs | x <- [1..n'-k'+1], xs <- aux (k'-1) (n'-x)]
+
+  -- |'evenPartitions' 'n' 'k' returns all ordered partitions of @[n]@ into 'k'
+  -- even parts.
+  --
+  -- >>> evenPartitions 1 10
+  -- [[10]]
+  -- >>> evenPartitions 2 10
+  -- [[2,8],[4,6],[6,4],[8,2]]
+  -- >>> evenPartitions 3 10
+  -- [[2,2,6],[2,4,4],[2,6,2],[4,2,4],[4,4,2],[6,2,2]]
+  -- >>> evenPartitions 4 10
+  -- [[2,2,2,4],[2,2,4,2],[2,4,2,2],[4,2,2,2]]
+  -- >>> evenPartitions 5 10
+  -- [[2,2,2,2,2]]
+  -- >>> evenPartitions 6 10
+  -- []
+  evenPartitions :: Int -> Int -> [[Int]]
+  evenPartitions k n
+    | odd n || k <= 0 = []
+    | otherwise       = aux k n
+      where
+        aux 1  n' = [[n']]
+        aux k' n' = [x : xs | x <- [2,4..n'-(2*(k'-1))], xs <- aux (k'-1) (n'-x)]
