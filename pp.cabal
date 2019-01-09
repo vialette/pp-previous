@@ -68,6 +68,7 @@ library
                      , Data.Algorithm.PP.Perm.Class.Simple
                      , Data.Algorithm.PP.Perm.Combine
                      , Data.Algorithm.PP.Perm.Complexity
+                     , Data.Algorithm.PP.Perm.DeterministicReversal
                      , Data.Algorithm.PP.Perm.ShuffleSquare
                      , Data.Algorithm.PP.Perm.ShuffleSquareBy
                      , Data.Algorithm.PP.Perm.Square

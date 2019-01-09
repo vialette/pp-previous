@@ -28,21 +28,21 @@ where
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-  -- |'ascendingRuns' 'p'
+  -- |'ascendingRuns' 'p' returns all ascendings runs in the permutation 'p'.
   --
   -- >>> ascendingRuns (mkPerm [4,6,2,1,3,8,5,7])
   -- [[4,6],[2],[1,3,8],[5,7]]
   ascendingRuns :: PP.Perm.Perm -> [PP.Perm.Patt]
   ascendingRuns = fmap PP.Perm.mkPatt . PP.Utils.List.groupBy' PP.Geometry.Point.isStrictlyBelowOf . PP.Perm.getPoints
 
-  -- |'longestAscendingRun' 'p'
+  -- |'longestAscendingRun' 'p' returns a longest ascending run in the permutation 'p'.
   --
   -- >>> longestAscendingRun (mkPerm [4,6,2,1,3,8,5,7])
   -- [1,3,8]
   longestAscendingRun :: PP.Perm.Perm -> PP.Perm.Patt
   longestAscendingRun = F.maximumBy (compare `on` PP.Perm.len) . ascendingRuns
 
-  -- |'descendingRuns' 'p'
+  -- |'descendingRuns' 'p' returns the descending runs in the permutation 'p'.
   --
   -- >>> descendingRuns (mkPerm [4,6,2,1,3,8,5,7])
   -- [[4],[6,2,1],[3],[8,5],[7]]
@@ -51,7 +51,7 @@ where
     where
       f p1 p2 = PP.Geometry.Point.getY p1 > PP.Geometry.Point.getY p2
 
-  -- |'longestDescendingRun' 'p'
+  -- |'longestDescendingRun' 'p' returns a ongest descending run in the permutation 'p'.
   --
   -- >>> longestDescendingRun (mkPerm [4,6,2,1,3,8,5,7])
   -- [6,2,1]
