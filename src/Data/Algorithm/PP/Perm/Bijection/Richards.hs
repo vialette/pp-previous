@@ -16,12 +16,12 @@ where
 
   -- |'richards' 'perm'
   -- richards bijection from Dyck Path to 123-avoiding permutations.
-  richards :: PP.Perm.Perm -> PP.Dyck.LPath ()
-  richards = PP.Dyck.mk . aux . PP.Perm.getList
+  richards :: PP.Perm.Perm -> PP.Dyck.Path
+  richards = PP.Dyck.mkUnsafe . aux . PP.Perm.getList
     where
       aux []  = []
-      aux [_] = [PP.Dyck.LUp (), PP.Dyck.LDown ()]
-      aux xs  = [PP.Dyck.LUp ()] ++ aux left ++ [PP.Dyck.LDown ()] ++ aux right
+      aux [_] = [PP.Dyck.UpStep, PP.Dyck.DownStep]
+      aux xs  = [PP.Dyck.UpStep] ++ aux left ++ [PP.Dyck.DownStep] ++ aux right
         where
           maxY = F.maximum xs
           (left, right) = PP.Utils.List.splitOn maxY xs

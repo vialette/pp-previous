@@ -7,6 +7,7 @@ module Data.Algorithm.PP.StdYoungTableau
 , empty
 
   -- * Querying
+, getRows
 , shapeR
 , shapeC
 , size

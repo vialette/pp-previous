@@ -78,6 +78,7 @@ library
                      , Data.Algorithm.PP.Perm.Generator.Basic
                      , Data.Algorithm.PP.Perm.Generator.Oscillating
                      , Data.Algorithm.PP.Perm.Generator.Random
+                     , Data.Algorithm.PP.Perm.Pattern
                      , Data.Algorithm.PP.Perm.Prop
                      , Data.Algorithm.PP.Perm.Rank
                      , Data.Algorithm.PP.Perm.Reversal

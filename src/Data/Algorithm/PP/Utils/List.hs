@@ -3,6 +3,8 @@ module Data.Algorithm.PP.Utils.List (
   , safeTail
 
   , splitOn
+  , splitAt
+  , splitEvery
 
   , insertAfterMax
 
@@ -29,6 +31,7 @@ module Data.Algorithm.PP.Utils.List (
 
 import System.Random
 import Data.Maybe
+import Prelude hiding (splitAt)
 import qualified Control.Arrow   as A
 import qualified Data.Foldable   as F
 import qualified Data.List       as L
@@ -55,7 +58,9 @@ splitOn x = aux []
       | x' < x    = aux (x' : acc) xs
       | otherwise = (L.reverse acc, xs)
 
--- |'splitEvery 'p' 'xs'
+-- |'splitEvery 'p' 'xs' return the pair @(xs', xs'')@, @xs ==  xs' ++ xs''@,
+-- where @xs'@ is the shortest prefix of @xs@ such that @p (last xs') == True@.
+-- The function returns @(xs, [])@ if @p x == False@ for every element of 'xs'.
 splitAt :: (a -> Bool) -> [a] -> ([a], [a])
 splitAt p = aux []
   where

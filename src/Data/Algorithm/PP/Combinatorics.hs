@@ -1,4 +1,4 @@
-module Data.Algorithm.PP.Combnatorics
+module Data.Algorithm.PP.Combinatorics
 (
   partitions
 , evenPartitions

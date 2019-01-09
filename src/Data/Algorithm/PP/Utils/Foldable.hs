@@ -16,7 +16,9 @@ import qualified Data.Tuple    as T
 
 import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
--- |'maximumBy' 'f' 'z' 'e' returns
+-- |'maximumBy' 'f' 'z' 'e' 'xs' returns the pair @(m, xs')@ where
+-- @m = maximum (fmap f xs)@ and @xs'@ are the elements of 'xs' that attain
+-- maximum 'm'.
 --
 -- >>> maximumBy length 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
 -- (3,[[4,5,6],[10,11,12]])
@@ -38,7 +40,7 @@ maximumBy0 f = maximumBy f 0 []
 maximumBy1 :: (Foldable t, Ord b, Num b) => (a -> b) -> t a -> (b, [a])
 maximumBy1 f = maximumBy f 1 []
 
--- |Return all subsets
+-- |'subsets' 'k' 'xs' returns all 'k'-subsets of 'xs'.
 --
 -- >>> subsets 0 [1..4]
 -- [[]]
@@ -92,6 +94,16 @@ balPartitions = aux . F.toList
         ps  = partitions (k-1) k xs
         k   = 1 + F.length xs `div` 2
 
+-- |'splitEvery' 'p' 'xs'
+--
+-- >>> splitEvery even [1..6]
+-- [[1,2],[3,4],[5,6]]
+-- >>> splitEvery even [1..7]
+-- [[1,2],[3,4],[5,6],[7]]
+-- >>> splitEvery odd [1..6]
+-- [[1],[2,3],[4,5],[6]]
+-- >>> splitEvery odd [1..7]
+-- [[1],[2,3],[4,5],[6,7]]
 splitEvery :: Foldable t => (a -> Bool) -> t a -> [[a]]
 splitEvery p = (\ (xs, xss) -> if L.null xs then xss else xs : xss) . F.foldr f ([], [])
   where

@@ -88,8 +88,6 @@ where
   -- the maximum number of permutations of length 'k' a permutation of length 'n'
   -- can contain.
   --
-  -- >>> import qualified Data.Algorithm.PP.Perm as Perm
-  -- >>> import qualified Data.Algorithm.PP.Perm.Complexity as Complexity
   -- >>>
   -- >>> maxComplexityStat 1 3
   -- 1

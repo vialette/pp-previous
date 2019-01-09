@@ -41,12 +41,12 @@ where
         | y /= y'   = [(x, y'') | y'' <- [y..y']] ++ acc'
         | otherwise = (x, y) : acc'
 
-  buildPath :: [(Int, Int)] -> PP.Dyck.LPath ()
-  buildPath = PP.Dyck.mk . fmap f . PP.Utils.List.chunk2 . fmap (uncurry (-)) . L.reverse
+  buildPath :: [(Int, Int)] -> PP.Dyck.Path
+  buildPath = PP.Dyck.mkUnsafe . fmap f . PP.Utils.List.chunk2 . fmap (uncurry (-)) . L.reverse
     where
       f (y, y')
-        | y < y'    = PP.Dyck.LUp ()
-        | otherwise = PP.Dyck.LDown ()
+        | y < y'    = PP.Dyck.UpStep
+        | otherwise = PP.Dyck.DownStep
 
   -- |'knuthRotem' 'perm'
   --
@@ -58,7 +58,7 @@ where
   -- >>> putStr . draw $ knuth (mkPerm [7,5,6,4,2,1,3])
   --    /\    /\/\
   -- /\/  \/\/    \
-  knuthRotem :: PP.Perm.Perm -> PP.Dyck.LPath ()
+  knuthRotem :: PP.Perm.Perm -> PP.Dyck.Path
   knuthRotem = buildPath . buildCoordinates . ballotSequence
 
   -- |'invKnuthRotem' 'perm'
