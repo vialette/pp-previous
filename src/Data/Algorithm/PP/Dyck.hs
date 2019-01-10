@@ -54,13 +54,13 @@ instance Show Step where
 newtype Path = Path { getSteps :: [Step] } deriving (Eq, Ord)
 
 --
-instance Semigroup Path where
-  p <> p' = mkUnsafe (getSteps p ++ getSteps p')
+-- instance Semigroup Path where
+--   p <> p' = mkUnsafe (getSteps p ++ getSteps p')
 
 --
 instance Monoid Path where
     mempty  = mkUnsafe []
-    mappend = (<>)
+    mappend p p' = mkUnsafe (getSteps p ++ getSteps p')
 
 --
 instance Show Path where
@@ -177,7 +177,7 @@ collapse k p = fmap (mkUnsafe . fmap T.fst) . L.Split.splitWhen predicate $ L.zi
 --
 -- >>>
 lift :: Int -> Path -> Path
-lift k p = upSteps k <> p <> downSteps k
+lift k p = upSteps k `mappend` p `mappend` downSteps k
 
 -- |'leftToRightMinima' 'p'
 --

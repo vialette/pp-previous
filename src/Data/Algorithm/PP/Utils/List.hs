@@ -156,7 +156,7 @@ reversal :: Int -> Int -> [a] -> [a]
 reversal i j xs = ps ++ L.reverse ys ++ ss
   where
     (ps, xs') = L.splitAt (i-1) xs
-    (ys, ss)  = L.splitAt (j-i) xs'
+    (ys, ss)  = L.splitAt (j-i+1) xs'
 
 -- |'reversal'' 'i' 'm' 'xs'
 --
@@ -168,7 +168,7 @@ reversal' i m = reversal i (i+m-1)
 --
 -- >>>
 prefixReversal :: Int -> [a] -> [a]
-prefixReversal m = reversal 1 (m-1)
+prefixReversal m = reversal' 1 m
 
 randomShuffleStep :: RandomGen g => Int -> (M.Map Int a, g) ->  (M.Map Int a, g)
 randomShuffleStep i (m, g) = ((M.insert j (m ! i) . M.insert i (m ! j)) m, g')

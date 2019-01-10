@@ -1,10 +1,10 @@
-module Data.Algorithm.PP.Perm.Reversal
-(
-  reversal
-, prefixReversal
-, suffixReversal
-)
-where
+module Data.Algorithm.PP.Perm.Reversal (
+    reversal
+  , reversal'
+  , prefixReversal
+  , suffixReversal
+  ) where
+
 
   import qualified Data.Foldable as F
   import qualified Data.List     as L
@@ -15,12 +15,19 @@ where
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   -- |'reversal' 'i' 'j' 'p'
+  --
+--
   reversal :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
   reversal i j = PP.Perm.mkPerm . PP.Utils.List.reversal i j . PP.Perm.getList
 
+  -- |'reversal' 'i' 'j' 'p'
+  reversal' :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
+  reversal' i j = PP.Perm.mkPerm . PP.Utils.List.reversal' i j . PP.Perm.getList
+
   -- |'prefixReversal' 'm' 'p'
   prefixReversal :: Int -> PP.Perm.Perm -> PP.Perm.Perm
-  prefixReversal = reversal 0
+  prefixReversal m = PP.Perm.mkPerm . PP.Utils.List.prefixReversal m . PP.Perm.getList
+
 
   -- |'suffixReversal' 'm' 'p'
   suffixReversal :: Int -> PP.Perm.Perm -> PP.Perm.Perm
