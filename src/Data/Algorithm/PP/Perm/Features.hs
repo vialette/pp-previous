@@ -7,6 +7,8 @@ module Data.Algorithm.PP.Perm.Features
 )
 where
 
+  import qualified Data.List as L
+
   import qualified Data.Algorithm.PP.Perm as PP.Perm
 
   -- |'leftmost' 'perm' returns the first (i.e. leftmost) element of the

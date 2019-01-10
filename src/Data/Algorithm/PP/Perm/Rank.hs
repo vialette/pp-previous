@@ -16,9 +16,9 @@ where
   import qualified Data.Array as Array
   import qualified Data.List  as L
 
-  import qualified Data.Algorithm.PP.Perm           as PP.Perm
-  import qualified Data.Algorithm.PP.Perm.Bijection as PP.Perm.Bijection
-  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
+  import qualified Data.Algorithm.PP.Perm            as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Bijection  as PP.Perm.Bijection
+  import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
 
   -- Array construction auxiliary function.
   mkArray :: [a] -> Array.Array Int a

@@ -3,7 +3,6 @@ module Data.Algorithm.PP.Perm.DeterministicReversal
   deterministicReversals
 , deterministicReversalRadius
 , longestDeterministicReversals
-, label
 )
 where
 
@@ -17,10 +16,6 @@ where
   import qualified Data.Algorithm.PP.Perm.Statistics as PP.Perm.Statistics
   import qualified Data.Algorithm.PP.Utils.Integer   as PP.Utils.Integer
   import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
-
-
-  label :: PP.Perm.Perm -> Integer
-  label = PP.Utils.Integer.encode . fmap PP.Geometry.Point.getY . PP.Perm.Statistics.fixedPoints
 
   -- |'deterministicReversals' 'p' returns the list of permutations 'q1', 'q2', ... 'qk'
   -- with 'p = q1'

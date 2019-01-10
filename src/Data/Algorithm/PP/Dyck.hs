@@ -54,13 +54,13 @@ instance Show Step where
 newtype Path = Path { getSteps :: [Step] } deriving (Eq, Ord)
 
 --
--- instance Semigroup Path where
---   p <> p' = mkUnsafe (getSteps p ++ getSteps p')
+instance Semigroup Path where
+  p <> p' = mkUnsafe (getSteps p ++ getSteps p')
 
 --
 instance Monoid Path where
     mempty  = mkUnsafe []
-    mappend p p' = mkUnsafe (getSteps p ++ getSteps p')
+    mappend = (<>)
 
 --
 instance Show Path where

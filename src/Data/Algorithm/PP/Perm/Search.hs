@@ -1,4 +1,4 @@
-module Data.Algorithm.Perm.Search
+module Data.Algorithm.PP.Perm.Search
 (
 
 )
