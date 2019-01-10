@@ -149,18 +149,26 @@ perfectShuffle = aux []
     aux acc []       ys = L.reverse acc ++ ys
     aux acc (x : xs) ys = aux (x : acc) ys xs
 
--- reversal i j xs returns the elements of xs between position i and i+j
+-- |'reversal' 'i' 'j' 'xs' return the list
+--
+-- >>>
 reversal :: Int -> Int -> [a] -> [a]
 reversal i j xs = ps ++ L.reverse ys ++ ss
   where
-    (ps, ss') = L.splitAt i xs
-    (ys, ss)  = L.splitAt j ss'
+    (ps, xs') = L.splitAt (i-1) xs
+    (ys, ss)  = L.splitAt (j-i) xs'
 
+-- |'reversal'' 'i' 'm' 'xs'
+--
+-- >>>
 reversal' :: Int -> Int -> [a] -> [a]
 reversal' i m = reversal i (i+m-1)
 
+-- |'prefixReversal' 'm' 'xs'
+--
+-- >>>
 prefixReversal :: Int -> [a] -> [a]
-prefixReversal m = reversal 0 (m-1)
+prefixReversal m = reversal 1 (m-1)
 
 randomShuffleStep :: RandomGen g => Int -> (M.Map Int a, g) ->  (M.Map Int a, g)
 randomShuffleStep i (m, g) = ((M.insert j (m ! i) . M.insert i (m ! j)) m, g')

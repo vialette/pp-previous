@@ -91,6 +91,7 @@ library
                      , Data.Algorithm.PP.SepTree
                      , Data.Algorithm.PP.StdYoungTableau
                      , Data.Algorithm.PP.Utils.Int
+                     , Data.Algorithm.PP.Utils.Integer
                      , Data.Algorithm.PP.Utils.List
                      , Data.Algorithm.PP.Utils.Maybe
 
