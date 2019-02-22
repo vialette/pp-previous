@@ -13,6 +13,7 @@ module Data.Algorithm.PP.Perm
 , fromList
 , mkPatt
 , identity
+, empty
 
   -- * Transforming
 , getPoints
@@ -23,7 +24,7 @@ module Data.Algorithm.PP.Perm
 
   -- * Querying
 , len
-
+, at
 , prefix
 , prefixes
 , suffix
@@ -58,7 +59,7 @@ where
   import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
   import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-  -- |'Seq' type
+  -- |'P' type
   newtype P a = P { getPoints :: [PP.Geometry.Point.Point] }
 
   -- |
@@ -96,17 +97,16 @@ where
   mkPermUnsafe :: [Int] -> Perm
   mkPermUnsafe = P . fmap (uncurry PP.Geometry.Point.mk) . L.zip [1..]
 
-  -- | 'mkPerm' 'xs' constructs a permutation
-  --
-  -- >>> mkPerm ['a','c','e','d','b']
-  -- [1,3,5,4,2]
-  -- >>> mkPerm (take 5 ['a'..])
-  -- [1,2,3,4,5]
-  --
-  -- Left to right
-  --
-  -- >>> mkPerm . take 5 $ repeat 'a'
-  -- [1,2,3,4,5]
+  {- | 'mkPerm' @xs@ constructs a permutation from foldable @xs@.
+  Ties are resolved from left to right.
+
+  >>> mkPerm ['a','c','e','d','b']
+  [1,3,5,4,2]
+  >>> mkPerm (take 5 ['a'..])
+  [1,2,3,4,5]
+  >>> mkPerm . take 5 $ repeat 'a'
+  [1,2,3,4,5]
+  -}
   mkPerm :: (Foldable t, Ord a) => t a -> Perm
   mkPerm = fromList . F.toList
 
@@ -141,15 +141,20 @@ where
   orderIso :: Perm-> P a -> Bool
   orderIso p1 p2 = p1 == mkPerm (getList p2)
 
-  -- | 'len' 'p' returns the length of the permutation 'p'.
+  {- | 'len' @p@ returns the length of @p@.
+  -}
   len :: P a -> Int
   len = L.length . getPoints
 
-  -- 'prefix' 'k' 'p'
-  --
-  -- >>> p = mk [2,4,5,1,6,3]
-  -- >>> [prefix i p | i <- [1..len p]]
-  -- [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
+  -- |'at'
+  at :: P a -> Int -> Int
+  at p = (L.!!) (getList p)
+
+  {- | 'prefix' @k p@ returns the prefix of length @k@ of @p@.
+
+  >>> let p = mk [2,4,5,1,6,3] in [prefix i p | i <- [1..len p]]
+  [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
+  -}
   prefix :: Int -> P a -> Patt
   prefix k = P . L.take k . getPoints
 
@@ -263,6 +268,9 @@ where
   -- [1,2,3,4]
   identity :: Int -> Perm
   identity n = mkPermUnsafe [1..n]
+
+  empty :: Perm
+  empty = mkPermUnsafe []
 
 
   isIdentity :: P a -> Bool

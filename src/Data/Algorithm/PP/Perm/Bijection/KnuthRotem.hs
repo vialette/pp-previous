@@ -10,16 +10,16 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Dyck            as PP.Dyck
-  import qualified Data.Algorithm.PP.Geometry.Point  as PP.Geometry.Point
-  import qualified Data.Algorithm.PP.Perm            as PP.Perm
-  import qualified Data.Algorithm.PP.Perm.Statistics as PP.Perm.Statistics
-  import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
+  import qualified Data.Algorithm.PP.Dyck           as PP.Dyck
+  import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+  import qualified Data.Algorithm.PP.Perm           as PP.Perm
+  import qualified Data.Algorithm.PP.Perm.Features  as PP.Perm.Features
+  import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
   ballotSequence :: PP.Perm.Perm -> [Int]
   ballotSequence perm
     | PP.Perm.len perm == 1 = [0]
-    | otherwise             = aux [0] (L.tail $ PP.Perm.getPoints perm) . L.tail $ PP.Perm.Statistics.leftToRightMaxima perm
+    | otherwise             = aux [0] (L.tail $ PP.Perm.getPoints perm) . L.tail $ PP.Perm.Features.leftToRightMaxima perm
     where
       aux s []       _  = L.reverse s
       aux s (p : ps) [] = aux (y : s)     ps []

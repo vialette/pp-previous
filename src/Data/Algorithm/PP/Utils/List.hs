@@ -1,6 +1,7 @@
 module Data.Algorithm.PP.Utils.List (
     safeHead
   , safeTail
+  , safeLast
 
   , splitOn
   , splitAt
@@ -48,6 +49,11 @@ safeHead (x : _) = Just x
 safeTail :: [a] -> Maybe [a]
 safeTail []       = Nothing
 safeTail (_ : xs) = Just xs
+
+-- |'safeLast' 'xs'
+safeLast :: [a] -> Maybe a
+safeLast [] = Nothing
+safeLast xs = Just (L.last xs)
 
 -- |'splitOn' 'x' 'xs'
 splitOn :: (Ord a) => a -> [a] -> ([a], [a])

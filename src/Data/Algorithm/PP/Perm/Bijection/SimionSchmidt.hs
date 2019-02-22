@@ -11,7 +11,7 @@ where
 
   import qualified Data.Algorithm.PP.Geometry.Point  as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm            as PP.Perm
-  import qualified Data.Algorithm.PP.Perm.Statistics as PP.Perm.Statistics
+  import qualified Data.Algorithm.PP.Perm.Features   as PP.Perm.Features
 
   -- |'simionSchmidt' 'perm'
   --
@@ -22,7 +22,7 @@ where
   simionSchmidt :: PP.Perm.Perm -> PP.Perm.Perm
   simionSchmidt perm = PP.Perm.fromPoints (minPoints ++ otherPoints')
     where
-      minPoints    = PP.Perm.Statistics.leftToRightMinima perm
+      minPoints    = PP.Perm.Features.leftToRightMinima perm
       otherPoints  = L.filter (`F.notElem` minPoints) $ PP.Perm.getPoints perm
       otherPoints' = uncurry PP.Geometry.Point.mk <$> L.zip xs ys
         where
@@ -71,7 +71,7 @@ where
   invSimionSchmidt :: PP.Perm.Perm -> PP.Perm.Perm
   invSimionSchmidt perm = PP.Perm.fromPoints (minPoints ++ otherPoints')
     where
-      minPoints    = PP.Perm.Statistics.leftToRightMinima perm
+      minPoints    = PP.Perm.Features.leftToRightMinima perm
       otherPoints  = PP.Geometry.Point.sortOnY . L.filter (`F.notElem` minPoints) $ PP.Perm.getPoints perm
       otherPoints' = F.concat . T.fst . F.foldl f ([], otherPoints) $ intervals (L.length otherPoints) minPoints
         where
