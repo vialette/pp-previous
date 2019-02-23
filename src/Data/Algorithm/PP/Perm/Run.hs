@@ -9,15 +9,15 @@ Stability   : experimental
 Runs in permutations.
 -}
 module Data.Algorithm.PP.Perm.Run
-(
-  ascendingRuns
-, longestAscendingRun
-, longestAscendingRuns
+  (
+    ascendingRuns
+  , longestAscendingRun
+  , longestAscendingRuns
 
-, descendingRuns
-, longestDescendingRun
-, longestDescendingRuns
-) where
+  , descendingRuns
+  , longestDescendingRun
+  , longestDescendingRuns
+  ) where
 
 import qualified Data.Foldable as F
 import qualified Data.List     as L
