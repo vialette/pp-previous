@@ -55,7 +55,7 @@ directSum = aux . F.toList
 p <<->> q = PP.Perm.mkPerm (xs ++ ys)
   where
     n  = L.length ys
-    xs = L.map (+n) $ PP.Perm.getList p
+    xs = L.map (+ n) $ PP.Perm.getList p
     ys = PP.Perm.getList q
 
 {- | 'skewSum' @ps@ returns the skew sums of the permutations @ps@.
@@ -90,7 +90,7 @@ p <<.>> q = PP.Utils.Maybe.whenMaybe (PP.Perm.len p == PP.Perm.len q)
 Just [1,3,4,2]
 >>> dotProduct [mkPerm [1..3], mkPerm [1..4]]
 Nothing
-—}
+-}
 dotProduct :: (Foldable t) => t PP.Perm.Perm -> Maybe PP.Perm.Perm
 dotProduct = aux . F.toList
   where

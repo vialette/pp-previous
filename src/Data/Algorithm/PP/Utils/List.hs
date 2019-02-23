@@ -89,16 +89,15 @@ insertAfterMax x xs = xs' ++ [y, x] ++ xs''
 
 -- |'groupBy''
 groupBy' :: (a -> a -> Bool) -> [a] -> [[a]]
-groupBy' _ [] = []
+groupBy' _   []       = []
 groupBy' cmp (x : xs) = (x : ys) : groupBy' cmp zs
     where
       (ys, zs) = spanCmp x xs
         where
-          spanCmp _ [] = ([], [])
+          spanCmp _  [] = ([], [])
           spanCmp x' (x'' : xs')
             | x' `cmp` x'' = let (ps, qs) = spanCmp x'' xs' in (x'' : ps, qs)
             | otherwise  = ([], x'' : xs')
-
 
 -- |'factor' 'xs'
 factor :: Int -> Int -> [a] -> [a]
@@ -174,7 +173,7 @@ reversal' i m = reversal i (i+m-1)
 --
 -- >>>
 prefixReversal :: Int -> [a] -> [a]
-prefixReversal m = reversal' 1 m
+prefixReversal = reversal' 1
 
 randomShuffleStep :: RandomGen g => Int -> (M.Map Int a, g) ->  (M.Map Int a, g)
 randomShuffleStep i (m, g) = ((M.insert j (m ! i) . M.insert i (m ! j)) m, g')

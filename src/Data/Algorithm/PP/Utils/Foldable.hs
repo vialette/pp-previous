@@ -1,5 +1,6 @@
 module Data.Algorithm.PP.Utils.Foldable (
-    maximumBy
+    maximumsBy
+  , maximumBy
   , maximumBy0
   , maximumBy1
 
@@ -16,14 +17,24 @@ import qualified Data.Tuple    as T
 
 import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
--- |'maximumBy' 'f' 'z' 'e' 'xs' returns the pair @(m, xs')@ where
--- @m = maximum (fmap f xs)@ and @xs'@ are the elements of 'xs' that attain
--- maximum 'm'.
---
--- >>> maximumBy length 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
--- (3,[[4,5,6],[10,11,12]])
--- >>> maximumBy head 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
--- (10,[[10,11,12]])
+maximumsBy _ [] = []
+maximumsBy f xs = T.snd . F.foldr1 g $ fmap (\ x -> (f x, [x])) xs
+  where
+    g (k, [x]) (maxSoFar, acc)
+      | k > maxSoFar  = (k,        [x])
+      | k == maxSoFar = (maxSoFar, x : acc)
+      | otherwise     = (maxSoFar, acc)
+
+
+{- |'maximumBy' @f@ @z@ @e@ @xs@ returns the pair @(m, xs')@ where
+@m = maximum (fmap f xs)@ and @xs'@ are the elements of @xs'@ that attain
+maximum @m@.
+
+>>> maximumBy length 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
+(3,[[4,5,6],[10,11,12]])
+>>> maximumBy head 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
+(10,[[10,11,12]])
+-}
 maximumBy :: (Foldable t, Ord b) => (a -> b) -> b -> [a] -> t a -> (b, [a])
 maximumBy f z e = F.foldr aux (z, e)
   where
