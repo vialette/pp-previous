@@ -25,29 +25,32 @@ where
           where
             (p, g') = f n g
 
-  -- |'random' 'n' 'g' takes an integer 'n' and a random generator 'g', and it returns
-  -- a random permutation of length 'n' together with a new random generator.
-  --
-  -- >>> rand (mkStdGen 12345) 9
-  -- ([3,9,1,5,8,7,2,4,6],2014025278 1422611300)
-  --
+  {- | 'random' @n@ @g@ takes an integer @n@ and a random generator @g@, and it returns
+  a random permutation of length @n@ together with a new random generator.
+
+  >>> rand (mkStdGen 12345) 9
+  ([3,9,1,5,8,7,2,4,6],2014025278 1422611300)
+  -}
   rand :: RandomGen g => Int -> g -> (PP.Perm.Perm, g)
   rand n = A.first PP.Perm.mkPerm . PP.Utils.List.randomShuffle [1..n]
 
-  -- |'rands' 'n' 'k' 'g' takes two integers 'n' and 'k' and a random generator 'g',
-  -- and it returns 'k' random permutations of length 'n'together with a new
-  -- random generator.
-  --
-  -- >>> rands 10 3 (mkStdGen 123)
-  -- ([[2,8,3,4,9,10,6,7,5,1],[2,5,7,4,9,1,10,6,8,3],[5,6,1,7,3,9,2,10,4,8]],2109333801 1701490540)
+  {- | 'rands' @n@ @k@ @g@ takes two integers @n@ and @k@ and a random generator @g@,
+  and it returns @k@ random permutations of length @n@ together with a new
+  random generator.
+
+  >>> rands 10 3 (mkStdGen 123)
+  ([[2,8,3,4,9,10,6,7,5,1],[2,5,7,4,9,1,10,6,8,3],[5,6,1,7,3,9,2,10,4,8]],2109333801 1701490540)
+  -}
   rands :: RandomGen g => Int -> Int -> g -> ([PP.Perm.Perm], g)
   rands n k = randsGen rand n k []
 
-  -- |'rand213'231Avoiding' 'n' 'g' takes an integer 'n' and a random generator 'g', and it returns
-  -- a random (213,231)-avoiding permutation of length 'n' together with a new random generator.
-  --
-  -- >>> randAvoiding_213_231 10 (mkStdGen 1234)
-  -- ([10,9,8,1,7,2,6,5,4,3],522754180 1336516156)
+  {- | 'randAvoiding_213_231 @n@ @g@ takes an integer @n@ and a random generator @g@,
+  and it returns a random (213,231)-avoiding permutation of length @n@ together with
+  a new random generator.
+
+  >>> randAvoiding_213_231 10 (mkStdGen 1234)
+  ([10,9,8,1,7,2,6,5,4,3],522754180 1336516156)
+  -}
   randAvoiding_213_231 :: RandomGen g => Int -> g -> (PP.Perm.Perm, g)
   randAvoiding_213_231 n = aux [] [1..n]
     where
@@ -56,12 +59,13 @@ where
                        (False, g') -> aux (L.head xs : acc) (L.tail xs) g'
                        (True,  g') -> aux (L.last xs : acc) (L.init xs) g'
 
-  -- |'rands213'231Avoiding' 'n' 'k' 'g' takes two integers 'n' and 'k' and a random generator 'g',
-  -- and it returns 'k' random (213,231)-avoiding permutations of length 'n'together with a new
-  -- random generator.
-  --
-  -- >>> randsAvoiding_213_231 10 3 (mkStdGen 1234)
-  -- ([[1,10,2,3,4,9,8,7,5,6],[1,2,10,3,4,9,8,7,5,6],[10,9,8,1,7,2,6,5,4,3]],2109333801 1701490540)
+  {- | 'rands213'231Avoiding' @n@ @k@ @g@ takes two integers @n@ and @k@ and a
+  random generator @g@, and it returns @k@ random (213,231)-avoiding permutations
+  of length @n@ together with a newrandom generator.
+
+  >>> randsAvoiding_213_231 10 3 (mkStdGen 1234)
+  ([[1,10,2,3,4,9,8,7,5,6],[1,2,10,3,4,9,8,7,5,6],[10,9,8,1,7,2,6,5,4,3]],2109333801 1701490540)
+  -}
   randsAvoiding_213_231 :: RandomGen g => Int -> Int -> g -> ([PP.Perm.Perm], g)
   randsAvoiding_213_231 n k = randsGen randAvoiding_213_231 n k []
 

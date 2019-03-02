@@ -25,7 +25,6 @@ maximumsBy f xs = T.snd . F.foldr1 g $ fmap (\ x -> (f x, [x])) xs
       | k == maxSoFar = (maxSoFar, x : acc)
       | otherwise     = (maxSoFar, acc)
 
-
 {- |'maximumBy' @f@ @z@ @e@ @xs@ returns the pair @(m, xs')@ where
 @m = maximum (fmap f xs)@ and @xs'@ are the elements of @xs'@ that attain
 maximum @m@.
