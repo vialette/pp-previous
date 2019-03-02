@@ -50,20 +50,21 @@ maximumBy0 f = maximumBy f 0 []
 maximumBy1 :: (Foldable t, Ord b, Num b) => (a -> b) -> t a -> (b, [a])
 maximumBy1 f = maximumBy f 1 []
 
--- |'subsets' 'k' 'xs' returns all 'k'-subsets of 'xs'.
---
--- >>> subsets 0 [1..4]
--- [[]]
--- >>> subsets 1 [1..4]
--- [[1],[2],[3],[4]]
--- >>> subsets 2 [1..4]
--- [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
--- >>> subsets 3 [1..4]
--- [[1,2,3],[1,2,4],[1,3,4],[2,3,4]]
--- >>> subsets 4 [1..4]
--- [[1,2,3,4]]
--- >>> subsets 5 [1..4]
--- []
+{- |'subsets' @k@ @xs@ returns all @k@-subsets of @xs@.
+
+>>> subsets 0 [1..4]
+[[]]
+>>> subsets 1 [1..4]
+[[1],[2],[3],[4]]
+>>> subsets 2 [1..4]
+[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
+>>> subsets 3 [1..4]
+[[1,2,3],[1,2,4],[1,3,4],[2,3,4]]
+>>> subsets 4 [1..4]
+[[1,2,3,4]]
+>>> subsets 5 [1..4]
+[]
+-}
 subsets :: (Foldable t, Eq b, Num b) => b -> t a -> [[a]]
 subsets k = aux k . F.toList
   where
@@ -104,16 +105,17 @@ balPartitions = aux . F.toList
         ps  = partitions (k-1) k xs
         k   = 1 + F.length xs `div` 2
 
--- |'splitEvery' 'p' 'xs'
---
--- >>> splitEvery even [1..6]
--- [[1,2],[3,4],[5,6]]
--- >>> splitEvery even [1..7]
--- [[1,2],[3,4],[5,6],[7]]
--- >>> splitEvery odd [1..6]
--- [[1],[2,3],[4,5],[6]]
--- >>> splitEvery odd [1..7]
--- [[1],[2,3],[4,5],[6,7]]
+{- | 'splitEvery' @p@ @xs@ splits foldable @xs@ after each element @x@ such that @p x@ is @True@.
+
+>>> splitEvery even [1..6]
+[[1,2],[3,4],[5,6]]
+>>> splitEvery even [1..7]
+[[1,2],[3,4],[5,6],[7]]
+>>> splitEvery odd [1..6]
+[[1],[2,3],[4,5],[6]]
+>>> splitEvery odd [1..7]
+[[1],[2,3],[4,5],[6,7]]
+-}
 splitEvery :: Foldable t => (a -> Bool) -> t a -> [[a]]
 splitEvery p = (\ (xs, xss) -> if L.null xs then xss else xs : xss) . F.foldr f ([], [])
   where
