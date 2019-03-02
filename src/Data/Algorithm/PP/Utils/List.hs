@@ -75,7 +75,8 @@ splitAt p = aux []
       | p x       = (L.reverse (x : acc), xs)
       | otherwise = aux (x : acc) xs
 
--- |'splitEvery 'p' 'xs'
+{- | 'splitEvery @p@ @xs@
+-}
 splitEvery :: (a -> Bool) -> [a] -> [[a]]
 splitEvery p = aux [] . splitAt p
   where
