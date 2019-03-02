@@ -99,7 +99,8 @@ groupBy' cmp (x : xs) = (x : ys) : groupBy' cmp zs
             | x' `cmp` x'' = let (ps, qs) = spanCmp x'' xs' in (x'' : ps, qs)
             | otherwise  = ([], x'' : xs')
 
--- |'factor' 'xs'
+{- |'factor' @xs@
+-}
 factor :: Int -> Int -> [a] -> [a]
 factor i j = L.take (j-i+1) . L.drop i
 
