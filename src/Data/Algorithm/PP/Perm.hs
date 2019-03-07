@@ -2,8 +2,7 @@ module Data.Algorithm.PP.Perm (
     -- * Type
     P
   , Perm
-  , Patt
-  , FPerm
+  , SubSeq
 
     -- * Building
   , mkPerm
@@ -11,7 +10,7 @@ module Data.Algorithm.PP.Perm (
   , fromPatt
   , fromPoints
   , fromList
-  , mkPatt
+  , mkSubSeq
   , identity
   , empty
 
@@ -77,19 +76,16 @@ instance Ord (P a) where
       f = getPoints . fromList . getList
 
 -- |'Span' type
-data Span
+data Reduced
 
 -- |'Sub' type
-data Sub
+data Reducible
 
 -- |'Perm' type
-type Perm = P Span
+type Perm = P Reduced
 
 -- |'Patt' type
-type Patt = P Sub
-
--- |'Perm' to 'Perm' function type.
-type FPerm = Perm -> Perm
+type Patt = P Reducible
 
 {- | 'mkPermUnsafe' @xs@.
 Use with caution.
@@ -117,8 +113,7 @@ Ties are resolved from left to right.
 mkPerm :: (Foldable t, Ord a) => t a -> Perm
 mkPerm = fromList . F.toList
 
-{- | 'fromList' @xs@ returns the permutation that coorespond to @xs@
-(ties are solved from left to right).
+{- | 'fromList' @xs@ returns the permutation that corresponds to @xs@ (ties are resolved from left to right).
 
 >>> fromList "abcd"
 [1,2,3,4]
@@ -132,8 +127,8 @@ mkPerm = fromList . F.toList
 fromList :: (Ord a) => [a] -> Perm
 fromList = mkPermUnsafe . reduce
 
-fromPatt :: Patt -> Perm
-fromPatt = fromList . getList
+fromSubSeq :: Patt -> Perm
+fromSubSeq = fromList . getList
 
 -- |'fromPoints' 'ps' construct a permutation from a list of points.
 -- The points do need to be sorted.
@@ -142,6 +137,16 @@ fromPatt = fromList . getList
 fromPoints :: (Foldable t) => t PP.Geometry.Point.Point -> Perm
 fromPoints = mkPerm . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . F.toList
 
+-- | 'mkPatt' 'ps'
+--
+-- >>>
+mkSubSeq :: [PP.Geometry.Point.Point] -> Patt
+mkSubSeq = P
+
+-- | 'getList' 'p' returns the list of the elements of permutation 'p'.
+getList :: P a -> [Int]
+getList = L.map PP.Geometry.Point.getY . getPoints
+
 -- Reduce a list of elements.
 reduce :: (Ord a) => [a] -> [Int]
 reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zip [1..]
@@ -149,21 +154,13 @@ reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zi
     cmpFstSnd = compare `on` (T.fst . T.snd)
     cmpSnd    = compare `on` T.snd
 
--- | 'mkPatt' 'ps'
---
--- >>>
-mkPatt :: [PP.Geometry.Point.Point] -> Patt
-mkPatt = P
 
--- | 'getList' 'p' returns the list of the elements of permutation 'p'.
-getList :: P a -> [Int]
-getList = L.map PP.Geometry.Point.getY . getPoints
 
 -- |'orderIso' 'p' 'q'
 orderIso :: Perm-> P a -> Bool
 orderIso p1 p2 = p1 == mkPerm (getList p2)
 
-{- | 'len' @p@ returns the length of @p@.
+{- | 'len' @p@ returns the length of permutation @p@.
 -}
 len :: P a -> Int
 len = L.length . getPoints
@@ -172,20 +169,20 @@ len = L.length . getPoints
 at :: P a -> Int -> Int
 at p = (L.!!) (getList p)
 
-{- | 'prefix' @k p@ returns the prefix of length @k@ of @p@.
+{- | 'prefix' @k p@ returns the prefix of length @k@ of permutation @p@.
 
->>> let p = mk [2,4,5,1,6,3] in [prefix i p | i <- [1..len p]]
+>>> let p = mkPerm [2,4,5,1,6,3] in [prefix i p | i <- [1..len p]]
 [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
 -}
-prefix :: Int -> P a -> Patt
+prefix :: Int -> P a -> SubSeq
 prefix k = P . L.take k . getPoints
 
--- |'prefixes' 'p' returns all the prefixes
---
--- >>> p = mk [2,4,5,1,6,3]
--- >>> prefixes p
--- [[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
-prefixes :: P a -> [Patt]
+{- |'prefixes' 'p' returns all prefixes of permutation @p@.
+
+>>> prefixes $ mkPerm [2,4,5,1,6,3]
+[[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
+-}
+prefixes :: P a -> [SubSeq]
 prefixes = L.map P . L.tail . L.inits . getPoints
 
 -- 'suffix' 'k' 'p' returns the suffix of length 'k' of the permutation 'p' as
