@@ -1,17 +1,16 @@
-module Data.Algorithm.PP.Perm.Combinator
-(
-  -- * Direct sum
-  (<<+>>)
-, directSum
+module Data.Algorithm.PP.Perm.Combinator (
+    -- * Direct sum
+    (<<+>>)
+  , directSum
 
-  -- * Skew sum
-, (<<->>)
-, skewSum
+    -- * Skew sum
+  , (<<->>)
+  , skewSum
 
-  -- * Dot product
-, (<<.>>)
-, dotProduct
-) where
+    -- * Dot product
+  , (<<.>>)
+  , dotProduct
+  ) where
 
 import Control.Applicative ((<$>))
 import Control.Monad (foldM)

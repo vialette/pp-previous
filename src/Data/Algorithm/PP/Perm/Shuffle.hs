@@ -1,5 +1,4 @@
-module Data.Algorithm.PP.Perm.Shuffle
-  (
+module Data.Algorithm.PP.Perm.Shuffle (
     -- * Generating
     shuffle
   , shuffle2
@@ -55,7 +54,7 @@ shuffleOf2'' p q = PP.Utils.List.safeHead . shuffleOf2' p q
 {- | 'shuffle2' @p@ @q@ returns all distinct permutations that can be be obtained by
 shuffling permutation @p@ and @q@.
 
->>>  shuffle2 (mkPerm [1,2]) (mkPerm [2,1])
+>>> shuffle2 (mkPerm [1,2]) (mkPerm [2,1])
 [[1,3,4,2],[1,3,4,2],[1,3,2,4],[3,1,4,2],[3,1,2,4],[3,1,2,4]]
 -}
 shuffle2 :: PP.Perm.Perm -> PP.Perm.Perm -> [PP.Perm.Perm]

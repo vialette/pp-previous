@@ -13,8 +13,7 @@ import qualified Data.Algorithm.PP.Perm           as PP.Perm
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-{- | 'kPatterns' @k@ @p@ function returns the list of all permutations of length
-@k@ that occur in the permutation @p@.
+{- | 'kPatterns' @k@ @p@ returns the list of all permutations of length @k@ that occur in the permutation @p@.
 
 >>> kPatterns 1 $ mkPerm [1,4,2,5,3]
 [[1]]
@@ -30,7 +29,8 @@ import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 kPatterns :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
 kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mkPerm . PP.Utils.Foldable.subsets k . PP.Perm.getList
 
-{- |
+{- | 'patterns' @p@ returns the list of all permutations that occur in the permutation @p@.
+
 
 >>> patterns $ mkPerm [1,4,2,5,3]
 [[1],[1,2],[2,1],[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[1,2,4,3],[1,3,2,4],[1,3,4,2],[1,4,2,3],[3,1,4,2],[1,4,2,5,3]]
