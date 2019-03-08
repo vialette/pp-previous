@@ -11,7 +11,7 @@ Permutations.
 
 module Data.Algorithm.PP.Perm (
     -- * Type
-  , Perm
+    Perm
 
     -- * Building permutations
   , mk
@@ -138,7 +138,7 @@ fromPoints = mk . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX 
 >>> getList $ mkPerm [1,5,3]
 
 -}
-getList :: P a -> [Int]
+getList :: Perm -> [Int]
 getList = L.map PP.Geometry.Point.getY . getPoints
 
 -- Reduce a list of elements.
@@ -150,7 +150,7 @@ reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zi
 
 {- | 'len' @p@ returns the length of permutation @p@.
 -}
-len :: P a -> Int
+len :: Perm -> Int
 len = L.length . getPoints
 
 {- | 'at' @i@ @p@ returns the integer at position @i@ in permutation @p@.
@@ -192,16 +192,16 @@ deleteAt i p
 
 >>>
 -}
-partitions :: Int -> Int -> P a -> [([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])]
-partitions k l = PP.Utils.Foldable.partitions k l . getPoints
+partitions :: Int -> Int -> Perm -> [([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])]
+partitions k l = PP.Utils.List.partitions k l . getPoints
 
 {- | 'inversions' @p@ returns the inversions of permutation @p@.
 
->>> inversions (mk [1,5,3,2,6,4])
+>>> inversions $ mk [1,5,3,2,6,4]
 [(5,3),(5,2),(5,4),(3,2),(6,4)]
 -}
 inversions :: Perm -> [(Int, Int)]
-inversions = L.map (\ [i, j] -> (i, j)) . L.filter (\ [i, j] -> i > j) . PP.Utils.Foldable.subsets 2 . getList
+inversions = L.filter (T.uncurry (>)) . PP.Utils.List.subsets2 . getList
 
 {- | 'identity' @n@ returns the identity permutation of length @n@.
 

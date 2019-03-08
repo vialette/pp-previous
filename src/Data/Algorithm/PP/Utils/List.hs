@@ -44,6 +44,7 @@ module Data.Algorithm.PP.Utils.List (
   , prefixReversal
 
   , subsets
+  , subsets2
   , partitions
   , balPartitions
 
@@ -82,7 +83,7 @@ safeLast xs = Just (L.last xs)
 
 kDeleteAt :: Int -> Int -> [a] -> [a]
 kDeleteAt _ _ [] = []
-kDeleteAt i k xs = T.uncurry (++) $ Arrow.second (kDeleteAt . L.drop k) $ L.splitAt i xs
+kDeleteAt i k xs = T.uncurry (++) . A.second (L.drop k) $ L.splitAt i xs
 
 deleteAt :: Int -> [a] -> [a]
 deleteAt i = kDeleteAt i 1
@@ -257,6 +258,9 @@ subsets k = aux k . F.toList
     aux 0  _        = [[]]
     aux _  []       = []
     aux k' (x : xs) = [x : xs' | xs' <- aux (k'-1) xs] ++ aux k' xs
+
+subsets2 :: [a] -> [(a, a)]
+subsets2 = L.map (\ [x, y] -> (x, y)) . subsets 2
 
 {- | 'partitions' @nl@ @nr@ @xs@  return all possible partitions of @xs@ into @ns@ and @nr@ elements.
 
