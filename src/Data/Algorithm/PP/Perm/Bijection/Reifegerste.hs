@@ -9,8 +9,8 @@ where
 
   -- |'reifegerste' 'perm'
   reifegerste :: PP.Perm.Perm -> PP.Perm.Perm
-  reifegerste _ = PP.Perm.mkPerm [1]
+  reifegerste _ = PP.Perm.mk [1]
 
   -- |'invReifegerste' 'perm'
   invReifegerste :: PP.Perm.Perm -> PP.Perm.Perm
-  invReifegerste _ = PP.Perm.mkPerm [1]
+  invReifegerste _ = PP.Perm.mk [1]

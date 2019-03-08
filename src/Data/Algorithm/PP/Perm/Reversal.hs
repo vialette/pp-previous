@@ -107,7 +107,7 @@ reversals p = [reversal i j p | i <- [1..PP.Perm.len p], j <- [i+1..PP.Perm.len 
 -- (3,[3,2,1])
 -- (4,[3,2,1])
 prefixReversal :: Int -> PP.Perm.Perm -> PP.Perm.Perm
-prefixReversal m = PP.Perm.mkPerm . PP.Utils.List.prefixReversal m . PP.Perm.getList
+prefixReversal m = PP.Perm.mk . PP.Utils.List.prefixReversal m . PP.Perm.getList
 
 -- |'randomPrefixReversal' 'p' 'g'
 --

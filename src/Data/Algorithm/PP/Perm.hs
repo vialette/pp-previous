@@ -1,25 +1,18 @@
 module Data.Algorithm.PP.Perm (
     -- * Type
-    P
   , Perm
-  , SubSeq
 
-    -- * Building
-  , mkPerm
-  , mkPermUnsafe
-  , fromPatt
+    -- * Building permutations
+  , mk
+  , mkUnsafe
   , fromPoints
   , fromList
-  , mkSubSeq
   , identity
   , empty
 
     -- * Transforming
   , getPoints
   , getList
-
-    -- * Comparing
-  , orderIso
 
     -- * Querying
   , len
@@ -56,62 +49,49 @@ import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
--- |'P' type
-newtype P a = P { getPoints :: [PP.Geometry.Point.Point] }
+-- |'Perm' type
+newtype Perm = Perm { getPoints :: [PP.Geometry.Point.Point] }
 
 -- |
-instance Show (P a) where
+instance Show Perm where
   show = show . fmap PP.Geometry.Point.getY . getPoints
 
 -- |
-instance Eq (P a) where
+instance Eq Perm where
   p == q = f p == f q
     where
       f = getPoints . fromList . getList
 
 -- |
-instance Ord (P a) where
+instance Ord Perm where
   p `compare` q = f p `compare` f q
     where
       f = getPoints . fromList . getList
 
--- |'Span' type
-data Reduced
-
--- |'Sub' type
-data Reducible
-
--- |'Perm' type
-type Perm = P Reduced
-
--- |'Patt' type
-type Patt = P Reducible
-
-{- | 'mkPermUnsafe' @xs@.
+{- | 'mkUnsafe' @xs@.
 Use with caution.
 
->>> mkPermUnsafe [1,2,4,3]
+>>> mkUnsafe [1,2,4,3]
 [1,2,4,3]
->>> mkPermUnsafe [1,2,1,2]
+>>> mkUnsafe [1,2,1,2]
 [1,2,1,2]
 -}
-mkPermUnsafe :: [Int] -> Perm
-mkPermUnsafe = P . fmap (uncurry PP.Geometry.Point.mk) . L.zip [1..]
+mkUnsafe :: [Int] -> Perm
+mkUnsafe = P . fmap (uncurry PP.Geometry.Point.mk) . L.zip [1..]
 
-{- | 'mkPerm' @xs@ constructs a permutation from foldable @xs@.
-Ties are resolved from left to right.
+{- | 'mk' @xs@ constructs a permutation from foldable @xs@ (ties are resolved from left to right).
 
->>> mkPerm "abcd"
+>>> mk "abcd"
 [1,2,3,4]
->>> mkPerm "abca"
+>>> mk "abca"
 [1,3,4,2]
->>> mkPerm "abab"
+>>> mk "abab"
 [1,3,2,4]
->>> mkPerm "aaaa"
+>>> mk "aaaa"
 [1,2,3,4]
 -}
-mkPerm :: (Foldable t, Ord a) => t a -> Perm
-mkPerm = fromList . F.toList
+mk :: (Foldable t, Ord a) => t a -> Perm
+mk = fromList . F.toList
 
 {- | 'fromList' @xs@ returns the permutation that corresponds to @xs@ (ties are resolved from left to right).
 
@@ -125,25 +105,20 @@ mkPerm = fromList . F.toList
 [1,2,3,4]
 -}
 fromList :: (Ord a) => [a] -> Perm
-fromList = mkPermUnsafe . reduce
+fromList = mkUnsafe . reduce
 
-fromSubSeq :: Patt -> Perm
-fromSubSeq = fromList . getList
+{- |'fromPoints' @ps@ construct a permutation from a list of points. The points do need to be sorted.
 
--- |'fromPoints' 'ps' construct a permutation from a list of points.
--- The points do need to be sorted.
---
--- >>> fromPoints []
+>>> fromPoints []
+-}
 fromPoints :: (Foldable t) => t PP.Geometry.Point.Point -> Perm
-fromPoints = mkPerm . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . F.toList
+fromPoints = mk . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . F.toList
 
--- | 'mkPatt' 'ps'
---
--- >>>
-mkSubSeq :: [PP.Geometry.Point.Point] -> Patt
-mkSubSeq = P
+{- | 'getList' @p@ returns the list of the elements of permutation @p@.
 
--- | 'getList' 'p' returns the list of the elements of permutation 'p'.
+>>> getList $ mkPerm [1,5,3]
+
+-}
 getList :: P a -> [Int]
 getList = L.map PP.Geometry.Point.getY . getPoints
 
@@ -154,88 +129,16 @@ reduce = L.map T.fst . L.sortBy cmpFstSnd . L.zip [1..] . L.sortBy cmpSnd . L.zi
     cmpFstSnd = compare `on` (T.fst . T.snd)
     cmpSnd    = compare `on` T.snd
 
-
-
--- |'orderIso' 'p' 'q'
-orderIso :: Perm-> P a -> Bool
-orderIso p1 p2 = p1 == mkPerm (getList p2)
-
 {- | 'len' @p@ returns the length of permutation @p@.
 -}
 len :: P a -> Int
 len = L.length . getPoints
 
--- |'at'
+{- | 'at' @i@ @p@ returns the integer at position @i@ in permutation @p@.
+-}
 at :: P a -> Int -> Int
 at p = (L.!!) (getList p)
 
-{- | 'prefix' @k p@ returns the prefix of length @k@ of permutation @p@.
-
->>> let p = mkPerm [2,4,5,1,6,3] in [prefix i p | i <- [1..len p]]
-[[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
--}
-prefix :: Int -> P a -> SubSeq
-prefix k = P . L.take k . getPoints
-
-{- |'prefixes' 'p' returns all prefixes of permutation @p@.
-
->>> prefixes $ mkPerm [2,4,5,1,6,3]
-[[1],[1,2],[1,2,3],[2,3,4,1],[2,3,4,1,5],[2,4,5,1,6,3]]
--}
-prefixes :: P a -> [SubSeq]
-prefixes = L.map P . L.tail . L.inits . getPoints
-
--- 'suffix' 'k' 'p' returns the suffix of length 'k' of the permutation 'p' as
--- a permutation.
---
--- >>> p = mk [2,4,5,1,6,3]
--- >>> [suffix i p | i <- [1..len p]]
--- [[1],[2,1],[1,3,2],[3,1,4,2],[3,4,1,5,2],[2,4,5,1,6,3]]
-suffix :: Int -> P a -> Patt
-suffix k p = P . L.drop (n-k) $ getPoints p
-  where
-    n = len p
-
--- |'suffixes' 'p' returns all the suffixes of the permutation 'p' as
--- permutations.
---
--- >>> p = mk [2,4,5,1,6,3]
--- >>> suffixes p
--- [[2,4,5,1,6,3],[3,4,1,5,2],[3,1,4,2],[1,3,2],[2,1],[1]]
-suffixes :: P a -> [Patt]
-suffixes = L.map P . L.init . L.tails . getPoints
-
-{- | 'kFactors' @k@ @p@ returns the list of all factors of length @k@ of the
-permutation @p@.
-
->>> kFactors 0 $ mkPerm [2,4,1,3]
-[]
->>> kFactors 1 $ mkPerm [2,4,1,3]
-[[2],[4],[1],[3]]
->>> kFactors 2 $ mkPerm [2,4,1,3]
-[[2,4],[4,1],[1,3]]
->>> kFactors 3 $ mkPerm [2,4,1,3]
-[[2,4,1],[4,1,3]]
->>> kFactors 4 $ mkPerm [2,4,1,3]
-[[2,4,1,3]]
--}
-kFactors :: Int -> P a -> [Patt]
-kFactors k = L.map P . PP.Utils.List.chunk k . getPoints
-
-{- | 'factors' @p@ retruns ll factors of the permutation @p@.
-
->>> factors $ mkPerm [2,4,1,3]
-[[2],[4],[1],[3],[2,4],[4,1],[1,3],[2,4,1],[4,1,3],[2,4,1,3]]
--}
-factors :: P a -> [Patt]
-factors p = F.concat [kFactors k p |  k <- [1..len p]]
-
--- |'maxFactors' 'f' 'p'
-maxFactors :: (Patt -> Bool) -> P a -> [Patt]
-maxFactors f p = select $ L.dropWhile L.null [[q | q <- kFactors k p, f q] | k <- [n,n-1..1]]
-  where
-    n         = len p
-    select xs = if L.null xs then [] else L.head xs
 
 -- | 'patterns' 'k' 'p' returns all distinct permutations of length 'k' that
 -- occurs in permutation 'p'.
@@ -288,10 +191,10 @@ inversions = L.map (\[i, j] -> (i, j)) . L.filter (\[i, j] -> i > j) . PP.Utils.
 -- >>> identity 4
 -- [1,2,3,4]
 identity :: Int -> Perm
-identity n = mkPermUnsafe [1..n]
+identity n = mkUnsafe [1..n]
 
 empty :: Perm
-empty = mkPermUnsafe []
+empty = mkUnsafe []
 
 
 isIdentity :: P a -> Bool
@@ -299,7 +202,7 @@ isIdentity p = True
 
 -- |'grid' 'p'
 --
--- >>> putStr $ grid  (mkPerm [5,1,6,4,2,3])
+-- >>> putStr $ grid  (mk [5,1,6,4,2,3])
 -- +---+---+---+---+---+---+
 -- |   |   | o |   |   |   |
 -- +---+---+---+---+---+---+

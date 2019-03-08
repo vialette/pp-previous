@@ -27,7 +27,7 @@ import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 [[1,4,2,5,3]]
 -}
 kPatterns :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
-kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mkPerm . PP.Utils.Foldable.subsets k . PP.Perm.getList
+kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . PP.Perm.getList
 
 {- | 'patterns' @p@ returns the list of all permutations that occur in the permutation @p@.
 

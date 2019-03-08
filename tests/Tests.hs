@@ -12,7 +12,7 @@ unitTests =
     [increasing, decreasing]
 
 increasing =
-  testCase "Increasing" $ assertEqual [] [1..9] (PP.Perm.getList $ PP.Perm.mkPerm [1..9])
+  testCase "Increasing" $ assertEqual [] [1..9] (PP.Perm.getList $ PP.Perm.mk [1..9])
 
 decreasing =
-  testCase "Decreasing" $ assertEqual [] [9,8..1] (PP.Perm.getList $ PP.Perm.mkPerm [9,8..1])
+  testCase "Decreasing" $ assertEqual [] [9,8..1] (PP.Perm.getList $ PP.Perm.mk [9,8..1])

@@ -9,8 +9,8 @@ where
 
   -- | 'west' 'perm'
   west :: PP.Perm.Perm -> PP.Perm.Perm
-  west _ = PP.Perm.mkPerm [1]
+  west _ = PP.Perm.mk [1]
 
   -- | 'invWest' 'perm'
   invWest :: PP.Perm.Perm -> PP.Perm.Perm
-  invWest _ = PP.Perm.mkPerm [1]
+  invWest _ = PP.Perm.mk [1]

@@ -26,6 +26,10 @@ module Data.Algorithm.PP.Utils.List (
   , reversal'
   , prefixReversal
 
+  , subsets
+  , partitions
+  , balPartitions
+
     -- * Random
   , randomShuffle
   ) where
@@ -188,3 +192,58 @@ randomShuffle xs g = A.first M.elems $ foldr randomShuffleStep initial [1..n]
   where
     n       = L.length xs
     initial = (M.fromList $ L.zip [1..] xs, g)
+
+{- |'subsets' @k@ @xs@ returns all @k@-subsets of @xs@.
+
+>>> subsets 0 [1..4]
+[[]]
+>>> subsets 1 [1..4]
+[[1],[2],[3],[4]]
+>>> subsets 2 [1..4]
+[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
+>>> subsets 3 [1..4]
+[[1,2,3],[1,2,4],[1,3,4],[2,3,4]]
+>>> subsets 4 [1..4]
+[[1,2,3,4]]
+>>> subsets 5 [1..4]
+[]
+-}
+subsets :: (Foldable t, Eq b, Num b) => b -> t a -> [[a]]
+subsets k = aux k . F.toList
+  where
+    aux 0  _        = [[]]
+    aux _  []       = []
+    aux k' (x : xs) = [x : xs' | xs' <- aux (k'-1) xs] ++ aux k' xs
+
+-- |'partitions' 'nl' 'nr' 'xs'  return all possible partitions of 'xs' into 'ns'
+-- and 'nr' elements.
+--
+-- >>> [(i, j, partitions i j [1..4]) | i <- [0..4], j <- [0..4], i+j == 4]
+-- [(0,4,[([],[1,2,3,4])])
+-- ,(1,3,[([1],[2,3,4]),([2],[1,3,4]),([3],[1,2,4]),([4],[1,2,3])])
+-- ,(2,2,[([1,2],[3,4]),([1,3],[2,4]),([1,4],[2,3]),([2,3],[1,4]),([2,4],[1,3]),([3,4],[1,2])])
+-- ,(3,1,[([1,2,3],[4]),([1,2,4],[3]),([1,3,4],[2]),([2,3,4],[1])])
+-- ,(4,0,[([1,2,3,4],[])])]
+partitions :: (Eq a, Foldable t) => Int -> Int -> t a -> [([a], [a])]
+partitions nl nr = aux . F.toList
+  where
+    aux xs
+      | nl + nr /= F.length xs = []
+      | otherwise              = [(xs', xs L.\\ xs') | xs' <- subsets nl xs]
+
+-- |'balPartitions' 'xs' returns all partitions of 'xs' into 'n/2' and 'n/2'
+-- elements, where 'n' is the length of 'xs'.
+--
+-- >>> balPartitions [1..4]
+-- [([1,2],[3,4]),([1,3],[2,4]),([1,4],[2,3])]
+-- >>> balPartitions [1..5]
+-- []
+balPartitions :: (Foldable t, Ord a) => t a -> [([a], [a])]
+balPartitions = aux . F.toList
+  where
+    aux []       = []
+    aux (x : xs) = PP.Utils.List.uniq $ fmap f ps
+      where
+        f p = (x : T.fst p, T.snd p)
+        ps  = partitions (k-1) k xs
+        k   = 1 + F.length xs `div` 2

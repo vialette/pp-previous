@@ -1,14 +1,87 @@
 module Data.Algorithm.PP.Perm.Factor (
-    kFactors
+  -- * Prefixes
+    prefix
+  , prefixes
+  , evenPrefixes
+  , oddPrefixes
+
+   -- * Suffixes
+  , suffix
+  , suffixes
+  , evenSuffixes
+  , oddSuffixes
+
+   -- * Factors
+  , kFactors
   , factors
+  , evenFactors
+  , oddFactors
   ) where
 
-import qualified Data.Algorithm.PP.Perm           as PP.Perm
-import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
-import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
+import qualified Data.Algorithm.PP.Geometry.Point     as PP.Geometry.Point
+import qualified Data.Algorithm.PP.Perm               as PP.Perm
+import qualified Data.Algorithm.PP.Perm.Factor.Points as PP.Perm.Factor.Points
+import qualified Data.Algorithm.PP.Utils.List         as PP.Utils.List
 
-kFactors :: Int -> PP.Perm.Perm -> [PP.Perm.SubSeq]
-kFactors = fmap PP.Perm.mkSubSeq . PP.Utils.List.kFactors k . PP.Perm.getList
+{- |
+-}
+prefix :: Int -> PP.Perm.Perm -> PP.Perm.Perm
+prefix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . PP.Perm.Factor.Points.prefix
 
-factors :: PP.Perm.Perm -> [PP.Perm.SubSeq]
-factors p = L.concat [kFactors k | k <- [1..PP.Perm.len p]]
+{- | 'perPrefixes' @p@ returns all prefixes of permutations @p@ as permutations.
+-}
+prefixes :: PP.Perm.Perm -> [PP.Perm.Perm]
+prefixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.prefixes
+
+{- | 'evenPrefixes' @p@ returns all even length prefixes of permutations @p@ as permutations.
+-}
+evenPrefixes :: PP.Perm.Perm -> [PP.Perm.Perm]
+evenPrefixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.evenPrefixes
+
+{- | 'oddPrefixes' @p@ returns all odd length prefixes of permutations @p@ as permutations.
+-}
+oddPrefixes :: PP.Perm.Perm -> [PP.Perm.Perm]
+oddPrefixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.oddPrefixes
+
+{- | 'suffix' @k@ @p@ returns the suffix of length @k@ of permutation @p@ as a permutation.
+-}
+suffix :: Int -> PP.Perm.Perm -> PP.Perm.Perm
+suffix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . suffix
+
+
+{- | 'suffixes' @p@ returns the suffixes of permutations @p@ as permutations.
+
+-}
+suffixes :: PP.Perm.Perm -> [PP.Perm.Perm]
+suffixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . prefixes
+
+{- | 'evenPrefixes' @p@ returns all even length suffixes of permutations @p@ as permutations.
+-}
+evenSuffixes :: PP.Perm.Perm -> [PP.Perm.Perm]
+evenSuffixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.evenSuffixes
+
+{- | 'oddPrefixes' @p@ returns all odd length suffixes of permutations @p@ as permutations.
+-}
+oddSuffixes :: PP.Perm.Perm -> [PP.Perm.Perm]
+oddSuffixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.evenSuffixes
+
+{- | 'kFactors' @p@ returns all factors (as permutations) of length @k@ of permutation @p@.
+-}
+kFactors :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
+kFactors k = fmap (PP.Perm.mk . fmap PP.geometry.Point.getY) . PP.Perm.Factor.Points.kFactors k
+
+{- | 'factors' @p@ returns all factors (as permutations) of permutation @p@.
+-}
+factors :: PP.Perm.Perm -> [PP.Perm.Perm]
+factors = PP.Utils.List.uniq . fmap PP.Perm.mk .  PP.Perm.Factor.Points.factors
+
+{- | 'evenFactors' @p@ returns all even length factors (as permutations) of permutation @p@.
+-}
+evenFactors :: PP.Perm.Perm -> [PP.Perm.Perm]
+evenFactors = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.evenFactors
+
+{- | 'oddFactors' @p@ returns all odd length factors (as permutations) of permutation @p@.
+-}
+oddFactors :: PP.Perm.Perm -> [PP.Perm.Perm]
+oddFactors = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.oddFactors
+

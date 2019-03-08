@@ -118,7 +118,7 @@ which elements of @xs@ are fixed points.
 >>> localizedFixedPoints [2,3,4] 4
 [[1,2,3,4]]
 -}
-localizedFixedPoints xs = L.map (PP.Perm.mkPerm . L.map T.snd) . localizedFixedPoints' xs
+localizedFixedPoints xs = L.map (PP.Perm.mk . L.map T.snd) . localizedFixedPoints' xs
 
 {- | 'localizedFixedPoints' @xs@ @n@ returns all permutations of length @n@ in
 which only elements of @xs@ are fixed points.
@@ -138,7 +138,7 @@ which only elements of @xs@ are fixed points.
 >>> strictLocalizedFixedPoints [1,4] 4
 [[1,3,2,4]]
 -}
-strictLocalizedFixedPoints xs = L.map (PP.Perm.mkPerm . L.map T.snd) . L.filter f . localizedFixedPoints' xs
+strictLocalizedFixedPoints xs = L.map (PP.Perm.mk . L.map T.snd) . L.filter f . localizedFixedPoints' xs
   where
     f = F.all (\ (i, j) -> i `L.elem` xs || i /= j)
 

@@ -9,8 +9,8 @@ where
 
   -- |'elizaldeDeutsch' 'perm'
   elizaldeDeutsch :: PP.Perm.Perm -> PP.Perm.Perm
-  elizaldeDeutsch _ = PP.Perm.mkPerm [1]
+  elizaldeDeutsch _ = PP.Perm.mk [1]
 
   -- |'invElizaldeDeutsch' 'perm'
   invElizaldeDeutsch :: PP.Perm.Perm -> PP.Perm.Perm
-  invElizaldeDeutsch _ = PP.Perm.mkPerm [1]
+  invElizaldeDeutsch _ = PP.Perm.mk [1]

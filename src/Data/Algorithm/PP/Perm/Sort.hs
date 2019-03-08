@@ -34,7 +34,7 @@ import qualified Data.Algorithm.PP.Perm       as PP.Perm
 -- stackSort([3,1,2]) = [1,2,3]
 -- stackSort([1,3,2]) = [1,2,3]
 stackSort :: PP.Perm.Perm -> PP.Perm.Perm
-stackSort = PP.Perm.mkPerm . aux [] [] . PP.Perm.getList
+stackSort = PP.Perm.mk . aux [] [] . PP.Perm.getList
   where
     aux acc []           []       = L.reverse acc
     aux acc (s : ss)     []       = aux (s : acc) ss []

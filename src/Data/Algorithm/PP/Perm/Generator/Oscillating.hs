@@ -16,7 +16,7 @@ where
   -- >>> oscillatingIncreasing 10
   -- [3,1,5,2,7,4,9,6,10,8]
   oscillatingIncreasing :: Int-> PP.Perm.Perm
-  oscillatingIncreasing n = PP.Perm.mkPerm . L.take n $ F.concat [[2*k+2, 2*k-1] | k <- [1..]]
+  oscillatingIncreasing n = PP.Perm.mk . L.take n $ F.concat [[2*k+2, 2*k-1] | k <- [1..]]
 
   -- |'oscillatingIncreasings' return the infinite list of all oscillanting increasing
   -- permutations.

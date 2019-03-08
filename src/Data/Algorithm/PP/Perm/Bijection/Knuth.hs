@@ -33,7 +33,7 @@ where
 
   -- |'knuthDyckPathTo132AvoidingPerm' 'path'
   knuthDyckPathTo132AvoidingPerm :: PP.Dyck.Path -> PP.Perm.Perm
-  knuthDyckPathTo132AvoidingPerm _ = PP.Perm.mkPerm [1]
+  knuthDyckPathTo132AvoidingPerm _ = PP.Perm.mk [1]
 
   -- |'knuth321AvoidingPermToDyckPath' 'perm'
   knuth321AvoidingPermToDyckPath :: PP.Perm.Perm -> PP.Dyck.Path
@@ -59,7 +59,7 @@ where
 
   -- |'knuthDyckPathTo321AvoidingPerm' 'path'
   knuthDyckPathTo321AvoidingPerm :: PP.Dyck.Path -> PP.Perm.Perm
-  knuthDyckPathTo321AvoidingPerm _ = PP.Perm.mkPerm [1]
+  knuthDyckPathTo321AvoidingPerm _ = PP.Perm.mk [1]
 
   -- |'knuth132AvoidingPermTo321AvoidingPerm' 'perm'
   knuth132AvoidingPermTo321AvoidingPerm :: PP.Perm.Perm -> PP.Perm.Perm
