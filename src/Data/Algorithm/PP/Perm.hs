@@ -154,9 +154,11 @@ len :: P a -> Int
 len = L.length . getPoints
 
 {- | 'at' @i@ @p@ returns the integer at position @i@ in permutation @p@.
+
+>>> (mk [1..4]) `at` 0
 -}
-at :: P a -> Int -> Int
-at p = (L.!!) (getList p)
+at :: Int -> Perm -> Int
+at i = flip i (L.!!) . getList
 
 {- | 'delete' @i@ @p@ returns the permutations obtains by deleting @i@ in permutation @p@.
 If @i@ is not part of permutation @p@, then the function returns @p@ unchanged.
@@ -185,20 +187,21 @@ deleteAt i p
   | i <= 0 || i > len p = Nothing
   | otherwise           = Just . mk . L.delete i $ getList p
 
+{- | 'partitions' @p@ @k@ @l@ returns all partitions @(qk,ql)@ of permutation @p@ such that
+@|qk|=k@ and @|ql|=l@.
 
--- |'partitions' 'p' 'k' 'l' returns all partitions ('qk','ql') of the permutation
--- 'p' such that '|qk|=k' and '|ql|=l'
---
--- >>>
+>>>
+-}
 partitions :: Int -> Int -> P a -> [([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])]
 partitions k l = PP.Utils.Foldable.partitions k l . getPoints
 
--- |'inversions' 'p' returns the inversions of the permutation 'p'.
---
--- >>> inversions (mk [1,5,3,2,6,4])
--- [(5,3),(5,2),(5,4),(3,2),(6,4)]
-inversions :: P a -> [(Int, Int)]
-inversions = L.map (\[i, j] -> (i, j)) . L.filter (\[i, j] -> i > j) . PP.Utils.Foldable.subsets 2 . getList
+{- | 'inversions' @p@ returns the inversions of permutation @p@.
+
+>>> inversions (mk [1,5,3,2,6,4])
+[(5,3),(5,2),(5,4),(3,2),(6,4)]
+-}
+inversions :: Perm -> [(Int, Int)]
+inversions = L.map (\ [i, j] -> (i, j)) . L.filter (\ [i, j] -> i > j) . PP.Utils.Foldable.subsets 2 . getList
 
 {- | 'identity' @n@ returns the identity permutation of length @n@.
 
@@ -229,7 +232,9 @@ descending n = mkUnsafe [n,n-1..1]
 empty :: Perm
 empty = mkUnsafe []
 
-isIdentity :: P a -> Bool
+{- | 'isIdentity' @p@ returns @True@ if the permutation @p@ is the identity.
+-}
+isIdentity :: Perm -> Bool
 isIdentity p = True
 
 {- | 'grid' @p@
