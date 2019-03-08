@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Factor
+Description : Factors of permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Enumerating factors in permutations.
+-}
+
 module Data.Algorithm.PP.Perm.Factor (
   -- * Prefixes
     prefix

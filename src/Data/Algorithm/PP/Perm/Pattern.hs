@@ -1,6 +1,20 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Pattern
+Description : Patterns of permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Enumerating patterns in permutations.
+-}
+
 module Data.Algorithm.PP.Perm.Pattern (
+  -- * Basic patterns
     kPatterns
   , patterns
+
+  -- * Parity patterns
   , evenPatterns
   , oddPatterns
   ) where
@@ -15,7 +29,7 @@ import qualified Data.Algorithm.PP.Perm           as PP.Perm
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-{- | 'kPatterns' @k@ @p@ returns the list of all permutations of length @k@ that occur in the permutation @p@.
+{- | 'kPatterns' @k@ @p@ returns tall permutations of length @k@ that occur in permutation @p@.
 
 >>> kPatterns 1 $ mkPerm [1,4,2,5,3]
 [[1]]
@@ -31,7 +45,7 @@ import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 kPatterns :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
 kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . PP.Perm.getList
 
-{- | 'patterns' @p@ returns the list of all permutations that occur in the permutation @p@.
+{- | 'patterns' @p@ returns all permutations that occur in permutation @p@.
 
 
 >>> patterns $ mkPerm [1,4,2,5,3]
@@ -40,14 +54,18 @@ kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . 
 patterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 patterns p = L.concat [kPatterns k p | k <- [1..PP.Perm.len p]]
 
-{- | 'evenPatterns' @p@ returns all even lenth patterns that ocuur in permutation @p@.
+{- | 'evenPatterns' @p@ returns all even length patterns that occur in permutation @p@.
+
+>>> evenPattern $ mkPerm [1,4,2,5,3]
 -}
 evenPatterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 evenPatterns p = L.concat [kPatterns k p | k <- [2,4..n]]
   where
     n : PP.Perm.len p
 
-{- | 'oddPatterns' @p@ returns all even lenth patterns that ocuur in permutation @p@.
+{- | 'oddPatterns' @p@ returns all even length patterns that occur in permutation @p@.
+
+>>> oddPattern $ mkPerm [1,4,2,5,3]
 -}
 oddPatterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 oddPatterns p = L.concat [kPatterns k p | k <- [1,3..n]]
