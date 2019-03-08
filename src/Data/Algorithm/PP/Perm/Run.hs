@@ -6,7 +6,7 @@ License     : GPL-3
 Maintainer  : vialette@gmail.com
 Stability   : experimental
 
-Computing runs in permutations.
+Computing ascending and descending runs in permutations.
 -}
 module Data.Algorithm.PP.Perm.Run
   (
