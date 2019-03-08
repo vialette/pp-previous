@@ -8,6 +8,7 @@ Stability   : experimental
 
 Computing ascending and descending runs in permutations.
 -}
+
 module Data.Algorithm.PP.Perm.Run
   (
   -- * Ascending run

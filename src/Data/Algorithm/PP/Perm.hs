@@ -189,8 +189,8 @@ maxPatterns f p = select $ L.dropWhile L.null [[q | q <- patterns k p, f q] | k
 -- 'p' such that '|qk|=k' and '|ql|=l'
 --
 -- >>>
-partitions :: Int -> Int -> P a -> [(Patt, Patt)]
-partitions k l = L.map ((A.***) P P) . PP.Utils.Foldable.partitions k l . getPoints
+partitions :: Int -> Int -> P a -> [([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])]
+partitions k l = PP.Utils.Foldable.partitions k l . getPoints
 
 -- |'inversions' 'p' returns the inversions of the permutation 'p'.
 --
