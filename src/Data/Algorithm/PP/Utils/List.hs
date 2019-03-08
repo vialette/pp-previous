@@ -17,6 +17,9 @@ module Data.Algorithm.PP.Utils.List (
   , evens
   , odds
 
+  , kDeleteAt
+  , deleteAt
+
   , splitOn
   , splitAt
   , splitEvery
@@ -76,6 +79,13 @@ safeTail (_ : xs) = Just xs
 safeLast :: [a] -> Maybe a
 safeLast [] = Nothing
 safeLast xs = Just (L.last xs)
+
+kDeleteAt :: Int -> Int -> [a] -> [a]
+kDeleteAt _ _ [] = []
+kDeleteAt i k xs = T.uncurry (++) $ Arrow.second (kDeleteAt . L.drop k) $ L.splitAt i xs
+
+deleteAt :: Int -> [a] -> [a]
+deleteAt i = kDeleteAt i 1
 
 {- | 'evens' @xs@ returns the elements returns the elements of @xs@ at all even positions.
 -}

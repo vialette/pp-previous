@@ -14,6 +14,9 @@ module Data.Algorithm.PP.Perm.Pattern (
     kPatterns
   , patterns
 
+  -- * Maximizing
+  , maxPatterns
+
   -- * Parity patterns
   , evenPatterns
   , oddPatterns
@@ -47,12 +50,19 @@ kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . 
 
 {- | 'patterns' @p@ returns all permutations that occur in permutation @p@.
 
-
 >>> patterns $ mkPerm [1,4,2,5,3]
 [[1],[1,2],[2,1],[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[1,2,4,3],[1,3,2,4],[1,3,4,2],[1,4,2,3],[3,1,4,2],[1,4,2,5,3]]
 -}
 patterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 patterns p = L.concat [kPatterns k p | k <- [1..PP.Perm.len p]]
+
+{- | 'maxPatterns' @f@ @p@ returns the longest patterns @q@ of permutation @p@ such that @f q@ holds.
+-}
+maxPatterns :: (Perm -> Bool) -> PP.Perm.Perm -> [PP.Perm.Perm]
+maxPatterns f p = select $ L.dropWhile L.null [[q | q <- kPatterns k p, f q] | k <- [n,n-1..1]]
+  where
+    n         = PP.Perm.len p
+    select ys = if L.null ys then [] else L.head ys
 
 {- | 'evenPatterns' @p@ returns all even length patterns that occur in permutation @p@.
 

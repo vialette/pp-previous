@@ -23,6 +23,12 @@ module Data.Algorithm.PP.Perm (
   , identity
   , empty
 
+  -- * Modifying
+  , delete
+  , deleteMin
+  , deleteMax
+  , deleteAt
+
     -- * Transforming
   , getPoints
   , getList
@@ -152,38 +158,33 @@ len = L.length . getPoints
 at :: P a -> Int -> Int
 at p = (L.!!) (getList p)
 
+{- | 'delete' @i@ @p@ returns the permutations obtains by deleting @i@ in permutation @p@.
+If @i@ is not part of permutation @p@, then the function returns @p@ unchanged.
+-}
+delete :: Int -> Perm -> Perm
+delete i = mk . L.delete i . getList
 
--- | 'patterns' 'k' 'p' returns all distinct permutations of length 'k' that
--- occurs in permutation 'p'.
---
--- >>> patterns 0 (mk [2,4,1,3,5])
--- [[]]
--- >>> patterns 1 (mk [2,4,1,3,5])
--- [[1]]
--- >>> patterns 2 (mk [2,4,1,3,5])
--- [[1,2],[2,1]]
--- >>> patterns 3 (mk [2,4,1,3,5])
--- [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2]]
--- >>> patterns 4 (mk [2,4,1,3,5])
--- [[1,3,2,4],[2,1,3,4],[2,3,1,4],[2,4,1,3],[3,1,2,4]]
--- >>> patterns 5 (mk [2,4,1,3,5])
--- [[2,4,1,3,5]]
--- >>> patterns 6 (mk [2,4,1,3,5])
--- []
-patterns :: Int -> P a -> [Perm]
-patterns k = L.map P . PP.Utils.Foldable.subsets k . getPoints
+{- | 'deleteMin' @p@ returns the permutations obtains by deleting @1@ in permutation @p@.
+-}
+deleteMin :: Perm -> Perm
+deleteMin = delete 1
 
--- |'patterns'' 'k' 'p'
-patterns' :: Int -> P a -> [Perm]
-patterns' k = L.map (P . getPoints) . patterns k
-
--- |'maxPatterns' 'f' 'p' returns the longest patterns 'q' of permutation 'p'
--- such that 'f' 'q' holds.
-maxPatterns :: (Perm-> Bool) -> P a -> [Perm]
-maxPatterns f p = select $ L.dropWhile L.null [[q | q <- patterns k p, f q] | k <- [n,n-1..1]]
+{- | 'deleteMax' @p@ returns the permutations obtains by deleting the maximum element in permutation @p@.
+-}
+deleteMax :: Perm -> Perm
+deleteMax p = delete n p
   where
-    n         = len p
-    select ys = if L.null ys then [] else L.head ys
+  n = len p
+
+{- | 'deleteAt' @i@ @p@ returns the permutations obtains by deleting the element at position @i@
+ in permutation @p@ (positions start at 0).
+ if @i < 0@ or @i >= len p@ then the function returns Nothing.
+-}
+deleteAt :: Int -> Perm -> Maybe Perm
+deleteAt i p
+  | i <= 0 || i > len p = Nothing
+  | otherwise           = Just . mk . L.delete i $ getList p
+
 
 -- |'partitions' 'p' 'k' 'l' returns all partitions ('qk','ql') of the permutation
 -- 'p' such that '|qk|=k' and '|ql|=l'
@@ -228,13 +229,12 @@ descending n = mkUnsafe [n,n-1..1]
 empty :: Perm
 empty = mkUnsafe []
 
-
 isIdentity :: P a -> Bool
 isIdentity p = True
 
 {- | 'grid' @p@
 
->>> putStr $ grid  (mk [5,1,6,4,2,3])
+>>> putStr . grid  $ mk [5,1,6,4,2,3]
 +---+---+---+---+---+---+
 |   |   | o |   |   |   |
 +---+---+---+---+---+---+
@@ -248,7 +248,7 @@ isIdentity p = True
 +---+---+---+---+---+---+
 |   | o |   |   |   |   |
 +---+---+---+---+---+---+
->>> putStr $ grid  (identity 6)
+>>> putStr . grid  $ identity 6
 +---+---+---+---+---+---+
 |   |   |   |   |   | o |
 +---+---+---+---+---+---+
@@ -264,12 +264,12 @@ isIdentity p = True
 +---+---+---+---+---+---+
 -}
 grid :: Perm -> String
-grid p = aux . L.map (row . PP.Geometry.Point.getX) . L.reverse . L.sortOn PP.Geometry.Point.getY $ getPoints p
+grid = grid' 'o'
+
+grid' :: Char -> Perm -> String
+grid' c p = aux . L.map (row . PP.Geometry.Point.getX) . L.reverse . L.sortOn PP.Geometry.Point.getY $ getPoints p
   where
     n      = len p
     sep    = ('+' :) $ F.concat (L.replicate n "---+") ++ "\n"
-    row x  = ('|' :) $ F.concat [F.concat (L.replicate (x-1) "   |"), " o |", F.concat (L.replicate (n-x) "   |"), "\n"]
+    row x  = ('|' :) $ F.concat [F.concat (L.replicate (x-1) "   |"), " ", [c], " |", F.concat (L.replicate (n-x) "   |"), "\n"]
     aux ss = sep ++ L.intercalate sep ss ++ sep
-
-grid' :: Perm -> String
-grid' p = ""
