@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Generator
+Description : Generating permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Generating permutation facilities.
+-}
+
 module Data.Algorithm.PP.Perm.Generator
   (
     module M

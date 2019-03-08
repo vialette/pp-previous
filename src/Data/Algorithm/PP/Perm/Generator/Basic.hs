@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Generator.Basic
+Description : Generating basic permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Generating basic permutations facilities.
+-}
+
 module Data.Algorithm.PP.Perm.Generator.Basic (
     perms
   , lexPerms

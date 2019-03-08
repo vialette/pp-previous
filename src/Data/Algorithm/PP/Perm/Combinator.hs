@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Combinator
+Description : Combining permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Combining permutations facilities.
+-}
+
 module Data.Algorithm.PP.Perm.Combinator (
     -- * Direct sum
     (<<+>>)

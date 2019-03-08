@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Perm
+Description : Permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Permutations.
+-}
+
 module Data.Algorithm.PP.Perm (
     -- * Type
   , Perm
@@ -7,6 +18,8 @@ module Data.Algorithm.PP.Perm (
   , mkUnsafe
   , fromPoints
   , fromList
+  , ascending
+  , descending
   , identity
   , empty
 
@@ -186,13 +199,32 @@ partitions k l = L.map ((A.***) P P) . PP.Utils.Foldable.partitions k l . getPoi
 inversions :: P a -> [(Int, Int)]
 inversions = L.map (\[i, j] -> (i, j)) . L.filter (\[i, j] -> i > j) . PP.Utils.Foldable.subsets 2 . getList
 
--- | 'identity' 'n' returns the identity permutation of length 'n'.
---
--- >>> identity 4
--- [1,2,3,4]
-identity :: Int -> Perm
-identity n = mkUnsafe [1..n]
+{- | 'identity' @n@ returns the identity permutation of length @n@.
 
+>>> identity 4
+[1,2,3,4]
+-}
+identity :: Int -> Perm
+identity = ascending
+
+{- | 'ascending' @n@ returns the ascending permutation of length @n@.
+
+>>> ascending 4
+[1,2,3,4]
+-}
+ascending :: Int -> Perm
+ascending n = mkUnsafe [1..n]
+
+{- | 'descending' @n@ returns the ascending permutation of length @n@.
+
+>>> descending 4
+[4,3,2,1]
+-}
+descending :: Int -> Perm
+descending n = mkUnsafe [n,n-1..1]
+
+{- | 'empty' returns the empty permutation.
+-}
 empty :: Perm
 empty = mkUnsafe []
 
@@ -200,36 +232,37 @@ empty = mkUnsafe []
 isIdentity :: P a -> Bool
 isIdentity p = True
 
--- |'grid' 'p'
---
--- >>> putStr $ grid  (mk [5,1,6,4,2,3])
--- +---+---+---+---+---+---+
--- |   |   | o |   |   |   |
--- +---+---+---+---+---+---+
--- | o |   |   |   |   |   |
--- +---+---+---+---+---+---+
--- |   |   |   | o |   |   |
--- +---+---+---+---+---+---+
--- |   |   |   |   |   | o |
--- +---+---+---+---+---+---+
--- |   |   |   |   | o |   |
--- +---+---+---+---+---+---+
--- |   | o |   |   |   |   |
--- +---+---+---+---+---+---+
--- >>> putStr $ grid  (identity 6)
--- +---+---+---+---+---+---+
--- |   |   |   |   |   | o |
--- +---+---+---+---+---+---+
--- |   |   |   |   | o |   |
--- +---+---+---+---+---+---+
--- |   |   |   | o |   |   |
--- +---+---+---+---+---+---+
--- |   |   | o |   |   |   |
--- +---+---+---+---+---+---+
--- |   | o |   |   |   |   |
--- +---+---+---+---+---+---+
--- | o |   |   |   |   |   |
--- +---+---+---+---+---+---+
+{- | 'grid' @p@
+
+>>> putStr $ grid  (mk [5,1,6,4,2,3])
++---+---+---+---+---+---+
+|   |   | o |   |   |   |
++---+---+---+---+---+---+
+| o |   |   |   |   |   |
++---+---+---+---+---+---+
+|   |   |   | o |   |   |
++---+---+---+---+---+---+
+|   |   |   |   |   | o |
++---+---+---+---+---+---+
+|   |   |   |   | o |   |
++---+---+---+---+---+---+
+|   | o |   |   |   |   |
++---+---+---+---+---+---+
+>>> putStr $ grid  (identity 6)
++---+---+---+---+---+---+
+|   |   |   |   |   | o |
++---+---+---+---+---+---+
+|   |   |   |   | o |   |
++---+---+---+---+---+---+
+|   |   |   | o |   |   |
++---+---+---+---+---+---+
+|   |   | o |   |   |   |
++---+---+---+---+---+---+
+|   | o |   |   |   |   |
++---+---+---+---+---+---+
+| o |   |   |   |   |   |
++---+---+---+---+---+---+
+-}
 grid :: Perm -> String
 grid p = aux . L.map (row . PP.Geometry.Point.getX) . L.reverse . L.sortOn PP.Geometry.Point.getY $ getPoints p
   where

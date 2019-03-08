@@ -1,7 +1,21 @@
+{-|
+Module      : Data.Algorithm.PP.Utils.List
+Description : Useful functions on lists
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Convenient functions on lists.
+-}
+
 module Data.Algorithm.PP.Utils.List (
     safeHead
   , safeTail
   , safeLast
+
+  , evens
+  , odds
 
   , splitOn
   , splitAt
@@ -43,23 +57,40 @@ import qualified Data.List       as L
 import Data.Map.Strict ((!))
 import qualified Data.Map.Strict as M
 import qualified Data.Set        as S
+import qualified Data.Tuple      as T
 
--- |'safeHead' 'xs'
+{- | 'safeHead' @xs@
+-}
 safeHead :: [a] -> Maybe a
 safeHead []      = Nothing
 safeHead (x : _) = Just x
 
--- |'safeTail' 'xs'
+{- | 'safeTail' @xs@
+-}
 safeTail :: [a] -> Maybe [a]
 safeTail []       = Nothing
 safeTail (_ : xs) = Just xs
 
--- |'safeLast' 'xs'
+{- | 'safeLast' @xs@
+-}
 safeLast :: [a] -> Maybe a
 safeLast [] = Nothing
 safeLast xs = Just (L.last xs)
 
--- |'splitOn' 'x' 'xs'
+{- | 'evens' @xs@ returns the elements returns the elements of @xs@ at all even positions.
+-}
+evens :: [a] -> [a]
+evens []       = []
+evens (x : xs) = x : odds xs
+
+{- | 'odd' @xs@ returns the elements returns the elements of @xs@ at all odd positions.
+-}
+odds :: [a] -> [a]
+odds []       = []
+odds (_ : xs) = evens xs
+
+{- | 'splitOn' @x@ @xs@
+-}
 splitOn :: (Ord a) => a -> [a] -> ([a], [a])
 splitOn x = aux []
   where
@@ -92,7 +123,8 @@ insertAfterMax x xs = xs' ++ [y, x] ++ xs''
   where
     (xs', y : xs'') = flip L.splitAt xs . fromJust . flip L.elemIndex xs $ F.maximum xs
 
--- |'groupBy''
+{- | 'groupBy'' @xs@
+-}
 groupBy' :: (a -> a -> Bool) -> [a] -> [[a]]
 groupBy' _   []       = []
 groupBy' cmp (x : xs) = (x : ys) : groupBy' cmp zs
@@ -113,10 +145,11 @@ factor i j = L.take (j-i+1) . L.drop i
 factor' :: Int -> Int -> [a] -> [a]
 factor' i k = factor i (i+k-1)
 
--- |'uniq' xs removes all duplicates in 'xs'. No order is guaranteed.
---
--- >>> uniq "abcacbb"
--- "abc"
+{- | 'uniq' @xs@ removes all duplicates in @xs@. No order is guaranteed.
+
+>>> uniq "abcacbb"
+"abc"
+-}
 uniq :: Ord a => [a] -> [a]
 uniq = S.toList . S.fromList
 
@@ -208,41 +241,42 @@ randomShuffle xs g = A.first M.elems $ foldr randomShuffleStep initial [1..n]
 >>> subsets 5 [1..4]
 []
 -}
-subsets :: (Foldable t, Eq b, Num b) => b -> t a -> [[a]]
+subsets :: (Eq b, Num b) => b -> [a] -> [[a]]
 subsets k = aux k . F.toList
   where
     aux 0  _        = [[]]
     aux _  []       = []
     aux k' (x : xs) = [x : xs' | xs' <- aux (k'-1) xs] ++ aux k' xs
 
--- |'partitions' 'nl' 'nr' 'xs'  return all possible partitions of 'xs' into 'ns'
--- and 'nr' elements.
---
--- >>> [(i, j, partitions i j [1..4]) | i <- [0..4], j <- [0..4], i+j == 4]
--- [(0,4,[([],[1,2,3,4])])
--- ,(1,3,[([1],[2,3,4]),([2],[1,3,4]),([3],[1,2,4]),([4],[1,2,3])])
--- ,(2,2,[([1,2],[3,4]),([1,3],[2,4]),([1,4],[2,3]),([2,3],[1,4]),([2,4],[1,3]),([3,4],[1,2])])
--- ,(3,1,[([1,2,3],[4]),([1,2,4],[3]),([1,3,4],[2]),([2,3,4],[1])])
--- ,(4,0,[([1,2,3,4],[])])]
-partitions :: (Eq a, Foldable t) => Int -> Int -> t a -> [([a], [a])]
-partitions nl nr = aux . F.toList
+{- | 'partitions' @nl@ @nr@ @xs@  return all possible partitions of @xs@ into @ns@ and @nr@ elements.
+
+>>> [(i, j, partitions i j [1..4]) | i <- [0..4], j <- [0..4], i+j == 4]
+[(0,4,[([],[1,2,3,4])])
+,(1,3,[([1],[2,3,4]),([2],[1,3,4]),([3],[1,2,4]),([4],[1,2,3])])
+,(2,2,[([1,2],[3,4]),([1,3],[2,4]),([1,4],[2,3]),([2,3],[1,4]),([2,4],[1,3]),([3,4],[1,2])])
+,(3,1,[([1,2,3],[4]),([1,2,4],[3]),([1,3,4],[2]),([2,3,4],[1])])
+,(4,0,[([1,2,3,4],[])])]
+-}
+partitions :: (Eq a) => Int -> Int -> [a] -> [([a], [a])]
+partitions nl nr = aux
   where
     aux xs
       | nl + nr /= F.length xs = []
       | otherwise              = [(xs', xs L.\\ xs') | xs' <- subsets nl xs]
 
--- |'balPartitions' 'xs' returns all partitions of 'xs' into 'n/2' and 'n/2'
--- elements, where 'n' is the length of 'xs'.
---
--- >>> balPartitions [1..4]
--- [([1,2],[3,4]),([1,3],[2,4]),([1,4],[2,3])]
--- >>> balPartitions [1..5]
--- []
-balPartitions :: (Foldable t, Ord a) => t a -> [([a], [a])]
-balPartitions = aux . F.toList
+{- | 'balPartitions' @xs@ returns all partitions of @xs@ into @n/2@ and @n/2@, elements,
+where @n@ is the length of @xs@.
+
+>>> balPartitions [1..4]
+[([1,2],[3,4]),([1,3],[2,4]),([1,4],[2,3])]
+>>> balPartitions [1..5]
+[]
+-}
+balPartitions :: (Ord a) => [a] -> [([a], [a])]
+balPartitions = aux
   where
     aux []       = []
-    aux (x : xs) = PP.Utils.List.uniq $ fmap f ps
+    aux (x : xs) = uniq $ fmap f ps
       where
         f p = (x : T.fst p, T.snd p)
         ps  = partitions (k-1) k xs
