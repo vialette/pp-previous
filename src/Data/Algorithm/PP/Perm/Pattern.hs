@@ -1,6 +1,8 @@
 module Data.Algorithm.PP.Perm.Pattern (
     kPatterns
   , patterns
+  , evenPatterns
+  , oddPatterns
   ) where
 
 import qualified Control.Arrow   as Arrow
@@ -37,3 +39,17 @@ kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . 
 -}
 patterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 patterns p = L.concat [kPatterns k p | k <- [1..PP.Perm.len p]]
+
+{- | 'evenPatterns' @p@ returns all even lenth patterns that ocuur in permutation @p@.
+-}
+evenPatterns :: PP.Perm.Perm -> [PP.Perm.Perm]
+evenPatterns p = L.concat [kPatterns k p | k <- [2,4..n]]
+  where
+    n : PP.Perm.len p
+
+{- | 'oddPatterns' @p@ returns all even lenth patterns that ocuur in permutation @p@.
+-}
+oddPatterns :: PP.Perm.Perm -> [PP.Perm.Perm]
+oddPatterns p = L.concat [kPatterns k p | k <- [1,3..n]]
+  where
+    n : PP.Perm.len p
