@@ -36,16 +36,6 @@ module Data.Algorithm.PP.Perm (
     -- * Querying
   , len
   , at
-  , prefix
-  , prefixes
-  , suffix
-  , suffixes
-  , kFactors
-  , factors
-  , maxFactors
-  , patterns
-  , patterns'
-  , maxPatterns
 
   , partitions
   , inversions
@@ -96,7 +86,7 @@ Use with caution.
 [1,2,1,2]
 -}
 mkUnsafe :: [Int] -> Perm
-mkUnsafe = P . fmap (uncurry PP.Geometry.Point.mk) . L.zip [1..]
+mkUnsafe = Perm . fmap (uncurry PP.Geometry.Point.mk) . L.zip [1..]
 
 {- | 'mk' @xs@ constructs a permutation from foldable @xs@ (ties are resolved from left to right).
 
@@ -158,7 +148,7 @@ len = L.length . getPoints
 >>> (mk [1..4]) `at` 0
 -}
 at :: Int -> Perm -> Int
-at i = flip i (L.!!) . getList
+at i = flip (L.!!) i . getList
 
 {- | 'delete' @i@ @p@ returns the permutations obtains by deleting @i@ in permutation @p@.
 If @i@ is not part of permutation @p@, then the function returns @p@ unchanged.
@@ -187,7 +177,7 @@ deleteAt i p
   | i <= 0 || i > len p = Nothing
   | otherwise           = Just . mk . L.delete i $ getList p
 
-{- | 'partitions' @p@ @k@ @l@ returns all partitions @(qk,ql)@ of permutation @p@ such that
+{- | 'partitions' @p@ @k@ @l@ returns all partitions @(qk,ql)@ of the permutation @p@ such that
 @|qk|=k@ and @|ql|=l@.
 
 >>>
@@ -195,7 +185,7 @@ deleteAt i p
 partitions :: Int -> Int -> Perm -> [([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])]
 partitions k l = PP.Utils.List.partitions k l . getPoints
 
-{- | 'inversions' @p@ returns the inversions of permutation @p@.
+{- | 'inversions' @p@ returns the inversions of the permutation @p@.
 
 >>> inversions $ mk [1,5,3,2,6,4]
 [(5,3),(5,2),(5,4),(3,2),(6,4)]

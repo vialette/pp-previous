@@ -32,7 +32,7 @@ where
   ([3,9,1,5,8,7,2,4,6],2014025278 1422611300)
   -}
   rand :: RandomGen g => Int -> g -> (PP.Perm.Perm, g)
-  rand n = A.first PP.Perm.mkPerm . PP.Utils.List.randomShuffle [1..n]
+  rand n = A.first PP.Perm.mk . PP.Utils.List.randomShuffle [1..n]
 
   {- | 'rands' @n@ @k@ @g@ takes two integers @n@ and @k@ and a random generator @g@,
   and it returns @k@ random permutations of length @n@ together with a new
