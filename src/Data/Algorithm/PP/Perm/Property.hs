@@ -14,10 +14,12 @@ module Data.Algorithm.PP.Perm.Property
   (
     derangement
 
+  -- * Monotone
   , increasing
   , decreasing
   , monotone
 
+  -- Alternating
   , upDownAlternating
   , downUpAlternating
   , alternating
