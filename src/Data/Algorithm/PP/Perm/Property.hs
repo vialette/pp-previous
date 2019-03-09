@@ -1,3 +1,15 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Property
+Description :
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Here is a longer description of this module, containing some
+commentary with @some markup@.
+-}
+
 module Data.Algorithm.PP.Perm.Property
   (
     derangement
@@ -20,18 +32,16 @@ import qualified Data.Algorithm.PP.Perm           as PP.Perm
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
 {- | 'derangement' @@p@ returns @True@ if the permutation @p@ is a derangement
-(i.e. 'p' is a permutation that has no fixed points).
+(i.e. @p@ is a permutation that has no fixed points).
 -}
 derangement :: PP.Perm.Perm -> Bool
 derangement = F.all PP.Geometry.Point.isNotOnDiagonal . PP.Perm.getPoints
 
-{- | 'increasing' @p@ returns @True@ if the permutation @p@ is increasing.
--}
+{- | 'increasing' @p@ returns @True@ if the permutation @p@ is increasing. -}
 increasing :: PP.Perm.Perm -> Bool
 increasing = F.any (uncurry (<)) . PP.Utils.List.chunk2 . PP.Perm.getList
 
-{- | 'decreasing' @p@ returns @True@ if the permutation @p@ is decreasing.
--}
+{- | 'decreasing' @p@ returns @True@ if the permutation @p@ is decreasing. -}
 decreasing :: PP.Perm.Perm -> Bool
 decreasing = F.any (uncurry (>)) . PP.Utils.List.chunk2 . PP.Perm.getList
 
