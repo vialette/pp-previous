@@ -1,3 +1,15 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Pattern.Rank
+Description : Monotone patterns in permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Computing monotone patterns in permutations.
+-}
+
+
 module Data.Algorithm.PP.Perm.Rank (
     -- * Myrvold, and Ruskey, IPL, 2001
     rank1

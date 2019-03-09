@@ -11,24 +11,24 @@ commentary with @some markup@.
 -}
 
 module Data.Algorithm.PP.Perm.Features (
-  leftmost
-, rightmost
-, fixedPoints
-, ascents
-, descents
-, excedances
-, weakExcedances
-, peaks
-, maxima
+    leftmost
+  , rightmost
+  , fixedPoints
+  , ascents
+  , descents
+  , excedances
+  , weakExcedances
+  , peaks
+  , maxima
 
-, valleys
-, minima
+  , valleys
+  , minima
 
-, leftToRightMinima
-, leftToRightMaxima
-, rightToLeftMinima
-, rightToLeftMaxima
-) where
+  , leftToRightMinima
+  , leftToRightMaxima
+  , rightToLeftMinima
+  , rightToLeftMaxima
+  ) where
 
 import qualified Data.Foldable as F
 import qualified Data.List     as L
@@ -40,69 +40,76 @@ import qualified Data.Algorithm.PP.Perm.Bijection.Trivial as PP.Perm.Bijection.T
 import qualified Data.Algorithm.PP.Utils.List             as PP.Utils.List
 
 
--- |'leftmost' 'p' returns the first (i.e. leftmost) element of the
--- permutation 'p'.
---
--- >>> leftmost (mkPerm [1..4])
--- Just 1
--- >>> lelftmost empty
--- Nothing
+{- | 'leftmost' @p@ returns the first (i.e. leftmost) element of the permutation @p@.
+The function returns @Nothing@ if @p@ is the empty permutation.
+
+>>> leftmost $ mkPerm [3,1,4,2]
+Just 3
+>>> lelftmost empty
+Nothing
+-}
 leftmost :: PP.Perm.Perm -> Maybe Int
 leftmost = PP.Utils.List.safeHead . PP.Perm.getList
 
--- |'rightmost' 'p' returns the last (i.e. rightmost) element of the
--- permutation 'p'.
---
--- >>> rightmost (mkPerm [1..4])
--- Just 4
--- >>> rightmost empty
--- Nothing
+{- | 'rightmost' @p@ returns the last (i.e. rightmost) element of the permutation @p@.
+The function returns @Nothing@ if @p@ is the empty permutation.
+
+>>> rightmost $ mkPerm [3,1,4,2]
+Just 2
+>>> rightmost empty
+Nothing
+-}
 rightmost :: PP.Perm.Perm -> Maybe Int
 rightmost = PP.Utils.List.safeLast . PP.Perm.getList
 
--- |'fixedPoints' 'p' returns the fixed points in the permutation 'p'.
---
--- >>> fixedPoints (mkPerm [4,2,3,1,6,5,7,8])
--- [(2,2),(3,3),(7,7),(8,8)]
+{- | 'fixedPoints' @p@ returns the fixed points (as a list points) in the permutation @p@.
+
+>>> fixedPoints $ mkPerm [4,2,3,1,6,5,7,8]
+[(2,2),(3,3),(7,7),(8,8)]
+-}
 fixedPoints :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 fixedPoints = L.filter PP.Geometry.Point.isOnDiagonal . PP.Perm.getPoints
 
--- |'ascents' 'p' returns the ascents of the permutation 'p'
--- (i.e. the positions of 'p' where the following value is bigger than the current
--- one).
---
--- >>> ascents (mkPerm [3,1,5,6,2,4])
--- [(2,1),(3,5),(5,2)]
+{- | 'ascents' @p@ returns the ascents (as a list of points) of the permutation @p@
+(i.e. the positions of @p@ where the following value is bigger than the current one).
+
+>>> ascents $ mkPerm [3,1,5,6,2,4]
+[(2,1),(3,5),(5,2)]
+-}
 ascents :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 ascents = L.map T.fst . L.filter (uncurry PP.Geometry.Point.isStrictlyBelowOf) . PP.Utils.List.chunk2 . PP.Perm.getPoints
 
--- |'descents' 'p' returns the ascents of the permutation 'p'
--- (i.e. the positions of 'p' where the following value is smaller than the current
--- one).
---
--- >>> descents (mkPerm [3,1,5,6,2,4])
--- [(1,3),(4,6)]
+{- | 'descents' @p@ returns the ascents (as a list of points) of the permutation @p@
+(i.e. the positions of @p@ where the following value is smaller than the current one).
+
+>>> descents (mkPerm [3,1,5,6,2,4])
+[(1,3),(4,6)]
+-}
 descents :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 descents =  L.map T.fst . L.filter (uncurry PP.Geometry.Point.isStrictlyAboveOf) . PP.Utils.List.chunk2 . PP.Perm.getPoints
 
 
--- |'excedances' 'p' returns the excedancesof the permutation 'p'.
--- (i.e. the excedance set is the set of indices i for which @p `at` i > i.
---
--- >>>
+{- | 'excedances' @p@ returns the excedances (as a list of points) of the permutation @p@.
+(i.e. the excedance set is the set of indices @i@ for which @p `at` i > i@.
+
+>>>
+-}
 excedances :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 excedances = L.filter PP.Geometry.Point.isStrictlyAboveDiagonal . PP.Perm.getPoints
 
--- |'weakExcedances' 'p'
---
--- >>>
+{- | 'weakExcedances' @p@ returns the weak excedances (as a list of points) of the permutation @p@.
+(i.e. the excedance set is the set of indices @i@ for which @p `at` i >= i@.
+
+>>>
+-}
 weakExcedances :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 weakExcedances =  L.filter PP.Geometry.Point.isAboveDiagonal . PP.Perm.getPoints
 
--- |'peaks' 'p'
---
--- >>> peaks (mk [4,6,1,3,2,5])
--- [(2,6),(4,3)]
+{- | 'peaks' @p@
+
+>>> peaks $ mk [4,6,1,3,2,5]
+[(2,6),(4,3)]
+-}
 peaks :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 peaks = L.map proj2 . L.filter f . PP.Utils.List.chunk3 . PP.Perm.getPoints
   where
@@ -113,10 +120,11 @@ peaks = L.map proj2 . L.filter f . PP.Utils.List.chunk3 . PP.Perm.getPoints
 maxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 maxima = peaks
 
--- |'valleys' 'p'
---
--- >>> valleys (mk [3,1,5,2,6,4])
--- [(2,1),(4,2)]
+{- | 'valleys' @p@
+
+>>> valleys $ mk [3,1,5,2,6,4]
+[(2,1),(4,2)]
+-}
 valleys :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 valleys = L.map proj2 . L.filter f . PP.Utils.List.chunk3 . PP.Perm.getPoints
   where
@@ -127,7 +135,10 @@ valleys = L.map proj2 . L.filter f . PP.Utils.List.chunk3 . PP.Perm.getPoints
 minima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 minima = valleys
 
--- |'leftToRightMinima' 'p'
+{- | 'leftToRightMinima' @p@
+
+>>>
+-}
 leftToRightMinima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 leftToRightMinima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
   where
@@ -137,10 +148,11 @@ leftToRightMinima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
       | otherwise                                  = acc
 
 
--- |'leftToRightMaxima' 'p'
---
--- >>> leftToRightMaxima (mk [4,2,3,1,6,5,7,8])
--- [(1,4),(5,6),(7,7),(8,8)]
+{- | 'leftToRightMaxima' @p@
+
+>>> leftToRightMaxima $ mk [4,2,3,1,6,5,7,8]
+[(1,4),(5,6),(7,7),(8,8)]
+-}
 leftToRightMaxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 leftToRightMaxima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
   where
@@ -149,16 +161,18 @@ leftToRightMaxima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
       | p `PP.Geometry.Point.isStrictlyAboveOf`p' = p : acc
       | otherwise                                 = acc
 
--- |'rightToLeftMaxima' 'p'
---
--- >>> rightToLeftMinima (mk [3,1,5,2,6,4])
--- [(2,6),(1,4)]
+{- | 'rightToLeftMaxima' @p@
+
+>>> rightToLeftMinima (mk [3,1,5,2,6,4])
+[(2,6),(1,4)]
+-}
 rightToLeftMinima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 rightToLeftMinima = L.reverse . leftToRightMaxima . PP.Perm.Bijection.Trivial.rev
 
--- |'rightToLeftMaxima' 'p'
---
--- >>> rightToLeftMaxima (mk [3,1,5,2,6,4])
--- [(2,6),(1,4)]
+{- | 'rightToLeftMaxima' @p@
+
+>>> rightToLeftMaxima (mk [3,1,5,2,6,4])
+[(2,6),(1,4)]
+-}
 rightToLeftMaxima :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 rightToLeftMaxima = L.reverse . leftToRightMaxima . PP.Perm.Bijection.Trivial.rev
