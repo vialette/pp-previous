@@ -37,7 +37,7 @@ import qualified Data.Algorithm.PP.Utils.List         as PP.Utils.List
 {- |
 -}
 prefix :: Int -> PP.Perm.Perm -> PP.Perm.Perm
-prefix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . PP.Perm.Factor.Points.prefix
+prefix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . PP.Perm.Factor.Points.prefix k
 
 {- | 'perPrefixes' @p@ returns all prefixes of permutations @p@ as permutations.
 -}
@@ -57,14 +57,14 @@ oddPrefixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.P
 {- | 'suffix' @k@ @p@ returns the suffix of length @k@ of permutation @p@ as a permutation.
 -}
 suffix :: Int -> PP.Perm.Perm -> PP.Perm.Perm
-suffix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . suffix
+suffix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . PP.Perm.Factor.Points.suffix k
 
 
 {- | 'suffixes' @p@ returns the suffixes of permutations @p@ as permutations.
 
 -}
 suffixes :: PP.Perm.Perm -> [PP.Perm.Perm]
-suffixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . prefixes
+suffixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.prefixes
 
 {- | 'evenPrefixes' @p@ returns all even length suffixes of permutations @p@ as permutations.
 -}
@@ -79,7 +79,7 @@ oddSuffixes = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.P
 {- | 'kFactors' @p@ returns all factors (as permutations) of length @k@ of permutation @p@.
 -}
 kFactors :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
-kFactors k = fmap (PP.Perm.mk . fmap PP.geometry.Point.getY) . PP.Perm.Factor.Points.kFactors k
+kFactors k = fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.kFactors k
 
 {- | 'factors' @p@ returns all factors (as permutations) of permutation @p@.
 -}

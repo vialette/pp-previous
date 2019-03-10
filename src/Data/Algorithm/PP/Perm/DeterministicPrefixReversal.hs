@@ -46,7 +46,7 @@ lastInPlace n xs = L.last xs == n
 
 -- Helper function parameterized by the stop predicate f.
 deterministicPrefixReversals' :: ([Int] -> Bool) -> PP.Perm.Perm -> [PP.Perm.Perm]
-deterministicPrefixReversals' f = fmap PP.Perm.mkPerm . L.reverse . aux [] . PP.Perm.getList
+deterministicPrefixReversals' f = fmap PP.Perm.mk . L.reverse . aux [] . PP.Perm.getList
   where
     aux acc [] = acc
     aux acc xs
@@ -57,7 +57,7 @@ deterministicPrefixReversals' f = fmap PP.Perm.mkPerm . L.reverse . aux [] . PP.
 with 'p = q1' and every permutation @qi@ is obtained from the preceding permutation
 by reversing the prefix of length @l@, where @l@ is the first element.
 
->>> deterministicPrefixReversal $ mkPerm [4,2,6,4,3,1]
+>>> deterministicPrefixReversal $ mk [4,2,6,4,3,1]
 [4,2,6,5,3,1],[5,6,2,4,3,1],[3,4,2,6,5,1],[2,4,3,6,5,1],[4,2,3,6,5,1],[6,3,2,4,5,1],[1,5,4,2,3,6]]
 -}
 deterministicPrefixReversals :: PP.Perm.Perm -> [PP.Perm.Perm]

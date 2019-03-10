@@ -17,7 +17,7 @@ where
   -- >>> simpleAlternatingWedgeType1 12
   -- [7,5,8,4,9,3,10,2,11,1,12,6]
   simpleAlternatingWedgeType1 :: Int -> PP.Perm.Perm
-  simpleAlternatingWedgeType1 n = PP.Perm.mkPerm $ PP.Utils.List.perfectShuffle xs ys ++ [kDec+1]
+  simpleAlternatingWedgeType1 n = PP.Perm.mk $ PP.Utils.List.perfectShuffle xs ys ++ [kDec+1]
     where
       (kInc, kDec) = if even (n-1) then (n `div` 2, n `div` 2) else (1 + (n `div` 2), n `div` 2)
       xs           = [kDec+2..n]

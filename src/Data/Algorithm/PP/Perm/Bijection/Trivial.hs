@@ -29,7 +29,7 @@ where
   -- >>> inv $ mk [1,3,4,2]
   -- [1,4,2,3]
   inv :: PP.Perm.Perm -> PP.Perm.Perm
-  inv = PP.Perm.mkPermUnsafe . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . fmap PP.Geometry.Point.symmetric . PP.Perm.getPoints
+  inv = PP.Perm.mkUnsafe . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . fmap PP.Geometry.Point.symmetric . PP.Perm.getPoints
 
   -- | 'rev' 'perm' returns the reverse of the permutation 'perm'.
   --
@@ -38,7 +38,7 @@ where
   -- >>> rev $ mk [1,3,4,2]
   -- [2,4,3,1]
   rev :: PP.Perm.Perm -> PP.Perm.Perm
-  rev = PP.Perm.mkPermUnsafe . L.reverse . PP.Perm.getList
+  rev = PP.Perm.mkUnsafe . L.reverse . PP.Perm.getList
 
   -- | 'comp' 'perm' returns the complement of the permutation 'perm'.
   --
@@ -47,7 +47,7 @@ where
   -- >>> comp $ mk [1,3,4,2]
   -- [4,2,1,3]
   comp :: PP.Perm.Perm -> PP.Perm.Perm
-  comp p = PP.Perm.mkPermUnsafe $ fmap (\y -> m-y+1) ys
+  comp p = PP.Perm.mkUnsafe $ fmap (\y -> m-y+1) ys
     where
       ys = PP.Perm.getList p
       m  = F.maximum ys

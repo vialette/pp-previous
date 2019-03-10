@@ -86,7 +86,7 @@ where
   permsAvoiding_231 :: Int -> [PP.Perm.Perm]
   permsAvoiding_231 = fmap f . PP.Dyck.paths
     where
-      f p =  PP.Perm.mkPerm . F.foldr g [] $ L.zip (PP.Dyck.getSteps p) (PP.Dyck.labelLeftToRightDown p)
+      f p =  PP.Perm.mk . F.foldr g [] $ L.zip (PP.Dyck.getSteps p) (PP.Dyck.labelLeftToRightDown p)
         where
           g (PP.Dyck.UpStep, i)   acc = i : acc
           g (PP.Dyck.DownStep, i) acc = acc
@@ -119,7 +119,7 @@ where
     | n <= 0    = []
     | n == 1    = PP.Perm.Generator.Basic.perms 1
     | n == 2    = PP.Perm.Generator.Basic.perms 2
-    | otherwise = (PP.Perm.mkPerm . L.reverse) <$> aux (n-2) [[n, n-1], [n-1, n]]
+    | otherwise = (PP.Perm.mk . L.reverse) <$> aux (n-2) [[n, n-1], [n-1, n]]
       where
         aux 0 xss = xss
         aux k xss = aux (k-1) $ concatMap (\ (x : xs) -> [k : x : xs, x : k : xs]) xss
@@ -177,7 +177,7 @@ where
     | n <= 0    = []
     | n == 1    = PP.Perm.Generator.Basic.perms 1
     | n == 2    = PP.Perm.Generator.Basic.perms 2
-    | otherwise = PP.Perm.mkPerm <$> aux 3 [[1, 2], [2, 1]]
+    | otherwise = PP.Perm.mk <$> aux 3 [[1, 2], [2, 1]]
       where
         aux k xss
           | k > n     = xss
@@ -209,7 +209,7 @@ where
     | n <= 0    = []
     | n == 1    = PP.Perm.Generator.Basic.perms 1
     | n == 2    = PP.Perm.Generator.Basic.perms 2
-    | otherwise = PP.Perm.mkPerm <$> aux 3 [[1, 2], [2, 1]]
+    | otherwise = PP.Perm.mk <$> aux 3 [[1, 2], [2, 1]]
       where
         aux k xss
           | k > n     = xss
@@ -225,7 +225,7 @@ where
   -- >>> permsAvoiding_213_231 4
   -- [[1,2,3,4],[1,2,4,3],[1,4,2,3],[1,4,3,2],[4,1,2,3],[4,1,3,2],[4,3,1,2],[4,3,2,1]]
   permsAvoiding_213_231 :: Int -> [PP.Perm.Perm]
-  permsAvoiding_213_231 n = PP.Perm.mkPerm <$> aux [1..n]
+  permsAvoiding_213_231 n = PP.Perm.mk <$> aux [1..n]
     where
       aux []  = [[]]
       aux [x] = [[x]]

@@ -53,14 +53,14 @@ rank' n a b = (s, a', b')
     a' = swap (n-1) (b ! (n-1)) a
     b' = swap s     (n-1)       b
 
--- |'rank1' 'p' returns the rank of the permutation 'p' according to Algorithm
--- __rank1__ from
--- Wendy J. Myrvold, Frank Ruskey. Ranking and unranking permutations in linear time. Inf. Process. Lett. 79(6): 281-284 (2001)
---
--- >>> let n = 3 in [(p, rank1 p) | p <- perms n]
--- [([1,2,3],5),([2,1,3],2),([3,2,1],3),([2,3,1],0),([3,1,2],1),([1,3,2],4)]
--- >>> let n = 3 in and [p == (fromJust . unrank1 n . rank1) p | p <- perms n]
--- True
+{- | 'rank1' @p@ returns the rank of the permutation @p@ according to Algorithm __rank1__ from
+Wendy J. Myrvold, Frank Ruskey. Ranking and unranking permutations in linear time. Inf. Process. Lett. 79(6): 281-284 (2001)
+
+>>> let n = 3 in [(p, rank1 p) | p <- perms n]
+[([1,2,3],5),([2,1,3],2),([3,2,1],3),([2,3,1],0),([3,1,2],1),([1,3,2],4)]
+>>> let n = 3 in and [p == (fromJust . unrank1 n . rank1) p | p <- perms n]
+True
+-}
 rank1 :: PP.Perm.Perm -> Int
 rank1 p = rank1' (PP.Perm.len p) a b
   where
@@ -85,7 +85,7 @@ rank1' n a b = s + (n * rank1' (n-1) a' b')
 unrank1 :: Int -> Int -> Maybe PP.Perm.Perm
 unrank1 n r
   | r < 0 || r >= product [1..n] = Nothing
-  | otherwise                    = Just . PP.Perm.mkPerm . unrank1' n r $ mkArray [0..n-1]
+  | otherwise                    = Just . PP.Perm.mk . unrank1' n r $ mkArray [0..n-1]
 
 -- unrank1 auxiliary function.
 unrank1' :: Int -> Int -> Array.Array Int Int -> [Int]
@@ -125,7 +125,7 @@ rank2' n a b = s * product [1..n-1] + rank2' (n-1) a' b'
 unrank2 :: Int -> Int -> Maybe PP.Perm.Perm
 unrank2 n r
   | r < 0 || r >= product [1..n] = Nothing
-  | otherwise                    = Just . PP.Perm.mkPerm . unrank2' n r $ mkArray [0..n-1]
+  | otherwise                    = Just . PP.Perm.mk . unrank2' n r $ mkArray [0..n-1]
 
 -- unrank2 auxiliary function.
 unrank2' :: Int -> Int -> Array.Array Int Int -> [Int]

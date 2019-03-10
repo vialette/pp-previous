@@ -36,7 +36,7 @@ import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 [[1,4,2,5,3]]
 -}
 complexity :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
-complexity k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.Foldable.subsets k . PP.Perm.getList
+complexity k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . PP.Perm.getList
 
 {- | 'complexityStat' @n@ @p@ function returns the number of permutations of length
 @k@ that occurs in permutation @p@.

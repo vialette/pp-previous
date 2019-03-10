@@ -58,7 +58,7 @@ patterns p = L.concat [kPatterns k p | k <- [1..PP.Perm.len p]]
 
 {- | 'maxPatterns' @f@ @p@ returns the longest patterns @q@ of permutation @p@ such that @f q@ holds.
 -}
-maxPatterns :: (Perm -> Bool) -> PP.Perm.Perm -> [PP.Perm.Perm]
+maxPatterns :: (PP.Perm.Perm -> Bool) -> PP.Perm.Perm -> [PP.Perm.Perm]
 maxPatterns f p = select $ L.dropWhile L.null [[q | q <- kPatterns k p, f q] | k <- [n,n-1..1]]
   where
     n         = PP.Perm.len p
@@ -71,7 +71,7 @@ maxPatterns f p = select $ L.dropWhile L.null [[q | q <- kPatterns k p, f q] | 
 evenPatterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 evenPatterns p = L.concat [kPatterns k p | k <- [2,4..n]]
   where
-    n : PP.Perm.len p
+    n = PP.Perm.len p
 
 {- | 'oddPatterns' @p@ returns all even length patterns that occur in permutation @p@.
 
@@ -80,4 +80,4 @@ evenPatterns p = L.concat [kPatterns k p | k <- [2,4..n]]
 oddPatterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 oddPatterns p = L.concat [kPatterns k p | k <- [1,3..n]]
   where
-    n : PP.Perm.len p
+    n = PP.Perm.len p

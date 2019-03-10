@@ -15,6 +15,9 @@ import qualified Data.Tuple    as T
 
 import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
+{- | 'maximumsBy' @f@ @xs@
+
+-}
 maximumsBy _ [] = []
 maximumsBy f xs = T.snd . F.foldr1 g $ fmap (\ x -> (f x, [x])) xs
   where

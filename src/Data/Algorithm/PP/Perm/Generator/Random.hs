@@ -52,7 +52,7 @@ a new random generator.
 randAvoiding_213_231 :: RandomGen g => Int -> g -> (PP.Perm.Perm, g)
 randAvoiding_213_231 n = aux [] [1..n]
   where
-    aux acc [] g = A.first (PP.Perm.mkPerm . L.reverse) (acc, g)
+    aux acc [] g = A.first (PP.Perm.mk . L.reverse) (acc, g)
     aux acc xs g = case randomR (False, True) g of
                      (False, g') -> aux (L.head xs : acc) (L.tail xs) g'
                      (True,  g') -> aux (L.last xs : acc) (L.init xs) g'

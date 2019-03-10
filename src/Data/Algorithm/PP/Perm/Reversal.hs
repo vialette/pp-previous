@@ -57,7 +57,7 @@ import qualified Data.Algorithm.PP.Utils.List             as PP.Utils.List
 -- (3,4,[1,2,3])
 -- (4,4,[1,2,3])
 reversal :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
-reversal i j = PP.Perm.mkPerm . PP.Utils.List.reversal i j . PP.Perm.getList
+reversal i j = PP.Perm.mk . PP.Utils.List.reversal i j . PP.Perm.getList
 
 -- |'reversal' 'i' 'j' 'p'
 --
@@ -77,7 +77,7 @@ reversal i j = PP.Perm.mkPerm . PP.Utils.List.reversal i j . PP.Perm.getList
 -- (3,3,[1,2,3])
 -- (3,4,[1,2,3])
 -- (4,4,[1,2,3])
-reversal' i j = PP.Perm.mkPerm . PP.Utils.List.reversal' i j . PP.Perm.getList
+reversal' i j = PP.Perm.mk . PP.Utils.List.reversal' i j . PP.Perm.getList
 
 -- |'randomReversal' 'p' 'g'
 --

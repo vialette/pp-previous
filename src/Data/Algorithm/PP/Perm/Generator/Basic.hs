@@ -43,7 +43,7 @@ import qualified Data.Algorithm.PP.Perm.Property          as PP.Perm.Property
 [[1,2,3],[2,1,3],[3,2,1],[2,3,1],[3,1,2],[1,3,2]]
 -}
 perms :: Int -> [PP.Perm.Perm]
-perms n = L.map PP.Perm.mkPermUnsafe $ L.permutations [1..n]
+perms n = L.map PP.Perm.mkUnsafe $ L.permutations [1..n]
 
 {- | 'lexPerms' @n@ returns all permutations of length @n@ in lexicographic order.
 -}
@@ -170,7 +170,7 @@ to @p@.
 [[1,3,2],[2,3,1],[3,2,1]]
 -}
 extendLeft :: PP.Perm.Perm -> [PP.Perm.Perm]
-extendLeft p = L.map PP.Perm.mkPermUnsafe [k : f k ys | k <- [1..PP.Perm.len p+1]]
+extendLeft p = L.map PP.Perm.mkUnsafe [k : f k ys | k <- [1..PP.Perm.len p+1]]
   where
     ys  = PP.Perm.getList p
     f k = F.foldr (\ y acc -> (if y < k then y else y+1) : acc) []
