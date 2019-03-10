@@ -45,7 +45,7 @@ module Data.Algorithm.PP.Perm (
 
     -- * Displaying
   , grid
-  , grid'
+  , gridChar
   ) where
 
 import qualified Control.Arrow as A
@@ -259,10 +259,10 @@ isIdentity p = True
 +---+---+---+---+---+---+
 -}
 grid :: Perm -> String
-grid = grid' 'o'
+grid = gridChar 'o'
 
-grid' :: Char -> Perm -> String
-grid' c p = aux . L.map (row . PP.Geometry.Point.getX) . L.reverse . L.sortOn PP.Geometry.Point.getY $ getPoints p
+gridChar :: Char -> Perm -> String
+gridChar c p = aux . L.map (row . PP.Geometry.Point.getX) . L.reverse . L.sortOn PP.Geometry.Point.getY $ getPoints p
   where
     n      = len p
     sep    = ('+' :) $ F.concat (L.replicate n "---+") ++ "\n"
