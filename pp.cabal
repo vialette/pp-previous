@@ -37,10 +37,12 @@ library
                   , Data.Algorithm.PP.Perm.Bijection.Trivial
                   , Data.Algorithm.PP.Perm.Bijection.KnuthRichards
                   , Data.Algorithm.PP.Perm.Bijection.MansourDengDu
+                  , Data.Algorithm.PP.Perm.Block
                   , Data.Algorithm.PP.Perm.Generator
                   , Data.Algorithm.PP.Perm.Transposition
                   , Data.Algorithm.PP.Perm.Shuffle
                   , Data.Algorithm.PP.Perm.ShuffleSquare
+                  , Data.Algorithm.PP.Perm.ShuffleSquare.DB
                   , Data.Algorithm.PP.Perm.Rank
                   , Data.Algorithm.PP.Perm.Square
                   , Data.Algorithm.PP.Perm.Avoidance
@@ -70,6 +72,7 @@ library
                   , Data.Algorithm.PP.Utils.Maybe
                   , Data.Algorithm.PP.Utils.Foldable
                   , Data.Algorithm.PP.Geometry.Point
+                  , Data.Algorithm.PP.Geometry.Rectangle
                   , Data.Algorithm.PP.SepTree
                   , Data.Algorithm.PP.StdYoungTableau
   -- other-modules:
