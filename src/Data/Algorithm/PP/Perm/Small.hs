@@ -8,8 +8,7 @@ Stability   : experimental
 
 Convenient small permutations.
 -}
-module Data.Algorithm.PP.Perm.Small
-  (
+module Data.Algorithm.PP.Perm.Small (
     -- * Length 1 permutation
     p_1
 

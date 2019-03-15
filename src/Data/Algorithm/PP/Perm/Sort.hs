@@ -1,13 +1,20 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Sort
+Description : Sorting permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+Sorting permutations.
+-}
 module Data.Algorithm.PP.Perm.Sort
   (
     stackSort
   , isStackSortable
   )  where
 
--- import qualified Control.Arrow as A
--- import qualified Data.Foldable as F
 import qualified Data.List     as L
--- import qualified Data.Tuple    as T
 
 import qualified Data.Algorithm.PP.Perm       as PP.Perm
 
