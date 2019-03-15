@@ -26,26 +26,25 @@ import qualified Data.Algorithm.PP.Perm.Generator as PP.Perm.Generator
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 
-{- | 'squareBy' @f@ @p@ returns @True@ if the permutation @p@ is a @f@-square for some
-function \(f : S_n \to S_n\).
+{- | 'squareBy' @f@ @p@ returns @True@ if the permutation @p@ is a @f@-square for some function \(f : S_n \to S_n\).
 
 A permutation @p@ is @f@-square if @p = qr@, @|q| = |r|@ and @r = f q@.
 
 >>> squareBy id $ mk [3,4,1,5,6,2]
 True
->>> mk [3,4,1] == mk [5,6,2]
+>>> mk [3,4,1] == mk [5,6,2] -- check
 True
 >>> squareBy inv $ mk [3,4,1,6,2,5]
 True
->>> mk [3,4,1] == inv (mk [6,2,5])
+>>> mk [3,4,1] == inv (mk [6,2,5]) -- check
 True
 >>> squareBy rev $ mk [3,4,1,2,6,5]
 True
->>> mk [3,4,1] == rev (mk [2,6,5])
+>>> mk [3,4,1] == rev (mk [2,6,5]) -- check
 True
 >>> squareBy comp $ mk [3,4,1,5,2,6]
 True
->>> mk [3,4,1] == comp (mk [5,2,6])
+>>> mk [3,4,1] == comp (mk [5,2,6]) -- check
 True
 -}
 squareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
@@ -61,26 +60,27 @@ a @f@-square.
 
 >>> nonSquareBy id $ mk [3,4,1,6,5,2]
 True
-mk [3,4,1] == mk [6,5,2]
+>>> mk [3,4,1] == mk [6,5,2] -- check
 False
 >>> nonSquareBy inv $ mk [3,4,1,2,5,6]
 True
->>> mk [3,4,1] == inv (mk [2,5,6])
+>>> mk [3,4,1] == inv (mk [2,5,6]) -- check
 False
 >>> nonSquareBy rev $ mk [3,4,1,2,5,6]
 True
->>> mk [3,4,1] == rev (mk [2,5,6])
+>>> mk [3,4,1] == rev (mk [2,5,6]) -- check
 False
 >>> nonSquareBy comp $ mk [3,4,1,6,2,5]
 True
->>> mk [3,4,1] == comp (mk [6,2,5])
+>>> mk [3,4,1] == comp (mk [6,2,5]) -- check
 False
 -}
 nonSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
 nonSquareBy f = not . squareBy f
 
-{- | 'kSquareByFree' @f@ @k@ @p@ return @True@ if the permutation @p@ does not contain
-a @f@-square pattern @q@ of length @k@
+{- | 'kSquareByFree' @f@ @k@ @p@ return @True@ if the permutation @p@ does not contain a @f@-square pattern @q@
+of length @k@
+
 (\(p = qrst\), \(|r| = |s| = k\) and \(f r = s\)).
 -}
 kSquareByFree :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
