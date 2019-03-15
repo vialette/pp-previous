@@ -14,9 +14,10 @@ module Data.Algorithm.PP.Perm.Sort
   , isStackSortable
   )  where
 
-import qualified Data.List     as L
+import qualified Data.List as L
 
-import qualified Data.Algorithm.PP.Perm       as PP.Perm
+import qualified Data.Algorithm.PP.Perm          as PP.Perm
+import qualified Data.Algorithm.PP.Perm.Property as PP.Perm.Property
 
 {- | 'stackSort' @p@ applies the following algorithm to the permutation @p@:
 
@@ -63,18 +64,16 @@ stackSort([3,1,2]) = True
 stackSort([1,3,2]) = True
 -}
 isStackSortable :: PP.Perm.Perm -> Bool
-isStackSortable p = stackSort p == PP.Perm.identity n
-  where
-    n = PP.Perm.len p
+isStackSortable = PP.Perm.Property.sorted . stackSort
 
 dequeSort :: PP.Perm.Perm -> PP.Perm.Perm
 dequeSort p = p
 
 isDequeSortable :: PP.Perm.Perm -> Bool
-isDequeSortable = PP.Perm.isIdentity . dequeSort
+isDequeSortable = PP.Perm.Property.sorted . dequeSort
 
 parallelQueues2Sort :: PP.Perm.Perm -> PP.Perm.Perm
 parallelQueues2Sort p = p
 
 isParallelQueues2Sortable :: PP.Perm.Perm -> Bool
-isParallelQueues2Sortable = PP.Perm.isIdentity . parallelQueues2Sort
+isParallelQueues2Sortable = PP.Perm.Property.sorted . parallelQueues2Sort

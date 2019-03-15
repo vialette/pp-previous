@@ -16,7 +16,9 @@ module Data.Algorithm.PP.Perm.Property
 
   -- * Monotone
   , increasing
+  ; sorted
   , decreasing
+  , reverseSorted
   , monotone
 
   -- Alternating
@@ -43,9 +45,17 @@ derangement = F.all PP.Geometry.Point.isNotOnDiagonal . PP.Perm.getPoints
 increasing :: PP.Perm.Perm -> Bool
 increasing = F.any (uncurry (<)) . PP.Utils.List.chunk2 . PP.Perm.getList
 
+{- | Alias for 'increasing' -}
+sorted :: PP.Perm.Perm -> Bool
+sorted = increasing
+
 {- | 'decreasing' @p@ returns @True@ if the permutation @p@ is decreasing. -}
 decreasing :: PP.Perm.Perm -> Bool
 decreasing = F.any (uncurry (>)) . PP.Utils.List.chunk2 . PP.Perm.getList
+
+{- | Alias for 'decreasing' -}
+reverseSorted :: PP.Perm.Perm -> Bool
+reverseSorted = decreasing
 
 {- | 'monotone' @p@ returns @True@ if the permutation @p@ is monotone
 (i.e. @p@ is either increasing or decreasing).
