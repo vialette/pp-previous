@@ -9,7 +9,6 @@ Stability   : experimental
 Computing monotone patterns in permutations.
 -}
 
-
 module Data.Algorithm.PP.Perm.Rank (
     -- * Myrvold, and Ruskey, IPL, 2001
     rank1
