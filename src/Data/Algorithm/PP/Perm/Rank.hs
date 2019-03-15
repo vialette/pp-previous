@@ -1,12 +1,12 @@
 {-|
 Module      : Data.Algorithm.PP.Perm.Pattern.Rank
-Description : Monotone patterns in permutations
+Description : Rnaking/unranking permutations.
 Copyright   : (c) Stéphane Vialette, 2018-2019
 License     : GPL-3
 Maintainer  : vialette@gmail.com
 Stability   : experimental
 
-Computing monotone patterns in permutations.
+Ranking and unranking permutations.
 -}
 
 module Data.Algorithm.PP.Perm.Rank (
@@ -35,7 +35,7 @@ mkArray xs = Array.array (0, n-1) $ L.zip [0..] xs
   where
     n = L.length xs
 
--- Swap two elements in an aray
+-- Swap two elements in an array
 swap :: (Array.Ix i) => i -> i -> Array.Array i x -> Array.Array i x
 swap i j a
   | i == j    = a
@@ -52,6 +52,13 @@ rank' n a b = (s, a', b')
     a' = swap (n-1) (b ! (n-1)) a
     b' = swap s     (n-1)       b
 
+-- rank1 auxiliary function
+rank1' :: Int -> Array.Array Int Int -> Array.Array Int Int -> Int
+rank1' 1 _  _  = 0
+rank1' n a b = s + (n * rank1' (n-1) a' b')
+  where
+    (s, a', b') = rank' n a b
+
 {- | 'rank1' @p@ returns the rank of the permutation @p@ according to Algorithm __rank1__ from
 Wendy J. Myrvold, Frank Ruskey. Ranking and unranking permutations in linear time. Inf. Process. Lett. 79(6): 281-284 (2001)
 
@@ -65,13 +72,6 @@ rank1 p = rank1' (PP.Perm.len p) a b
   where
     a = mkArray . L.map (\ x -> x-1) $ PP.Perm.getList p
     b = mkArray . L.map (\ y -> y-1) . PP.Perm.getList $ PP.Perm.Bijection.inv p
-
--- rank1 auxiliary function
-rank1' :: Int -> Array.Array Int Int -> Array.Array Int Int -> Int
-rank1' 1 _  _  = 0
-rank1' n a b = s + (n * rank1' (n-1) a' b')
-  where
-    (s, a', b') = rank' n a b
 
 -- unrank1 auxiliary function.
 unrank1' :: Int -> Int -> Array.Array Int Int -> [Int]
@@ -91,7 +91,6 @@ unrank1 :: Int -> Int -> Maybe PP.Perm.Perm
 unrank1 n r
   | r < 0 || r >= product [1..n] = Nothing
   | otherwise                    = Just . PP.Perm.mk . unrank1' n r $ mkArray [0..n-1]
-
 
 -- rank2 auxiliary function.
 rank2' :: Int -> Array.Array Int Int -> Array.Array Int Int -> Int
