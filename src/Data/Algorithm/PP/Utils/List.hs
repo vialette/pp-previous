@@ -90,15 +90,15 @@ deleteAt i = kDeleteAt i 1
 
 {- | 'evens' @xs@ returns the elements returns the elements of @xs@ at all even positions.
 -}
-evens :: [a] -> [a]
-evens []       = []
-evens (x : xs) = x : odds xs
+odds :: [a] -> [a]
+odds []       = []
+odds (x : xs) = x : evens xs
 
 {- | 'odd' @xs@ returns the elements returns the elements of @xs@ at all odd positions.
 -}
-odds :: [a] -> [a]
-odds []       = []
-odds (_ : xs) = evens xs
+evens :: [a] -> [a]
+evens []       = []
+evens (_ : xs) = odds xs
 
 {- | 'splitOn' @x@ @xs@
 -}
