@@ -145,23 +145,39 @@ len = L.length . getPoints
 
 {- | 'at' @i@ @p@ returns the integer at position @i@ in permutation @p@.
 
->>> (mk [1..4]) `at` 0
+>>> let p = mk [1..4] in [p `at` i | i <- [0..len p-1]]
+[1,2,3,4]
+>>> mk [1..4] `at` 4
+*** Exception: Prelude.!!: index too large
 -}
-at :: Int -> Perm -> Int
-at i = flip (L.!!) i . getList
+at :: Perm -> Int -> Int
+at p i = flip (L.!!) i $ getList p
 
 {- | 'delete' @i@ @p@ returns the permutations obtains by deleting @i@ in permutation @p@.
 If @i@ is not part of permutation @p@, then the function returns @p@ unchanged.
+
+>>> let p = mk [4,1,3,2] in [delete i p | i <- [1..4]]
+[[3,2,1],[3,1,2],[3,1,2],[1,3,2]]
 -}
 delete :: Int -> Perm -> Perm
 delete i = mk . L.delete i . getList
 
 {- | 'deleteMin' @p@ returns the permutations obtains by deleting @1@ in permutation @p@.
+
+>>> deleteMin $ mk [4,1,3,2]
+[3,2,1]
+>>> let p = mk [4,1,3,2] in deleteMin p == delete 1 p
+True
 -}
 deleteMin :: Perm -> Perm
 deleteMin = delete 1
 
 {- | 'deleteMax' @p@ returns the permutations obtains by deleting the maximum element in permutation @p@.
+
+>>> deleteMax $ mk [4,1,3,2]
+[1,3,2]
+>>> let p = mk [4,1,3,2] in deleteMax p == delete 4 p
+True
 -}
 deleteMax :: Perm -> Perm
 deleteMax p = delete n p
@@ -169,8 +185,11 @@ deleteMax p = delete n p
   n = len p
 
 {- | 'deleteAt' @i@ @p@ returns the permutations obtains by deleting the element at position @i@
- in permutation @p@ (positions start at 0).
- if @i < 0@ or @i >= len p@ then the function returns Nothing.
+in permutation @p@ (positions start at 0).
+if @i < 0@ or @i >= len p@ then the function returns Nothing.
+
+>>> let p = mk [4,1,3,2] in [deleteAt i p | i <- [0..len p+1]]
+[Nothing,Just [3,2,1],Just [3,1,2],Just [3,1,2],Just [1,3,2],Nothing]
 -}
 deleteAt :: Int -> Perm -> Maybe Perm
 deleteAt i p
@@ -180,7 +199,12 @@ deleteAt i p
 {- | 'partitions' @p@ @k@ @l@ returns all partitions @(qk,ql)@ of the permutation @p@ such that
 @|qk|=k@ and @|ql|=l@.
 
->>>
+>>> let n = 4; p = mk [1..n] in mapM_ print [(k, l, partitions k l p) | k <- [0..n], l <- [0..n], k+l == n]
+(0,4,[([],[(1,1),(2,2),(3,3),(4,4)])])
+(1,3,[([(1,1)],[(2,2),(3,3),(4,4)]),([(2,2)],[(1,1),(3,3),(4,4)]),([(3,3)],[(1,1),(2,2),(4,4)]),([(4,4)],[(1,1),(2,2),(3,3)])])
+(2,2,[([(1,1),(2,2)],[(3,3),(4,4)]),([(1,1),(3,3)],[(2,2),(4,4)]),([(1,1),(4,4)],[(2,2),(3,3)]),([(2,2),(3,3)],[(1,1),(4,4)]),([(2,2),(4,4)],[(1,1),(3,3)]),([(3,3),(4,4)],[(1,1),(2,2)])])
+(3,1,[([(1,1),(2,2),(3,3)],[(4,4)]),([(1,1),(2,2),(4,4)],[(3,3)]),([(1,1),(3,3),(4,4)],[(2,2)]),([(2,2),(3,3),(4,4)],[(1,1)])])
+(4,0,[([(1,1),(2,2),(3,3),(4,4)],[])])
 -}
 partitions :: Int -> Int -> Perm -> [([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])]
 partitions k l = PP.Utils.List.partitions k l . getPoints
@@ -243,7 +267,7 @@ isIdentity p = True
 +---+---+---+---+---+---+
 |   | o |   |   |   |   |
 +---+---+---+---+---+---+
->>> putStr . grid  $ identity 6
+>>> putStr . grid $ identity 6
 +---+---+---+---+---+---+
 |   |   |   |   |   | o |
 +---+---+---+---+---+---+
@@ -261,6 +285,37 @@ isIdentity p = True
 grid :: Perm -> String
 grid = gridChar 'o'
 
+{- | 'gridChar' @c@ @p@
+
+>>> putStr . gridChar 'x' $ mk [5,1,6,4,2,3]
+    +---+---+---+---+---+---+
+    |   |   | x |   |   |   |
+    +---+---+---+---+---+---+
+    | x |   |   |   |   |   |
+    +---+---+---+---+---+---+
+    |   |   |   | x |   |   |
+    +---+---+---+---+---+---+
+    |   |   |   |   |   | x |
+    +---+---+---+---+---+---+
+    |   |   |   |   | x |   |
+    +---+---+---+---+---+---+
+    |   | x |   |   |   |   |
+    +---+---+---+---+---+---+
+>>> putStr . gridChar '1' $ identity 6
+    +---+---+---+---+---+---+
+    |   |   |   |   |   | 1 |
+    +---+---+---+---+---+---+
+    |   |   |   |   | 1 |   |
+    +---+---+---+---+---+---+
+    |   |   |   | 1 |   |   |
+    +---+---+---+---+---+---+
+    |   |   | 1 |   |   |   |
+    +---+---+---+---+---+---+
+    |   | 1 |   |   |   |   |
+    +---+---+---+---+---+---+
+    | 1 |   |   |   |   |   |
+    +---+---+---+---+---+---+
+-}
 gridChar :: Char -> Perm -> String
 gridChar c p = aux . L.map (row . PP.Geometry.Point.getX) . L.reverse . L.sortOn PP.Geometry.Point.getY $ getPoints p
   where

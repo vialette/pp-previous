@@ -2,8 +2,7 @@ module Data.Algorithm.PP.Perm.ShuffleSquareBy
   (
     -- * Searching
     shuffleSquareRootsBy
-  , shuffleSquareRootsByStat
-  , shuffleSquareRootsByMult
+  , shuffleSquareRootByCount
 
     -- * Testing
   , shuffleSquareBy
@@ -32,17 +31,17 @@ import qualified Data.Algorithm.PP.Perm.Pattern   as PP.Perm.Pattern
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
--- |'shuffleSquareRootsBy' 'f' 'p' returns all square roots of the permutation 'p'
--- according to the function 'f'.
---
--- \[
--- \forall p \in S_{n}, \;
--- \forall f : S_{n} \to S_{n},
--- \quad
--- \texttt{ shuffleSquareRootsBy } f \; p
--- \;=\;
--- \left\{q : p \in q \bullet f \; q\right\}
--- \]
+{- | 'shuffleSquareRootsBy' @f@ @p@ returns all square roots of the permutation @p@ according to the function @f@.
+
+\[
+\forall p \in S_{n}, \;
+\forall f : S_{n} \to S_{n},
+\quad
+\texttt{ shuffleSquareRootsBy } f \; p
+\;=\;
+\left\{q : p \in q \bullet f \; q\right\}
+\]
+-}
 shuffleSquareRootsBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> [PP.Perm.Perm]
 shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.map trans . PP.Utils.List.balPartitions . PP.Perm.getList
   where
@@ -50,39 +49,55 @@ shuffleSquareRootsBy f = PP.Utils.List.uniq . L.map proj1 . L.filter test . L.ma
     test  = T.uncurry (==)
     proj1 = T.fst
 
--- |'shuffleSquareRootsByStat' 'f' 'p' returns the number of distinct square roots
--- of the permutation 'p' according to the function 'f'.
---
--- \[
--- \forall n \in \mathbb{N}, \;
--- \forall f : S_{n} \to S_{n},
--- \quad
--- \texttt{ shuffleSquareRootsByStat } f \; p
--- \;=\;
--- \left|\left\{q : p \in q \bullet f \; q\right\}\right|
--- \]
-shuffleSquareRootsByStat :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Int
-shuffleSquareRootsByStat f = L.length . shuffleSquareRootsBy f
+{- | 'shuffleSquareRootByCount' @f@ @p@ returns the number of distinct square roots of the permutation @p@
+according to the function @f@.
 
--- |Alias for 'shuffleSquareRootsByStat'.
-shuffleSquareRootsByMult :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Int
-shuffleSquareRootsByMult = shuffleSquareRootsByStat
+\[
+\forall n \in \mathbb{N}, \;
+\forall f : S_{n} \to S_{n},
+\quad
+\texttt{ shuffleSquareRootsByStat } f \; p
+\;=\;
+\left|\left\{q : p \in q \bullet f \; q\right\}\right|
+\]
+-}
+shuffleSquareRootByCount :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Int
+shuffleSquareRootByCount f = L.length . shuffleSquareRootsBy f
 
--- |'shuffleSquareBy' 'f' 'p' returns 'True' if the permutation 'p' is a
--- shuffle-square according to the bijection 'f'.
+{- | 'shuffleSquareBy' @f@ @p@ returns @True@ if the permutation @p@ is a shuffle-square according to the function @f@. -}
 shuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
 shuffleSquareBy f = not . L.null . shuffleSquareRootsBy f
 
--- |'simpleShuffleSquareBy' 'f' 'p' returns 'True' if the permutations 'p' has
--- exactly one square root according to the bijection 'f'.
+{- | 'simpleShuffleSquareBy' @f@ @p@ returns @True@ if the permutations @p@ has exactly one square root according
+to the funtion @f@.
+
+>>> simpleShuffleSquareBy comp $ mk [7,3,5,1,2,6,4,8]
+True
+>>> shuffleSquareRootsBy comp $ mk [7,3,5,1,2,6,4,8] -- check
+[[4,2,3,1]]
+>>> simpleShuffleSquareBy comp $ mk [7,1,3,5,4,6,2,8]
+False
+>>> shuffleSquareRootsBy comp $ mk [7,1,3,5,4,6,2,8] -- check
+[[3,1,2,4],[4,2,3,1],[4,3,2,1]]
+-}
 simpleShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> PP.Perm.Perm -> Bool
 simpleShuffleSquareBy f = go . shuffleSquareRootsBy f
   where
     go [p] = True
     go _   = False
 
--- |'kShuffleSquareBy' 'f' 'k' 'p' returns 'True' if the permutations 'p' has
--- exactly 'k' square roots according to the bijection 'f'.
+{- | 'kShuffleSquareBy' @f@ @k@ @p@ returns @True@ if the permutations @p@ has exactly @k@ distinct square roots
+according to the function @f@.
+
+>>> kShuffleSquareBy comp 3 $ mk [7,1,3,5,4,6,2,8]
+>>> True
+>>> shuffleSquareRootsBy comp $ mk [7,1,3,5,4,6,2,8] -- check
+[[3,1,2,4],[4,2,3,1],[4,3,2,1]]
+>>>  kShuffleSquareBy comp 3 $ mk [7,3,5,1,2,6,4,8]
+False
+>>> shuffleSquareRootsBy comp $ mk [7,3,5,1,2,6,4,8] -- check
+[[4,2,3,1]]
+-}
 kShuffleSquareBy :: (PP.Perm.Perm -> PP.Perm.Perm) -> Int -> PP.Perm.Perm -> Bool
 kShuffleSquareBy f k = (==) k . L.length . shuffleSquareRootsBy f
 
