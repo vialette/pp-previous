@@ -36,8 +36,6 @@ squares = PP.Perm.SquareBy.squaresBy id
 
 {- | 'nonSquares' @n@ returns all non-square permutations of length @n@.
 
-prop> sort (nonSquares n) == sort [p | p <- perms n, nonSquare p]
-
 >>> nonSquares 2
 []
 >>> nonSquares 3
@@ -48,21 +46,17 @@ prop> sort (nonSquares n) == sort [p | p <- perms n, nonSquare p]
 nonSquares :: Int -> [PP.Perm.Perm]
 nonSquares = PP.Perm.SquareBy.nonSquaresBy id
 
-{- | 'squareFrees' @n@ returns all permutations of length @n@ that do not contain
-a square factor of length at least @4@.
-
-prop> sort (squareFrees n) == sort [p | p <- perms n, squareFree p]
+{- | 'squareFrees' @n@ returns all permutations of length @n@ that do not contain a square factor of length at least @4@.
 
 >>> squareFrees 5
 [[3,2,1,4,5],[3,4,2,1,5],[2,4,3,1,5],[4,2,1,3,5],[1,4,3,2,5],[4,3,1,2,5],[3,4,5,2,1],[5,2,3,4,1],[2,3,5,4,1],[3,2,4,5,1],[2,4,5,3,1],[4,2,3,5,1],[5,2,1,3,4],[2,1,3,5,4],[2,5,3,1,4],[1,5,3,2,4],[5,3,1,2,4],[3,1,2,5,4],[3,5,2,1,4],[1,4,5,3,2],[4,1,3,5,2],[4,5,3,1,2],[5,1,3,4,2],[1,3,5,4,2],[3,1,4,5,2],[3,5,4,1,2],[1,5,4,2,3],[5,4,1,2,3],[4,1,2,5,3],[4,5,2,1,3],[5,1,2,4,3],[1,2,5,4,3],[2,1,4,5,3],[2,5,4,1,3]]
 >>> sort (squareFrees 5 ) == sort [p | p <- perms 5, squareFree p]
 True
 -}
-squareFrees:: Int -> [PP.Perm.Perm]
+squareFrees :: Int -> [PP.Perm.Perm]
 squareFrees = PP.Perm.SquareBy.squaresByFree id
 
-{- | 'square' @p@ returns @True@ if the permutation @p@ is the concatenation
-of two order-isomorphic factors.
+{- | 'square' @p@ returns @True@ if the permutation @p@ is the concatenation of two order-isomorphic factors.
 
 >>> square $ mkPerm [1,2,3,4]
 True
@@ -72,8 +66,7 @@ False
 square :: PP.Perm.Perm -> Bool
 square = PP.Perm.SquareBy.squareBy id
 
-{- | 'nonSquare' @p@ returns @True@ if the permutation @p@ is not the concatenation
-of two order-isomorphic factors.
+{- | 'nonSquare' @p@ returns @True@ if the permutation @p@ is not the concatenation of two order-isomorphic factors.
 
 >>> nonSquare $ mkPerm [1,2,3,4]
 False
@@ -83,8 +76,8 @@ True
 nonSquare :: PP.Perm.Perm -> Bool
 nonSquare = not . square
 
-{- | 'kSquareFree' @k@ @p@ return @True@ if the permutation @p@ does not contain
-a square factor of length @k@. The function trivially returns @False@ if @k@ is odd.
+{- | 'kSquareFree' @k@ @p@ return @True@ if the permutation @p@ does not contain a square factor of length @k@.
+The function trivially returns @False@ if @k@ is odd.
 
 >>> kSquareFree 2 $ mkPerm [3,5,6,2,1,4]
 False
@@ -96,8 +89,7 @@ True
 kSquareFree :: Int -> PP.Perm.Perm -> Bool
 kSquareFree = PP.Perm.SquareBy.kSquareByFree id
 
-{- | 'squareFree' @p@ returns @True@ if the permutation @p@ does not contain
-a square factor of length at least 4.
+{- | 'squareFree' @p@ returns @True@ if the permutation @p@ does not contain a square factor of length at least 4.
 
 >>> squareFree $ mkPerm [3,5,6,2,1,4]
 True
@@ -107,8 +99,7 @@ False
 squareFree :: PP.Perm.Perm -> Bool
 squareFree = PP.Perm.SquareBy.squareByFree id
 
-{- | 'kSquareCount' @k@ @p@ return the number of square factors of length @k@ of
-the permutation @p@.
+{- | 'kSquareCount' @k@ @p@ return the number of square factors of length @k@ of the permutation @p@.
 
 prop> kSquareCount k p == length [q | q <- factors k p, square (mkPerm q)]
 
@@ -122,8 +113,7 @@ prop> kSquareCount k p == length [q | q <- factors k p, square (mkPerm q)]
 kSquareCount :: Int -> PP.Perm.Perm -> Int
 kSquareCount = PP.Perm.SquareBy.kSquareByCount id
 
-{- | 'squareCount' @p@ return the number of square factors of
-the permutation @p@.
+{- | 'squareCount' @p@ return the number of square factors of the permutation @p@.
 
 prop> squareCount p == length [q | k <- [4..len p], q <- factors k p, square (fromPatt q)]
 
