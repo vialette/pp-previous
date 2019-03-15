@@ -16,6 +16,7 @@ module Data.Algorithm.PP.Geometry.Point (
   , mk
   , mk'
   , zero
+  , onDiagonal
   , move
   , symmetric
 
@@ -49,98 +50,133 @@ module Data.Algorithm.PP.Geometry.Point (
   , isStrictlyAboveOf
   , isAboveOf
   , isStrictlyDominatedBy
-  , isDominatedBy
+  , dominatedBy
   ) where
 
 import qualified Data.Foldable as F
 import qualified Data.List     as L
 import qualified Data.Tuple    as T
 
--- |'Point' type
+{- | 'Point' type. -}
 newtype Point = Point { getCoordinates :: (Int, Int) } deriving (Eq, Ord)
 
 instance Show Point where
   show Point { getCoordinates = (x, y) } = "(" ++ show x ++ "," ++ show y ++ ")"
 
--- |'mk' x' 'y' return the point with (x, y) coordinates.
+{- | 'mk' @x@ @y@ return a point with (x, y) coordinates.
+
+>>> mk 2 3
+-}
 mk :: Int -> Int -> Point
 mk x y = Point { getCoordinates = (x, y) }
 
+{- | 'mk'' @(x, y)@ return a point with (x, y) coordinates.
+
+>>> mk' (2, 3)
+-}
 mk' :: (Int, Int) -> Point
 mk' = uncurry mk
 
--- |'zero' return the (0,0) point.
-zero :: Point
-zero = mk 0 0
+{- | 'mkZero' return the point at the origin.
 
--- |'move' 'dx' 'dy' 'p' returns the point (x+dx, y+dy), where (x,y) are
--- the coordinates of the point 'p'.
+>>>
+-}
+mkZero :: Point
+mkZero = mk 0 0
+
+{- | 'onDiagonal' @i@ returns the point @(i, i)@. -}
+mkOnDiagonal :: Int -> Point
+mkOnDiagonal i = mk i i
+
+{- | 'move' @dx@ @dy@ @p@ returns the point @(x+dx, y+dy)@, where @(x,y)@ are the coordinates of the point @p@.
+
+>>>
+-}
 move :: Int -> Int -> Point -> Point
 move dx dy p = mk (getX p + dx) (getY p + dy)
 
--- |'symmetric' 'p' return the point with coordinates (y, x),
--- where (x,y) are the coordinates of the point 'p'.
+{- | 'symmetric' @p@ returns the point with coordinates @(y, x)@, where @(x,y)@ are the coordinates of the point @p@.
+
+>>>
+-}
 symmetric :: Point -> Point
 symmetric Point { getCoordinates = (x, y) } = mk y x
 
--- |'getX' 'p' return the x-coordinate of the point 'p'.
+{- | 'getX' @p@ returns the @x@-coordinate of the point @p@. -}
 getX :: Point -> Int
 getX = T.fst . getCoordinates
 
--- |'getY' 'p' return the y-coordinate of the point 'p'.
+{- | 'getY' @p@ returns the @y@-coordinate of the point @p@. -}
 getY :: Point -> Int
 getY = T.snd . getCoordinates
 
+{- | 'sortOn' @f@ @ps@ sorts the points @ps@ according to the function @f@. -}
 sortOn :: (Foldable t) => (Point -> Int) -> t Point -> [Point]
 sortOn f = L.sortOn f . F.toList
 
--- |'sortOnX' 'ps' ascending sorts points 'ps' according to their x-ccordinates.
+{- | 'sortOnX' @ps@ ascending sorts points @ps@ according to their @x@-coordinates.
+
+>>> sortOnX [mk i j | i <- [1..3], j <- [1..3]]
+-}
 sortOnX :: (Foldable t) => t Point -> [Point]
 sortOnX = sortOn getX
 
--- |'sortOnDescX' 'ps' descending sorts points 'ps' according to their x-ccordinates.
+{- | 'sortOnDescX' @ps@ descending sorts points @ps@ according to their @x@-coordinates.
+
+>>> sortOnDescX [mk i j | i <- [1..3], j <- [1..3]]
+-}
 sortOnDescX :: (Foldable t) => t Point -> [Point]
 sortOnDescX = L.reverse . sortOnX
 
--- |'sortOnY' 'ps' ascending sorts points 'ps' according to their y-ccordinates.
+{- | 'sortOnY' @ps@ ascending sorts points @ps@ according to their @y@-coordinates.
+
+>>> sortOnY [mk i j | i <- [1..3], j <- [1..3]]
+-}
 sortOnY :: (Foldable t) => t Point -> [Point]
 sortOnY = sortOn getY
 
--- |'sortOnDescY' 'ps' descending sorts points 'ps' according to their y-ccordinates.
+{- | 'sortOnDescY' @ps@ descending sorts points @ps@ according to their @y@-coordinates.
+
+>>> sortOnDescY [mk i j | i <- [1..3], j <- [1..3]]
+-}
 sortOnDescY :: (Foldable t) => t Point -> [Point]
 sortOnDescY = L.reverse . sortOnY
 
--- |'isOnDiagonal' 'p' returns 'True' if @x == y@,
--- where (x,y) are the coordinates of the point 'p'.
+{- | 'isOnDiagonal' @p@ returns @True@ if @x == y@, where @(x,y)@ are the coordinates of the point @p@. -}
 isOnDiagonal :: Point -> Bool
 isOnDiagonal p = getX p == getY p
 
--- |'isNotOnDiagonal' 'p' returns 'True' if @x /= y@,
--- where (x,y) are the coordinates of the point 'p'.
+{- | 'isOnDiagonal' @p@ returns @True@ if @x /= y@, where @(x,y)@ are the coordinates of the point @p@. -}
 isNotOnDiagonal :: Point -> Bool
 isNotOnDiagonal = not . isOnDiagonal
 
+{- | 'isStrictlyAboveDiagonal' @p@ returns @True@ if @x < y@, where @(x,y)@ are the coordinates of the point @p@. -}
 isStrictlyAboveDiagonal :: Point -> Bool
 isStrictlyAboveDiagonal p = getX p < getY p
 
+{- | 'isAboveDiagonal' @p@ returns @True@ if @x <= y@, where @(x,y)@ are the coordinates of the point @p@. -}
 isAboveDiagonal :: Point -> Bool
 isAboveDiagonal p = getX p <= getY p
 
+{- | 'isStrictlyBelowDiagonal' @p = (x, y)@ returns @True@ if @x > y@. -}
 isStrictlyBelowDiagonal :: Point -> Bool
 isStrictlyBelowDiagonal p = getX p > getY p
 
+{- | 'isBelowDiagonal' @p = (x, y)@ returns @True@ if @x >= y@. -}
 isBelowDiagonal :: Point -> Bool
 isBelowDiagonal p = getX p >= getY p
 
--- (@<-@) :: Point -> Point -> Bool
--- p1 @<-@ p2 = getX p1 < getX p2
+(@-<-@) :: Point -> Point -> Bool
+(@-<-@) = isStrictlyOnTheLeftOf
 
+{- | 'isStrictlyOnTheLeftOf' @p1 = (x1, y1)@ @p2 = (x2, y2)@ returns @True@ if @x1 < x2@. -}
 isStrictlyOnTheLeftOf :: Point -> Point -> Bool
 p1 `isStrictlyOnTheLeftOf` p2 = getX p1 < getX p2
 
--- (@<=-@) :: Point -> Point -> Bool
--- p1 @<=-@ p2 = getX p1 <= getX p2
+(@-<=-@) :: Point -> Point -> Bool
+(@-<=-@) = isOnTheLeftOf
 
+{- | 'isOnTheLeftOf' @p1 = (x1, y1)@ @p2 = (x2, y2)@ returns @True@ if @x1 <= x2@. -}
 isOnTheLeftOf :: Point -> Point -> Bool
 p1 `isOnTheLeftOf` p2 = getX p1 <= getX p2
 
@@ -183,5 +219,8 @@ p1 `isAboveOf` p2 = getY p1 >= getY p2
 isStrictlyDominatedBy :: Point -> Point -> Bool
 p1 `isStrictlyDominatedBy` p2 = getX p1 < getX p2 && getY p1 < getY p2
 
-isDominatedBy :: Point -> Point -> Bool
-p1 `isDominatedBy` p2 = getX p1 <= getX p2 && getY p1 <= getY p2
+{- | 'dominatedBy' @p1@ @p2@ returns @True@ if @x1 <= x2@ and @y1 <= y2, where
+ @(x1, y1)@ and (@x2, y2)@ are the coordinates of the points @p1@ and @p2@, respectively.
+-}
+dominatedBy :: Point -> Point -> Bool
+p1 `dominatedBy` p2 = getX p1 <= getX p2 && getY p1 <= getY p2
