@@ -97,8 +97,7 @@ localizedFixedPoints' xs n
       ys  = [1..n] L.\\ xs
       ys' = L.sort ys
 
-{- | 'localizedFixedPoints' @xs@ @n@ returns all permutations of length @n@ in
-which elements of @xs@ are fixed points.
+{- | 'localizedFixedPoints' @xs@ @n@ returns all permutations of length @n@ in which elements of @xs@ are fixed points.
 
 >>> localizedFixedPoints [1] 4
 [[1,2,3,4],[1,3,2,4],[1,4,3,2],[1,3,4,2],[1,4,2,3],[1,2,4,3]]
@@ -131,8 +130,7 @@ which elements of @xs@ are fixed points.
 -}
 localizedFixedPoints xs = L.map (PP.Perm.mk . L.map T.snd) . localizedFixedPoints' xs
 
-{- | 'localizedFixedPoints' @xs@ @n@ returns all permutations of length @n@ in
-which only elements of @xs@ are fixed points.
+{- | 'localizedFixedPoints' @xs@ @n@ returns all permutations of length @n@ in which only elements of @xs@ are fixed points.
 
 >>> strictLocalizedFixedPoints [1] 4
 [[1,3,4,2],[1,4,2,3]]
