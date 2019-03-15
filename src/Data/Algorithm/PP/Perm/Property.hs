@@ -16,7 +16,7 @@ module Data.Algorithm.PP.Perm.Property
 
   -- * Monotone
   , increasing
-  ; sorted
+  , sorted
   , decreasing
   , reverseSorted
   , monotone

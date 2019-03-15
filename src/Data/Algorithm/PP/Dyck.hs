@@ -9,36 +9,39 @@ Stability   : experimental
 -}
 
 module Data.Algorithm.PP.Dyck (
-    -- * Types
+  -- * Types
     Path
   , Step(..)
 
-    -- * Steps
+  -- * Steps
   , flipStep
   , isUpStep
   , isDownStep
 
-    -- * Constructing
+  -- * Constructing
   , mk
   , mkUnsafe
-  , paths
   , empty
   , fromString
 
-    -- * Transforming
+  -- * Generating
+  , paths
+  , returnPosPaths
+
+  -- * Transforming
   , collapse
   , lift
   , rev
   , splitAtReturn
 
-    -- * Querying
+  -- * Querying
   , len
   , Data.Algorithm.PP.Dyck.null
   , Data.Algorithm.PP.Dyck.notNull
   , semiLen
   , getSteps
 
-    -- * Drawing
+  -- * Drawing
   , draw
   , draw'
 
@@ -86,30 +89,24 @@ instance Show Path where
 
 >>> flipStep UpStep
 )
->>> :t flipStep UpStep
-flipStep UpStep :: Step
 >>> flipStep DownStep
 (
->>> :t flipStep DownStep
-flipStep DownStep :: Step
 -}
 flipStep :: Step -> Step
 flipStep UpStep   = DownStep
 flipStep DownStep = UpStep
 
-{- | 'isUpStep' @s@ returns @True@ if the step @s@ is an up-step.
--}
+{- | 'isUpStep' @s@ returns @True@ if the step @s@ is an up-step. -}
 isUpStep :: Step -> Bool
 isUpStep UpStep   = True
 isUpStep DownStep = False
 
-{- | 'isDownStep' @s@ returns @True@ if the step @s@ is a down-step.
--}
+{- | 'isDownStep' @s@ returns @True@ if the step @s@ is a down-step. -}
 isDownStep :: Step -> Bool
 isDownStep UpStep   = True
 isDownStep DownStep = False
 
-{- |'mk' @xs@ returns a path from a list of steps @xs@.
+{- | 'mk' @xs@ returns a path from a list of steps @xs@.
 The function returns @Nothing@ if the path is not well-formed.
 
 >>> mk []
@@ -129,16 +126,23 @@ mk ss = PP.Utils.Maybe.whenMaybe (check 0 ss) (mkUnsafe ss)
     check h (UpStep : ss)   = check (h+1) ss
     check h (DownStep : ss) = h > 0 && check (h-1) ss
 
--- Construct a path from a list of lists.
+{- | 'mkUnsafe' @xs@ returns a path from a list of steps @xs@.
+Use with caution, the function does not check that the path is well-formed..
+
+>>> mkUnsafe [UpStep, UpStep, DownStep, DownStep, UpStep, DownStep]
+(())()
+>>> mkUnsafe [DownStep, UpStep, DownStep, DownStep, UpStep, UpStep]
+)())((
+-}
 mkUnsafe :: [Step] -> Path
 mkUnsafe ss = Path { getSteps = ss }
 
-{- | 'empty' returns the empty path.
--}
+{- | 'empty' returns the empty path. -}
 empty :: Path
 empty = Path { getSteps = [] }
 
-{- | 'fromString' @xs@ return a path from the well-aprantesis string @xs@.
+{- | 'fromString' @xs@ return a path from the well-formed paranthesis string @xs@.
+The function returns @Nothing@ is @s@ is not a  well-formed paranthesis string.
 
 >>> fromString "()"
 Just ()
@@ -157,6 +161,8 @@ fromString = mk . fmap f
 
 {- |'len' @p@ returns the length of the path @p@.
 
+>>> fromString "()(())" >>= Just . len
+Just 6
 >>> fmap len $ paths 6
 [6,6,6,6,6]
 -}
@@ -165,6 +171,8 @@ len = L.length . getSteps
 
 {- | 'semiLen' @p@ returns the semi-length of the path @p@.
 
+>>> fromString "()(())" >>= Just . semiLen
+Just 3
 >>> fmap semiLen $ paths 6
 [3,3,3,3,3]
 -}
@@ -175,17 +183,18 @@ semiLen = flip div 2 . len
 
 >>> fromString "" >>= Just . null
 Just True
->>> fromString "()" >>= null
+>>> fromString "()" >>= Just . null
 Just False
 -}
 null :: Path -> Bool
-null p = len p == 0
+null Path { getSteps = [] } = True
+null _                      = False
 
-{- | 'null' @p@ returns @True@ if the path @p@ is not the empty path.
+{- | 'notNull' @p@ returns @True@ if the path @p@ is not the empty path.
 
->>> fromString "" >>= Just . null
+>>> fromString "" >>= Just . notNull
 Just False
->>> fromString "()" >>= null
+>>> fromString "()" >>= Just . notNull
 Just True
 -}
 notNull :: Path -> Bool
@@ -201,19 +210,13 @@ downSteps = mkUnsafe . flip L.replicate DownStep
 
 {- |'rev' @p@ reverses the path @p@.
 
->>> paths 8
-[(()()()),(()(())),((())()),((()())),(((()))),()(()()),()((())),(())(()),(()())(),((()))(),()()(()),()(())(),(())()(),()()()()]
->>> fmap rev $ paths 8
-[(()()()),((())()),(()(())),((()())),(((()))),(()())(),((()))(),(())(()),()(()()),()((())),(())()(),()(())(),()()(()),()()()()]
+>>> paths 6
+[(()()),((())),()(()),(())(),()()()]
+>>> fmap rev $ paths 6
+[(()()),((())),(())(),()(()),()()()]
 -}
 rev :: Path -> Path
 rev = mkUnsafe . L.reverse . fmap flipStep . getSteps
-
--- |'map' 'f' 'p'
---
--- >>>
-map :: (Step -> Step) -> Path -> Maybe Path
-map f = mk . fmap f . getSteps
 
 {- |'paths' @n@ returns all Dyck paths of length 'n'.
 
@@ -223,17 +226,21 @@ map f = mk . fmap f . getSteps
 []
 >>> paths 6
 [(()()),((())),()(()),(())(),()()()]
-paths 8
-[(()()()),(()(())),((())()),((()())),(((()))),()(()()),()((())),(())(()),(()())(),((()))(),()()(()),()(())(),(())()(),()()()()]
-
 -}
 paths :: Int -> [Path]
 paths n =  F.concat [returnPosPaths k n | k <- [0..n `div` 2]]
 
--- |'returnPosPaths' 'k' 'n' return all Dyck paths of length 'n' with 'k' internal
--- returns to the x-axis.
---
--- >>>
+{- | 'returnPosPaths' @k@ @n@ returns all Dyck paths of length @n@ with @k@ internal returns to the x-axis.
+
+>>> returnPosPaths 0 6
+[(()()),((()))]
+>>> returnPosPaths 1 6
+[()(()),(())()]
+>>> returnPosPaths 2 6
+[()()()]
+>>> returnPosPaths 3 6
+[]
+-}
 returnPosPaths :: Int -> Int -> [Path]
 returnPosPaths k n = F.concatMap f $ PP.Combinatorics.evenPartitions (k+1) n
     where
@@ -325,7 +332,7 @@ rRenderChar = '\\'
 
 -- |'getRenderPoints' 'p'
 getRenderPoints :: Path -> [PP.Geometry.Point.Point]
-getRenderPoints = L.reverse . T.snd . F.foldl f (PP.Geometry.Point.zero, []) . getSteps
+getRenderPoints = L.reverse . T.snd . F.foldl f (PP.Geometry.Point.mkZero, []) . getSteps
     where
       f (p, acc) UpStep = (p', p' : acc)
         where

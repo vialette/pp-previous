@@ -15,8 +15,8 @@ module Data.Algorithm.PP.Geometry.Point (
     -- * Construction
   , mk
   , mk'
-  , zero
-  , onDiagonal
+  , mkZero
+  , mkOnDiagonal
   , move
   , symmetric
 

@@ -38,6 +38,7 @@ prop> inv (inv perm) = perm
 >>> inv $ mk [1,3,4,2]
 [1,4,2,3]
 >>> inv $ identity 4
+[1,2,3,4]
 -}
 inv :: PP.Perm.Perm -> PP.Perm.Perm
 inv = PP.Perm.mkUnsafe . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX . fmap PP.Geometry.Point.symmetric . PP.Perm.getPoints
