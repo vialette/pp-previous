@@ -29,17 +29,17 @@ import qualified Data.Algorithm.PP.Perm           as PP.Perm
 
 >>> longestAscending $ mk [4,9,1,2,7,5,6,3,8]
 -}
-longestAscending :: PP.Perm.Perm -> [PP.Geometry.Point]
+longestAscending :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 longestAscending = L.map T.snd . L.reverse . Patience.longestIncreasing . L.map shape . PP.Perm.getPoints
   where
-    shape = (A.&&&) PP.Geometry.Point.getY id . PP.Geometry.getCoordinates
+    shape = (A.&&&) PP.Geometry.Point.getY id . PP.Geometry.Point.getCoordinates
 
 {- | 'longestDescending' @p@ returns a longest descending pattern (as a list of points) of permutation @p@.
 
 >>> longestDescending $ mk [4,9,1,2,7,5,6,3,8]
 -}
-longestDescending :: PP.Perm.Perm -> [PP.Geometry.Point]
+longestDescending :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 longestDescending = L.map T.snd . L.reverse . Patience.longestIncreasing . L.reverse . L.map shape . PP.Perm.getPoints
   where
-    shape = (A.&&&) PP.Geometry.Point.getY id . PP.Geometry.getCoordinates
+    shape = (A.&&&) PP.Geometry.Point.getY id . PP.Geometry.Point.getCoordinates
 

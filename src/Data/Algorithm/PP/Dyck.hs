@@ -42,8 +42,8 @@ module Data.Algorithm.PP.Dyck (
   , getSteps
 
   -- * Drawing
+  , drawDefault
   , draw
-  , draw'
 
   , labelLeftToRightDown
   ) where
@@ -253,9 +253,10 @@ returnPosPaths k n = F.concatMap f $ PP.Combinatorics.evenPartitions (k+1) n
                                                                          , ss  <- aux m
                                                                          , ss' <- aux (n'-2-m)]
 
--- |'splitAtReturn' 'p' splits the path 'p'
---
--- >>>
+{- | 'splitAtReturn' @p@ takes a path @p@ and returns a pair of paths @'p', p'')@, where @p'@ is the prefix of @p@
+until first return at zero and @p''@ is the remaining suffix.
+
+-}
 splitAtReturn :: Path -> (Path, Path)
 splitAtReturn p = ((mkUnsafe . fmap T.fst) *** (mkUnsafe . fmap T.fst)) . PP.Utils.List.splitAt predicate $ L.zip (getSteps p) (getRenderPoints p)
   where
@@ -264,7 +265,7 @@ splitAtReturn p = ((mkUnsafe . fmap T.fst) *** (mkUnsafe . fmap T.fst)) . PP.Uti
 
 -- |'splitEveryReturn'' 'p' splits the path 'p' into minimum x-axis to x-axis paths.
 --
--- >>>
+-- >>> NE FONCTIONNE PAS
 splitEveryReturn :: Path -> [Path]
 splitEveryReturn p = fmap (mkUnsafe . fmap T.fst) . PP.Utils.List.splitEvery predicate $ L.zip (getSteps p) (getRenderPoints p)
   where
@@ -289,7 +290,8 @@ collapse k p = fmap (mkUnsafe . fmap T.fst) . L.Split.splitWhen predicate $ L.zi
     predicate :: (Step, PP.Geometry.Point.Point) -> Bool
     predicate = (<= k) . PP.Geometry.Point.getY . T.snd
 
-{- |'lift' @k@ @p@
+{- |'lift' @k@ @p@ returns the path @p'@ obtained from path @p@ by adding @k@ up-steps at the beginning and
+@k@ down-steps at the end.
 
 >>> paths 4
 [(()),()()]
@@ -303,10 +305,10 @@ collapse k p = fmap (mkUnsafe . fmap T.fst) . L.Split.splitWhen predicate $ L.zi
 lift :: Int -> Path -> Path
 lift k p = upSteps k `mappend` p `mappend` downSteps k
 
--- |'leftToRightMinima' 'p'
+-- |labelLeftToRightDown 'p'
 --
 -- >>>
--- labelLeftToRightDown :: Path -> [Int]
+labelLeftToRightDown :: Path -> [Int]
 labelLeftToRightDown p = T.fst . F.foldr labelUpteps ([], []) . T.fst . F.foldr labelDownSteps ([], n) $ getSteps p
   where
     n :: Int
@@ -330,7 +332,7 @@ lRenderChar = '/'
 rRenderChar :: Char
 rRenderChar = '\\'
 
--- |'getRenderPoints' 'p'
+-- Transform a path into a list of 2D points.
 getRenderPoints :: Path -> [PP.Geometry.Point.Point]
 getRenderPoints = L.reverse . T.snd . F.foldl f (PP.Geometry.Point.mkZero, []) . getSteps
     where
@@ -358,10 +360,10 @@ drawLayer (lChar, rChar) = aux 0
       where
         x' = PP.Geometry.Point.getX p
 
-{- | 'draw' @p@ stringify the path @p@ using @/@ for an upstep and @\@ for a
+{- | 'drawDefault' @p@ stringify the path @p@ using @/@ for an upstep and @\@ for a
 downstep.
 
->>> let f (i, p) = intercalate "\n" [show i, show p, draw p] in mapM_ (putStr . f) . zip [1..] $ paths 6
+>>> let f (i, p) = intercalate "\n" [show i, show p, drawDefault p] in mapM_ (putStr . f) . zip [1..] $ paths 6
 1
 (()())
  /\/\
@@ -383,13 +385,13 @@ downstep.
 ()()()
 /\/\/\
 -}
-draw :: Path -> String
-draw = draw' (lRenderChar, rRenderChar)
+drawDefault :: Path -> String
+drawDefault = draw (lRenderChar, rRenderChar)
 
 {- | 'draw' @(lChar, rChar)@ @p@ stringify the path @p@ using @lChar@ for an upstep
 and @rChar@ for a downstep.
 
->>> let f (i, p) = intercalate "\n" [show i, show p, draw' ('u', 'd') p] in mapM_ (putStr . f) . zip [1..] $ paths 6
+>>> let f (i, p) = intercalate "\n" [show i, show p, draw ('u', 'd') p] in mapM_ (putStr . f) . zip [1..] $ paths 6
 1
 (()())
  udud
@@ -411,8 +413,8 @@ u  dud
 ()()()
 ududud
 -}
-draw' :: (Char, Char) -> Path -> String
-draw' (lChar, rChar) p = F.concat [drawLayer (lChar, rChar) (getStepsAtLayer y pss) | y <- [maxY,maxY-1..1]]
+draw :: (Char, Char) -> Path -> String
+draw (lChar, rChar) p = F.concat [drawLayer (lChar, rChar) (getStepsAtLayer y pss) | y <- [maxY,maxY-1..1]]
   where
     ss   = getRenderPoints p
     maxY = F.maximum $ fmap PP.Geometry.Point.getY ss
