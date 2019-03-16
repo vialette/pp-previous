@@ -153,7 +153,7 @@ Nothing
 >>> fromString "))(())"
 Nothing
 -}
-fromString :: String -> Maybe Path
+fromString :: String -> Path
 fromString = mk . fmap f
   where
     f '(' = UpStep

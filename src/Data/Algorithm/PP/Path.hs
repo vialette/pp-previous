@@ -14,6 +14,7 @@ module Data.Algorithm.PP.Path (
 
   -- * Constructing
   , mk
+  , fromString
   ) where
 
 import qualified Data.Foldable   as F
@@ -51,3 +52,21 @@ mk ss = Path { getSteps = ss }
 {- | 'empty' returns the empty path. -}
 empty :: Path
 empty = Path { getSteps = [] }
+
+{- | 'fromString' @xs@ return a path from the well-formed paranthesis string @xs@.
+The function returns @Nothing@ is @s@ is not a  well-formed paranthesis string.
+
+>>> fromString "()"
+Just ()
+>>> fromString "()(())"
+Just ()(())
+>>> fromString "()(()))"
+Nothing
+>>> fromString "))(())"
+Nothing
+-}
+fromString :: String -> Path
+fromString = mk . fmap convert
+  where
+    convert '(' = PP.Path.Step.UpStep
+    convert ')' = PP.Path.Step.DownStep
