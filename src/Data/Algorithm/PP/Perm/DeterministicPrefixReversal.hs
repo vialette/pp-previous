@@ -105,14 +105,22 @@ of a longest path for a permutation of length @n@).
 deterministicPrefixReversalRadius :: Int -> Int
 deterministicPrefixReversalRadius = L.length . L.head . T.snd . longestDeterministicPrefixReversals
 
+{- | 'lastDeterministicPrefixReversals' @p@
+-}
 lastDeterministicPrefixReversals :: PP.Perm.Perm -> [PP.Perm.Perm]
 lastDeterministicPrefixReversals p = deterministicPrefixReversals' (lastInPlace (PP.Perm.len p)) p
 
+{- | 'lastLongestDeterministicPrefixReversals' @n@
+-}
 lastLongestDeterministicPrefixReversals = PP.Utils.Foldable.maximumBy L.length 0 [] . fmap lastDeterministicPrefixReversals . PP.Perm.Generator.derangements
 
+{- | 'lastLongestDeterministicPrefixReversals' @n@
+-}
 lastLongestDeterministicPrefixReversals :: Int -> (Int, [[PP.Perm.Perm]])
 lastDeterministicPrefixReversalRadius = L.length . L.head . T.snd . lastLongestDeterministicPrefixReversals
 
+{- | 'follow' @n@ @p@
+-}
 follow :: Functor f => Int -> f PP.Perm.Perm -> f (Maybe Int)
 follow i = fmap (liftA PP.Geometry.Point.getX . F.find f . PP.Perm.getPoints)
   where
