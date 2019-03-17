@@ -19,12 +19,16 @@ module Data.Algorithm.PP.Path (
   , upSteps
   , downSteps
 
+  -- * Deonstructing
+  , splitY
+
   -- * Querying
   , len
   , null
   , notNull
 
   -- * Transforming
+  , getPoints
   , rev
 
   -- *Generating
@@ -32,10 +36,14 @@ module Data.Algorithm.PP.Path (
   ) where
 
 import Prelude hiding (null, notNull)
+import Control.Arrow
 import qualified Data.Foldable   as F
 import qualified Data.List       as L
+import qualified Data.Tuple      as T
 
-import qualified Data.Algorithm.PP.Path.Step as PP.Path.Step
+import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+import qualified Data.Algorithm.PP.Path.Step      as PP.Path.Step
+import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
 {- Type definition -}
 newtype Path = Path { getSteps :: [PP.Path.Step.Step] } deriving (Eq, Ord, Read)
@@ -56,9 +64,9 @@ instance Show Path where
 
 {- | 'mk' @xs@ returns a path from a list of steps @xs@.
 
->>> mkUnsafe [UpStep, UpStep, DownStep, DownStep, UpStep, DownStep]
+>>> mk [UpStep, UpStep, DownStep, DownStep, UpStep, DownStep]
 (())()
->>> mkUnsafe [DownStep, UpStep, DownStep, DownStep, UpStep, UpStep]
+>>> mk [DownStep, UpStep, DownStep, DownStep, UpStep, UpStep]
 )())((
 -}
 mk :: [PP.Path.Step.Step] -> Path
@@ -85,6 +93,19 @@ fromString = mk . fmap convert
   where
     convert '(' = PP.Path.Step.UpStep
     convert ')' = PP.Path.Step.DownStep
+
+{- | 'getPoint'
+-}
+getPoints :: Path -> [PP.Geometry.Point.Point]
+getPoints = L.reverse . T.snd . F.foldl f (PP.Geometry.Point.mkZero, []) . getSteps
+    where
+      f (p, acc) PP.Path.Step.UpStep = (p', p' : acc)
+        where
+          p' = PP.Geometry.Point.move 1 1 p
+      f (p, acc) PP.Path.Step.DownStep = (p', p'' : acc)
+        where
+          p'  = PP.Geometry.Point.move 1 (-1) p
+          p'' = PP.Geometry.Point.move 1 0    p
 
 {- |'len' @p@ returns the length of the path @p@.
 
@@ -155,3 +176,13 @@ paths = fmap mk . aux
     aux n = fmap (PP.Path.Step.DownStep :) ss ++ fmap (PP.Path.Step.UpStep :) ss
       where
         ss = aux (n-1)
+
+{- | 'splitAtReturn' @p@ takes a path @p@ and returns a pair of paths @'p', p'')@, where @p'@ is the prefix of @p@
+until first return at zero and @p''@ is the remaining suffix.
+
+-}
+splitY :: Int -> Path -> (Path, Path)
+splitY y p = ((mk . fmap T.fst) *** (mk . fmap T.fst)) . PP.Utils.List.splitAt predicate $ L.zip (getSteps p) (getPoints p)
+  where
+    predicate :: (PP.Path.Step.Step, PP.Geometry.Point.Point) -> Bool
+    predicate = (==) y . PP.Geometry.Point.getY . T.snd

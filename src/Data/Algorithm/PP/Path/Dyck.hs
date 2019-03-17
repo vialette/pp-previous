@@ -22,6 +22,7 @@ module Data.Algorithm.PP.Path.Dyck (
   , notNull
 
   -- * Transforming
+  , getPoints
   , rev
 
   -- * Generating
@@ -33,10 +34,11 @@ import Prelude hiding (null, notNull)
 import qualified Data.Foldable   as F
 import qualified Data.List       as L
 
-import qualified Data.Algorithm.PP.Combinatorics as PP.Combinatorics
-import qualified Data.Algorithm.PP.Path          as PP.Path
-import qualified Data.Algorithm.PP.Path.Step     as PP.Path.Step
-import qualified Data.Algorithm.PP.Utils.Maybe   as PP.Utils.Maybe
+import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
+import qualified Data.Algorithm.PP.Combinatorics  as PP.Combinatorics
+import qualified Data.Algorithm.PP.Path           as PP.Path
+import qualified Data.Algorithm.PP.Path.Step      as PP.Path.Step
+import qualified Data.Algorithm.PP.Utils.Maybe    as PP.Utils.Maybe
 
 {- | 'mk' @xs@ returns a Dyck path from a list of steps @xs@.
 The function returns @Nothing@ if the path is not Dyck.
@@ -80,6 +82,10 @@ fromString = mk . fmap convert
     convert '(' = PP.Path.Step.UpStep
     convert ')' = PP.Path.Step.DownStep
 
+{- | 'getPoint'
+-}
+getPoints :: PP.Path.Path -> [PP.Geometry.Point.Point]
+getPoints = PP.Path.getPoints
 
 {- |'len' @p@ returns the length of the path @p@.
 
