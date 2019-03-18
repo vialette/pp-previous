@@ -18,6 +18,12 @@ module Data.Algorithm.PP.Path (
   , fromString
   , upSteps
   , downSteps
+  , upStepDownStep
+  , upStepDownSteps
+  , downStepUpStep
+  , downStepUpSteps
+  , upPeak
+  , downPeak
 
   -- * Deonstructing
   , splitY
@@ -30,6 +36,7 @@ module Data.Algorithm.PP.Path (
   -- * Transforming
   , getPoints
   , rev
+  , complement
 
   -- *Generating
   , paths
@@ -146,6 +153,24 @@ upSteps = mk . flip L.replicate PP.Path.Step.UpStep
 downSteps :: Int -> Path
 downSteps = mk . flip L.replicate PP.Path.Step.DownStep
 
+upStepDownStep :: Path
+upStepDownStep = mk [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
+
+upStepDownSteps :: Int -> Path
+upStepDownSteps =  mk . L.concat . flip L.replicate [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
+
+downStepUpStep :: Path
+downStepUpStep = mk [PP.Path.Step.DownStep, PP.Path.Step.UpStep]
+
+downStepUpSteps :: Int -> Path
+downStepUpSteps =  complement . upStepDownSteps
+
+upPeak :: Int -> Path
+upPeak n = upSteps n <> downSteps n
+
+downPeak :: Int -> Path
+downPeak = complement . upPeak
+
 {- |'rev' @p@ reverses the path @p@.
 
 >>> paths 4
@@ -155,6 +180,9 @@ downSteps = mk . flip L.replicate PP.Path.Step.DownStep
 -}
 rev :: Path -> Path
 rev = mk . L.reverse . fmap PP.Path.Step.flipStep . getSteps
+
+complement :: Path -> Path
+complement = mk . L.map PP.Path.Step.flipStep . getSteps
 
 {- |'paths' @n@ returns all paths of length @n@.
 

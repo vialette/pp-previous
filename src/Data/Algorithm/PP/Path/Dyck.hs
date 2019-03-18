@@ -40,6 +40,7 @@ import qualified Data.Algorithm.PP.Path           as PP.Path
 import qualified Data.Algorithm.PP.Path.Step      as PP.Path.Step
 import qualified Data.Algorithm.PP.Utils.Maybe    as PP.Utils.Maybe
 
+
 {- | 'mk' @xs@ returns a Dyck path from a list of steps @xs@.
 The function returns @Nothing@ if the path is not Dyck.
 
@@ -96,7 +97,6 @@ Just 6
 -}
 len :: PP.Path.Path -> Int
 len = PP.Path.len
-
 
 {- | 'semiLen' @p@ returns the semi-length of the path @p@.
 
