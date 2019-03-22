@@ -125,8 +125,8 @@ fromPoints = mk . fmap PP.Geometry.Point.getY . L.sortOn PP.Geometry.Point.getX 
 
 {- | 'getList' @p@ returns the list of the elements of permutation @p@.
 
->>> getList $ mkPerm [1,5,3]
-
+>>> getList $ mk [1,5,3]
+[1,3,2]
 -}
 getList :: Perm -> [Int]
 getList = L.map PP.Geometry.Point.getY . getPoints

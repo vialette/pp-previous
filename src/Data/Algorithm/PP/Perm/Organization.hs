@@ -28,6 +28,7 @@ module Data.Algorithm.PP.Perm.Organization (
   , organizationList
   , organizationLists
   , organizationListAssoc
+  , organizationListByOrganizationNumber
   , organizationListFreq
   , distinctOrganizationLists
   , maxOrganizationLists
@@ -112,6 +113,22 @@ permutations.
 -}
 organizationListAssoc :: Int -> [(OrganizationList, [PP.Perm.Perm])]
 organizationListAssoc = L.map g . L.groupBy f . L.sort . L.map (organizationList &&& id) . PP.Perm.Generator.Basic.perms
+  where
+    f t t' = T.fst t == T.fst t'
+    g      = (T.fst . L.head) &&& (L.map T.snd)
+
+{- | 'organizationListByOrganizationNumber' @n@ returns  the list of pairs associating organization numbers to
+the organization lists.
+
+>>> mapM_ print $ organizationListByOrganizationNumber 4
+(3,[[1,1,1],[1,1,1]])
+(4,[[1,2,1],[1,2,1],[1,2,1],[1,2,1]])
+(5,[[1,1,3],[1,1,3],[1,3,1],[1,3,1],[2,1,2],[2,1,2],[2,1,2],[2,1,2],[2,1,2],[2,1,2],[3,1,1],[3,1,1]])
+(6,[[1,2,3],[1,2,3],[3,2,1],[3,2,1]])
+(7,[[2,3,2],[2,3,2]])
+-}
+organizationListByOrganizationNumber :: Int -> [(Int, [OrganizationList])]
+organizationListByOrganizationNumber =  L.map g . L.groupBy f . L.sort . L.map (F.sum &&& id) . organizationLists
   where
     f t t' = T.fst t == T.fst t'
     g      = (T.fst . L.head) &&& (L.map T.snd)
@@ -231,7 +248,8 @@ organizationNumberAssoc = L.map g . L.groupBy f . L.sort . L.map (organizationNu
     f t t' = T.fst t == T.fst t'
     g      = (T.fst . L.head) &&& (L.map T.snd)
 
-{- | 'organizationListFreq'
+{- | 'organizationListFreq' @n@ returns the list of pairs associating the organization numbers to the number of
+permutation having this organization number.
 
 >>> mapM_ print $ organizationNumberFreq 4
 (3,2)
