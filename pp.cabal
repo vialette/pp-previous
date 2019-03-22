@@ -42,7 +42,7 @@ library
                   , Data.Algorithm.PP.Perm.Bijection.MansourDengDu
                   , Data.Algorithm.PP.Perm.Block
                   , Data.Algorithm.PP.Perm.Generator
-                  , Data.Algorithm.PP.Perm.Jump
+                  , Data.Algorithm.PP.Perm.Organization
                   --, Data.Algorithm.PP.Perm.Pattern.Monotone
                   , Data.Algorithm.PP.Perm.Transposition
                   , Data.Algorithm.PP.Perm.Shuffle

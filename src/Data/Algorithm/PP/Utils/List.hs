@@ -204,24 +204,65 @@ perfectShuffle = aux []
     aux acc []       ys = L.reverse acc ++ ys
     aux acc (x : xs) ys = aux (x : acc) ys xs
 
--- |'reversal' 'i' 'j' 'xs' return the list
---
--- >>>
-reversal :: Int -> Int -> [a] -> [a]
-reversal i j xs = ps ++ L.reverse ys ++ ss
-  where
-    (ps, xs') = L.splitAt (i-1) xs
-    (ys, ss)  = L.splitAt (j-i+1) xs'
+{- | 'reversal' @i@ @j@ @xs@ returns the list obtained by reversing the elements at positions @i@,
+@i+1@, ..., @j@ in @xs.
 
--- |'reversal'' 'i' 'm' 'xs'
---
--- >>>
+>>> let n = 4 in mapM_ print [(i, j, reversal i j [1..n]) | i <- [1..n], j <- [1..n]]
+(1,1,[1,2,3,4])
+(1,2,[2,1,3,4])
+(1,3,[3,2,1,4])
+(1,4,[4,3,2,1])
+(2,1,[1,2,3,4])
+(2,2,[1,2,3,4])
+(2,3,[1,3,2,4])
+(2,4,[1,4,3,2])
+(3,1,[1,2,3,4])
+(3,2,[1,2,3,4])
+(3,3,[1,2,3,4])
+(3,4,[1,2,4,3])
+(4,1,[1,2,3,4])
+(4,2,[1,2,3,4])
+(4,3,[1,2,3,4])
+(4,4,[1,2,3,4])
+-}
+reversal :: Int -> Int -> [a] -> [a]
+reversal i j xs = pref ++ L.reverse ys ++ suff
+  where
+    (pref, xs') = L.splitAt (i-1)   xs
+    (ys, suff)  = L.splitAt (j-i+1) xs'
+
+{- | 'reversal'' @i@ @k@ @xs@ returns the list obtained by reversing the elements at positions @i@,
+@i+1@, ..., @i+k@ in @xs.
+
+>>> let n = 4 in mapM_ print [(i, k, reversal' i k [1..n]) | i <- [1..n], k <- [1..n]]
+(1,1,[1,2,3,4])
+(1,2,[2,1,3,4])
+(1,3,[3,2,1,4])
+(1,4,[4,3,2,1])
+(2,1,[1,2,3,4])
+(2,2,[1,3,2,4])
+(2,3,[1,4,3,2])
+(2,4,[1,4,3,2])
+(3,1,[1,2,3,4])
+(3,2,[1,2,4,3])
+(3,3,[1,2,4,3])
+(3,4,[1,2,4,3])
+(4,1,[1,2,3,4])
+(4,2,[1,2,3,4])
+(4,3,[1,2,3,4])
+(4,4,[1,2,3,4])
+-}
 reversal' :: Int -> Int -> [a] -> [a]
 reversal' i m = reversal i (i+m-1)
 
--- |'prefixReversal' 'm' 'xs'
---
--- >>>
+{- |'prefixReversal' @k@ @xs@ returns the list obtained by reversing the prefix of length @k@ of @xs@.
+
+>>> let n = 4 in mapM_ print [(k, prefixReversal k [1..n]) | k <- [1..n]]
+(1,[1,2,3,4])
+(2,[2,1,3,4])
+(3,[3,2,1,4])
+(4,[4,3,2,1])
+-}
 prefixReversal :: Int -> [a] -> [a]
 prefixReversal = reversal' 1
 

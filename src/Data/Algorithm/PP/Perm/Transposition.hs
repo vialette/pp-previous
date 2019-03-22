@@ -1,3 +1,13 @@
+{-|
+Module      : Data.Algorithm.PP.Perm.Transposition
+Description : Organization numbers
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+-}
+
 module Data.Algorithm.PP.Perm.Transposition
   (
 
