@@ -158,7 +158,7 @@ downSteps = mk . flip L.replicate PP.Path.Step.DownStep
 upStepDownStep :: Path
 upStepDownStep = mk [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
 
-{- |
+{- | 'upStepDownSteps'
 -}
 upStepDownSteps :: Int -> Path
 upStepDownSteps =  mk . L.concat . flip L.replicate [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
