@@ -1,9 +1,7 @@
 module Data.Algorithm.PP.Utils.Foldable (
-  -- * Maximum
-    maximumsBy
-  , maximumBy
-  , maximumBy0
-  , maximumBy1
+  -- * minimum / maximum
+    minimumsBy
+  , maximumsBy
 
   -- * Splitting
   , splitEvery
@@ -15,45 +13,28 @@ import qualified Data.Tuple    as T
 
 import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
-{- | 'maximumsBy' @f@ @xs@
-
--}
-maximumsBy _ [] = []
-maximumsBy f xs = T.snd . F.foldr1 g $ fmap (\ x -> (f x, [x])) xs
+-- maximumsBy and minimumsBy helper function.
+extremalsBy :: (Ord b, Eq b) => (b -> b -> Bool) -> (a -> b) -> [a] -> (b, [a])
+extremalsBy cmp f = F.foldr1 g . fmap (\ x -> (f x, [x]))
   where
-    g (k, [x]) (maxSoFar, acc)
-      | k > maxSoFar  = (k,        [x])
-      | k == maxSoFar = (maxSoFar, x : acc)
-      | otherwise     = (maxSoFar, acc)
+    g (k, [x]) (l, acc)
+      | k `cmp` l = (k, [x])
+      | k == l    = (l, x : acc)
+      | otherwise = (l, acc)
 
-{- |'maximumBy' @f@ @z@ @e@ @xs@ returns the pair @(m, xs')@ where
-@m = maximum (fmap f xs)@ and @xs'@ are the elements of @xs'@ that attain
-maximum @m@.
+{- | 'maximumsBy' @f@ @xs@ returns the list of the maximum elements of @xs@
+(according to @f@) together with the maximum.
 
->>> maximumBy length 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
-(3,[[4,5,6],[10,11,12]])
->>> maximumBy head 0 [] [[1],[2..3],[4..6],[7],[8..9],[10..12]]
-(10,[[10,11,12]])
 -}
-maximumBy :: (Foldable t, Ord b) => (a -> b) -> b -> [a] -> t a -> (b, [a])
-maximumBy f z e = F.foldr aux (z, e)
-  where
-    aux x (m, acc)
-      | k > m     = (k, [x])
-      | k == m    = (m, x : acc)
-      | otherwise = (m, acc)
-        where
-          k = f x
+maximumsBy :: (Ord b, Eq b) => (a -> b) -> [a] -> (b, [a])
+maximumsBy = extremalsBy (>)
 
-{- |
--}
-maximumBy0 :: (Foldable t, Ord b, Num b) => (a -> b) -> t a -> (b, [a])
-maximumBy0 f = maximumBy f 0 []
+{- | 'maximumsBy' @f@ @xs@ returns the list of the maximum elements of @xs@
+(according to @f@) together with the maximum.
 
-{- |
 -}
-maximumBy1 :: (Foldable t, Ord b, Num b) => (a -> b) -> t a -> (b, [a])
-maximumBy1 f = maximumBy f 1 []
+minimumsBy :: (Ord b, Eq b) => (a -> b) -> [a] -> (b, [a])
+minimumsBy = extremalsBy (<)
 
 
 

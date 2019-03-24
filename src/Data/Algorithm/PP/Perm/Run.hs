@@ -70,7 +70,7 @@ longestAscendingRun = F.maximumBy (compare `on` L.length) . ascendingRuns
 [[2,4,6],[1,3,9]]
 -}
 longestAscendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
-longestAscendingRuns = PP.Utils.Foldable.maximumsBy L.length . ascendingRuns
+longestAscendingRuns = T.snd . PP.Utils.Foldable.maximumsBy L.length . ascendingRuns
 
 {- |'descendingRuns' @p@ returns all descending runs (as lists of points) in permutation @p@.
 
@@ -113,4 +113,4 @@ longestDescendingRun = F.maximumBy (compare `on` L.length) . descendingRuns
 [[7,3,1],[6,5,2]]
 -}
 longestDescendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
-longestDescendingRuns = PP.Utils.Foldable.maximumsBy L.length . descendingRuns
+longestDescendingRuns = T.snd . PP.Utils.Foldable.maximumsBy L.length . descendingRuns

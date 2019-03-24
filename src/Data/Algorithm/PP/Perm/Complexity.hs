@@ -80,7 +80,7 @@ maxComplexity k = maxComplexity' k . PP.Perm.Generator.perms
 -- >>> Complexity.maxComplexity' 3 (Perm.perms 5) == Complexity.maxComplexity 3 5
 -- True
 maxComplexity' :: (Foldable t) => Int -> t PP.Perm.Perm -> (Int, [PP.Perm.Perm])
-maxComplexity' k = PP.Utils.Foldable.maximumBy0 (complexityStat k)
+maxComplexity' k = PP.Utils.Foldable.maximumsBy (complexityStat k)
 
 -- | The 'maxComplexityStat' 'k' 'n' function returns
 -- the maximum number of permutations of length 'k' a permutation of length 'n'
@@ -113,4 +113,4 @@ maxComplexityStat' :: Int -> Int -> [PP.Perm.Perm]
 maxComplexityStat' k = T.snd . maxComplexity k
 
 pat :: Int -> (Int, [PP.Perm.Perm])
-pat = PP.Utils.Foldable.maximumBy0 complexityAnyStat . PP.Perm.Generator.perms
+pat = PP.Utils.Foldable.maximumsBy complexityAnyStat . PP.Perm.Generator.perms

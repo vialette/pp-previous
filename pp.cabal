@@ -59,7 +59,7 @@ library
                   , Data.Algorithm.PP.Perm.Features
                   , Data.Algorithm.PP.Perm.Pattern
                   , Data.Algorithm.PP.Perm.ShuffleSquareBy
-                  , Data.Algorithm.PP.Perm.Complexity
+                  --, Data.Algorithm.PP.Perm.Complexity
                   , Data.Algorithm.PP.Perm.DeterministicPrefixReversal
                   , Data.Algorithm.PP.Perm.Sort
                   , Data.Algorithm.PP.Perm.Property

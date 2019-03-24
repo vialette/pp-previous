@@ -5,7 +5,7 @@ module Data.Algorithm.PP.Combinatorics
 )
 where
 
-  {- | 'partitions' @k@ @n@ returns all ordered partitions of @[n]@ into @k@ parts.
+  {- | 'partitions' @k@ @n@ returns all ordered partitions of @[n]@ into @k@ non-empty parts.
 
   >>> partitions 0 5
   []

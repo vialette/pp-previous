@@ -86,7 +86,7 @@ of length @n@ together with the length of the path.
 [[5,6,4,1,3,2],[3,1,4,6,5,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
 -}
 longestDeterministicPrefixReversals :: Int -> (Int, [[PP.Perm.Perm]])
-longestDeterministicPrefixReversals = PP.Utils.Foldable.maximumBy L.length 0 [] . fmap deterministicPrefixReversals . PP.Perm.Generator.derangements
+longestDeterministicPrefixReversals = PP.Utils.Foldable.maximumsBy L.length . fmap deterministicPrefixReversals . PP.Perm.Generator.derangements
 
 {- |'deterministicPrefixReversalRadius' @n@ return the radius (//i.e.// the length
 of a longest path for a permutation of length @n@).
@@ -112,7 +112,7 @@ lastDeterministicPrefixReversals p = deterministicPrefixReversals' (lastInPlace 
 
 {- | 'lastLongestDeterministicPrefixReversals' @n@
 -}
-lastLongestDeterministicPrefixReversals = PP.Utils.Foldable.maximumBy L.length 0 [] . fmap lastDeterministicPrefixReversals . PP.Perm.Generator.derangements
+lastLongestDeterministicPrefixReversals = PP.Utils.Foldable.maximumsBy L.length . fmap lastDeterministicPrefixReversals . PP.Perm.Generator.derangements
 
 {- | 'lastLongestDeterministicPrefixReversals' @n@
 -}
