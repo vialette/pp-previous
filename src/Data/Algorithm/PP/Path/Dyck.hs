@@ -9,7 +9,6 @@ Stability   : experimental
 -}
 
 module Data.Algorithm.PP.Path.Dyck (
-
   -- * Constructing
     mk
   , empty
@@ -24,10 +23,6 @@ module Data.Algorithm.PP.Path.Dyck (
   -- * Transforming
   , getPoints
   , rev
-
-  -- * Generating
-  , paths
-  , returnPaths
   ) where
 
 import Prelude hiding (null, notNull)
@@ -161,14 +156,3 @@ returnPaths k n = F.concatMap f $ PP.Combinatorics.evenPartitions (k+1) n
                                                                                                    , ss  <- aux m
                                                                                                    , ss' <- aux (n'-2-m)]
 
-{- |'paths' @n@ returns all Dyck paths of length @n@.
-
->>> paths 0
-[]
->>> paths 1
-[]
->>> paths 6
-[(()()),((())),()(()),(())(),()()()]
--}
-paths :: Int -> [PP.Path.Path]
-paths n =  F.concat [returnPaths k n | k <- [0..n `div` 2]]

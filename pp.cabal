@@ -21,6 +21,8 @@ library
                   , Data.Algorithm.PP.Dyck
                   , Data.Algorithm.PP.Path
                   , Data.Algorithm.PP.Path.Dyck
+                  , Data.Algorithm.PP.Path.Dyck.Generator
+                  , Data.Algorithm.PP.Path.Generator
                   , Data.Algorithm.PP.Path.Step
                   , Data.Algorithm.PP.Perm
                   , Data.Algorithm.PP.BetaTree
