@@ -1,6 +1,6 @@
 {-|
 Module      : Data.Algorithm.PP.Path.Dyck
-Description : Paths
+Description : Dyck paths
 Copyright   : (c) Stéphane Vialette, 2018-2019
 License     : GPL-3
 Maintainer  : vialette@gmail.com
@@ -127,7 +127,6 @@ Just True
 -}
 notNull :: PP.Path.Path -> Bool
 notNull = PP.Path.notNull
-
 
 {- |'rev' @p@ reverses the path @p@.
 

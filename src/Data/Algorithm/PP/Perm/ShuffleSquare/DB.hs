@@ -1,3 +1,13 @@
+{-|
+Module      : Data.Algorithm.PP.ShuffleSquare.DB
+Description : Paths
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+-}
+
 module Data.Algorithm.PP.Perm.ShuffleSquare.DB (
     assoc
   ) where

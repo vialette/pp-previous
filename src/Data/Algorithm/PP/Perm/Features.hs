@@ -147,7 +147,6 @@ leftToRightMinima = L.reverse . F.foldr f [] . L.reverse . PP.Perm.getPoints
       | p `PP.Geometry.Point.isStrictlyBelowOf` p' = p : acc
       | otherwise                                  = acc
 
-
 {- | 'leftToRightMaxima' @p@
 
 >>> leftToRightMaxima $ mk [4,2,3,1,6,5,7,8]
