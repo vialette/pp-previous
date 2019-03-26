@@ -16,6 +16,7 @@ module Data.Algorithm.PP.Path (
   , mk
   , empty
   , fromString
+  , fromStringChar
   , upSteps
   , downSteps
   , upStepDownStep
@@ -32,6 +33,8 @@ module Data.Algorithm.PP.Path (
   , len
   , null
   , notNull
+  , minY
+  , maxY
 
   -- * Transforming
   , getPoints
@@ -96,12 +99,18 @@ Nothing
 Nothing
 -}
 fromString :: String -> Path
-fromString = mk . fmap convert
-  where
-    convert '(' = PP.Path.Step.UpStep
-    convert ')' = PP.Path.Step.DownStep
+fromString = fromStringChar '(' ')'
+
+fromStringChar :: Char -> Char -> String -> Path
+fromStringChar l r = mk . fmap convert
+   where
+     convert '(' = PP.Path.Step.UpStep
+     convert ')' = PP.Path.Step.DownStep
 
 {- | 'getPoint'
+
+>>> fmap (\ p -> (p, getPoints p)) $ paths 3
+[())),[(1,0),(2,-1),(3,-2)]),())(,[(1,0),(2,-1),(3,-1)]),()(),[(1,0),(2,0),(3,0)]),()((,[(1,0),(2,0),(3,1)]),(()),[(1,1),(2,1),(3,0)]),(()(,[(1,1),(2,1),(3,1)]),(((),[(1,1),(2,2),(3,2)]),((((,[(1,1),(2,2),(3,3)])]
 -}
 getPoints :: Path -> [PP.Geometry.Point.Point]
 getPoints = L.reverse . T.snd . F.foldl f (PP.Geometry.Point.mkZero, []) . getSteps
@@ -145,6 +154,42 @@ Just True
 notNull :: Path -> Bool
 notNull = not .null
 
+{- | 'minY' @p@
+
+>>> mapM_ print . fmap (\ p -> (p, minY p)) $ paths 3
+())),-3)
+())(,-2)
+()(),-1)
+()((,-1)
+(()),-1)
+(()(,0)
+(((),0)
+((((,0)
+-}
+minY :: Path -> Int
+minY = F.minimum . fmap F.sum . L.inits . fmap f . getSteps
+  where
+    f PP.Path.Step.UpStep   = 1
+    f PP.Path.Step.DownStep = -1
+
+{- | 'maxY' @p@
+
+>>> mapM_ print . fmap (\ p -> (p, maxY p)) $ paths 3
+())),0)
+())(,0)
+()(),0)
+()((,1)
+(()),1)
+(()(,1)
+(((),2)
+((((,3)
+-}
+maxY :: Path -> Int
+maxY = F.maximum . fmap F.sum . L.inits . fmap f . getSteps
+  where
+    f PP.Path.Step.UpStep   = 1
+    f PP.Path.Step.DownStep = -1
+
 {- | 'upSteps' @n@ returns the ascending path of length @n@. -}
 upSteps :: Int -> Path
 upSteps = mk . flip L.replicate PP.Path.Step.UpStep
@@ -153,32 +198,50 @@ upSteps = mk . flip L.replicate PP.Path.Step.UpStep
 downSteps :: Int -> Path
 downSteps = mk . flip L.replicate PP.Path.Step.DownStep
 
-{- |
+{- | 'upStepDownStep'returns the path up - down.
+
+>>> upStepDownStep
+()
 -}
 upStepDownStep :: Path
 upStepDownStep = mk [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
 
-{- | 'upStepDownSteps'
+{- | 'upStepDownSteps' @n@ returns the paths that consists in @n@ copies of  the path up - down.
+
+>>> [upStepDownSteps i | i <- [0..5]]
+[,(),()(),()()(),()()()(),()()()()()]
 -}
 upStepDownSteps :: Int -> Path
 upStepDownSteps =  mk . L.concat . flip L.replicate [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
 
-{- |
+{- | 'downStepUpStep'returns the path down - up.
+
+>>> downStepUpStep
+)(
 -}
 downStepUpStep :: Path
 downStepUpStep = mk [PP.Path.Step.DownStep, PP.Path.Step.UpStep]
 
-{- |
+{- | 'downStepUpSteps' @n@ returns the paths that consists in @n@ copies of  the path down - up.
+
+>>> [downStepUpSteps i | i <- [0..5]]
+[,)(,)()(,)()()(,)()()()(,)()()()()(]
 -}
 downStepUpSteps :: Int -> Path
 downStepUpSteps =  complement . upStepDownSteps
 
 {- |
+
+>>> [upPeak i | i <- [0..5]]
+[,(),(()),((())),(((()))),((((()))))]
 -}
 upPeak :: Int -> Path
 upPeak n = upSteps n <> downSteps n
 
 {- |
+
+>>> [downPeak i | i <- [0..5]]
+[,)(,))((,)))(((,))))((((,)))))(((((]
 -}
 downPeak :: Int -> Path
 downPeak = complement . upPeak
@@ -193,6 +256,13 @@ downPeak = complement . upPeak
 rev :: Path -> Path
 rev = mk . L.reverse . fmap PP.Path.Step.flipStep . getSteps
 
+{- | 'complement' @p@ returns the path obtained from the path @p@ by flipping the steps.
+
+>>> paths 4
+[)))),)))(,))(),))((,)()),)()(,)((),)(((,())),())(,()(),()((,(()),(()(,(((),((((]
+>>> fmap complement $ paths 4
+[((((,(((),(()(,(()),()((,()(),())(,())),)(((,)((),)()(,)()),))((,))(),)))(,))))]
+-}
 complement :: Path -> Path
 complement = mk . L.map PP.Path.Step.flipStep . getSteps
 
@@ -217,8 +287,8 @@ paths = fmap mk . aux
       where
         ss = aux (n-1)
 
-{- | 'splitAtReturn' @p@ takes a path @p@ and returns a pair of paths @'p', p'')@, where @p'@ is the prefix of @p@
-until first return at zero and @p''@ is the remaining suffix.
+{- | 'splitAtReturn' @y@ @p@ takes a path @p@ and returns a pair of paths @(p', p'')@, where @p'@ is the prefix of @p@
+until first return at @y@ (including the point at @y@) and @p''@ is the remaining suffix.
 
 -}
 splitY :: Int -> Path -> (Path, Path)

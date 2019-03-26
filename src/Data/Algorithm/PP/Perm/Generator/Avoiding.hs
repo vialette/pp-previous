@@ -65,36 +65,39 @@ import qualified Data.Algorithm.PP.Utils.List                   as PP.Utils.List
 permsAvoiding_123 :: Int -> [PP.Perm.Perm]
 permsAvoiding_123 = fmap PP.Perm.Bijection.SimionSchmidt.simionSchmidt . permsAvoiding_132
 
--- |'permsAvoiding_132' 'n' returns all 132-avoiding permutations of length 'n'.
---
--- >>> permsAvoiding_123 3
--- [[3,2,1],[2,3,1],[3,1,2],[2,1,3],[1,3,2]]
--- >>> permsAvoiding_123 4
--- [[4,3,2,1],[3,4,2,1],[4,2,3,1],[3,2,4,1],[2,4,3,1],[4,3,1,2],[3,4,1,2],[4,2,1,3],[4,1,3,2],[3,2,1,4],[2,4,1,3],[3,1,4,2],[2,1,4,3],[1,4,3,2]]
+{- | 'permsAvoiding_132' @n@ returns all 132-avoiding permutations of length @n@.
+
+>>> permsAvoiding_123 3
+[[3,2,1],[2,3,1],[3,1,2],[2,1,3],[1,3,2]]
+>>> permsAvoiding_123 4
+[[4,3,2,1],[3,4,2,1],[4,2,3,1],[3,2,4,1],[2,4,3,1],[4,3,1,2],[3,4,1,2],[4,2,1,3],[4,1,3,2],[3,2,1,4],[2,4,1,3],[3,1,4,2],[2,1,4,3],[1,4,3,2]]
+-}
 permsAvoiding_132 :: Int -> [PP.Perm.Perm]
 permsAvoiding_132 = fmap PP.Perm.Bijection.Trivial.rev . permsAvoiding_231
 
--- |'permsAvoiding_213' 'n' returns all 213-avoiding permutations of length 'n'.
---
--- >>> permsAvoiding_132 3
--- [[3,2,1],[2,3,1],[3,1,2],[2,1,3],[1,2,3]]
--- >>> permsAvoiding_132 4
--- [[4,3,2,1],[3,4,2,1],[4,2,3,1],[3,2,4,1],[2,3,4,1],[4,3,1,2],[3,4,1,2],[4,2,1,3],[4,1,2,3],[3,2,1,4],[2,3,1,4],[3,1,2,4],[2,1,3,4],[1,2,3,4]]
+{- | 'permsAvoiding_213' @n@ returns all 213-avoiding permutations of length @n@.
+
+>>> permsAvoiding_132 3
+[[3,2,1],[2,3,1],[3,1,2],[2,1,3],[1,2,3]]
+>>> permsAvoiding_132 4
+[[4,3,2,1],[3,4,2,1],[4,2,3,1],[3,2,4,1],[2,3,4,1],[4,3,1,2],[3,4,1,2],[4,2,1,3],[4,1,2,3],[3,2,1,4],[2,3,1,4],[3,1,2,4],[2,1,3,4],[1,2,3,4]]
+-}
 permsAvoiding_213 :: Int -> [PP.Perm.Perm]
 permsAvoiding_213 = fmap PP.Perm.Bijection.Trivial.comp . permsAvoiding_132
 
--- |'permsAvoiding_231' 'n' returns all 231-avoiding permutations of length 'n'.
---
--- >>> permsAvoiding_231 3
--- [[1,2,3],[1,3,2],[2,1,3],[3,1,2],[3,2,1]]
--- >>> permsAvoiding_231 4
---[[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,2,3],[1,4,3,2],[2,1,3,4],[2,1,4,3],[3,1,2,4],[3,2,1,4],[4,1,2,3],[4,1,3,2],[4,2,1,3],[4,3,1,2],[4,3,2,1]]
+{- | 'permsAvoiding_231' @n@ returns all 231-avoiding permutations of length @n@.
+
+>>> permsAvoiding_231 3
+[[1,2,3],[1,3,2],[2,1,3],[3,1,2],[3,2,1]]
+>>> permsAvoiding_231 4
+[[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,2,3],[1,4,3,2],[2,1,3,4],[2,1,4,3],[3,1,2,4],[3,2,1,4],[4,1,2,3],[4,1,3,2],[4,2,1,3],[4,3,1,2],[4,3,2,1]]
+-}
 permsAvoiding_231 :: Int -> [PP.Perm.Perm]
-permsAvoiding_231 = fmap f . PP.Dyck.paths
+permsAvoiding_231 = fmap f . PP.Dyck.paths . (*) 2
   where
     f p =  PP.Perm.mk . F.foldr g [] $ L.zip (PP.Dyck.getSteps p) (PP.Dyck.labelLeftToRightDown p)
       where
-        g (PP.Dyck.UpStep, i)   acc = i : acc
+        g (PP.Dyck.UpStep,   i) acc = i : acc
         g (PP.Dyck.DownStep, i) acc = acc
 
 -- |'permsAvoiding_312' 'n' returns all 312-avoiding permutations of length 'n'.
