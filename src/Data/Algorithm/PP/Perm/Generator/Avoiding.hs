@@ -46,7 +46,10 @@ import qualified Data.Foldable as F
 import qualified Data.List     as L
 import qualified Data.Tuple    as T
 
-import qualified Data.Algorithm.PP.Dyck                         as PP.Dyck
+import qualified Data.Algorithm.PP.Path.DyckPath                    as PP.Path.Dyck
+import qualified Data.Algorithm.PP.Path.Dyck.Generator          as PP.Path.Dyck.Generator
+import qualified Data.Algorithm.PP.Path.Dyck.Label              as PP.Path.Dyck.Label
+import qualified Data.Algorithm.PP.Path.Step                    as PP.Path.Step
 import qualified Data.Algorithm.PP.Geometry.Point               as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Perm                         as PP.Perm
 import qualified Data.Algorithm.PP.Perm.Bijection.Trivial       as PP.Perm.Bijection.Trivial
@@ -93,12 +96,12 @@ permsAvoiding_213 = fmap PP.Perm.Bijection.Trivial.comp . permsAvoiding_132
 [[1,2,3,4],[1,2,4,3],[1,3,2,4],[1,4,2,3],[1,4,3,2],[2,1,3,4],[2,1,4,3],[3,1,2,4],[3,2,1,4],[4,1,2,3],[4,1,3,2],[4,2,1,3],[4,3,1,2],[4,3,2,1]]
 -}
 permsAvoiding_231 :: Int -> [PP.Perm.Perm]
-permsAvoiding_231 = fmap f . PP.Dyck.paths . (*) 2
+permsAvoiding_231 = fmap f . PP.Path.Dyck.Generator.paths . (*) 2
   where
-    f p =  PP.Perm.mk . F.foldr g [] $ L.zip (PP.Dyck.getSteps p) (PP.Dyck.labelLeftToRightDown p)
+    f p =  PP.Perm.mk . F.foldr g [] $ L.zip (PP.Path.Dyck.getSteps p) (PP.Path.Dyck.Label.labelLeftToRightDown p)
       where
-        g (PP.Dyck.UpStep,   i) acc = i : acc
-        g (PP.Dyck.DownStep, i) acc = acc
+        g (PP.Path.Step.UpStep,   i) acc = i : acc
+        g (PP.Path.Step.DownStep, i) acc = acc
 
 -- |'permsAvoiding_312' 'n' returns all 312-avoiding permutations of length 'n'.
 --

@@ -18,20 +18,22 @@ import qualified Data.Foldable   as F
 import qualified Data.List       as L
 import qualified Data.Tuple      as T
 
-import qualified Data.Algorithm.PP.Dyck            as PP.Dyck
-import qualified Data.Algorithm.PP.Perm            as PP.Perm
-import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
+import qualified Data.Algorithm.PP.Path       as PP.Path
+import qualified Data.Algorithm.PP.Path.DyckPath  as PP.Path.Dyck
+import qualified Data.Algorithm.PP.Path.Step  as PP.Path.Step
+import qualified Data.Algorithm.PP.Perm       as PP.Perm
+import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
 {- | 'richards' @p@
 
 -}
 -- richards bijection from Dyck Path to 123-avoiding permutations.
-richards :: PP.Perm.Perm -> PP.Dyck.Path
-richards = PP.Dyck.mkUnsafe . aux . PP.Perm.getList
+richards :: PP.Perm.Perm -> PP.Path.Dyck.DyckPath
+richards = PP.Path.mk . aux . PP.Perm.getList
   where
     aux []  = []
-    aux [_] = [PP.Dyck.UpStep, PP.Dyck.DownStep]
-    aux xs  = [PP.Dyck.UpStep] ++ aux left ++ [PP.Dyck.DownStep] ++ aux right
+    aux [_] = [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
+    aux xs  = [PP.Path.Step.UpStep] ++ aux left ++ [PP.Path.Step.DownStep] ++ aux right
       where
         maxY = F.maximum xs
         (left, right) = PP.Utils.List.splitOn maxY xs

@@ -10,7 +10,9 @@ where
   import qualified Data.List     as L
   import qualified Data.Tuple    as T
 
-  import qualified Data.Algorithm.PP.Dyck           as PP.Dyck
+  import qualified Data.Algorithm.PP.Path           as PP.Path
+  import qualified Data.Algorithm.PP.Path.DyckPath      as PP.Path.Dyck
+  import qualified Data.Algorithm.PP.Path.Step      as PP.Path.Step
   import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
   import qualified Data.Algorithm.PP.Perm           as PP.Perm
   import qualified Data.Algorithm.PP.Perm.Features  as PP.Perm.Features
@@ -41,12 +43,12 @@ where
         | y /= y'   = [(x, y'') | y'' <- [y..y']] ++ acc'
         | otherwise = (x, y) : acc'
 
-  buildPath :: [(Int, Int)] -> PP.Dyck.Path
-  buildPath = PP.Dyck.mkUnsafe . fmap f . PP.Utils.List.chunk2 . fmap (uncurry (-)) . L.reverse
+  buildPath :: [(Int, Int)] -> PP.Path.Dyck.DyckPath
+  buildPath = PP.Path.mk . fmap f . PP.Utils.List.chunk2 . fmap (uncurry (-)) . L.reverse
     where
       f (y, y')
-        | y < y'    = PP.Dyck.UpStep
-        | otherwise = PP.Dyck.DownStep
+        | y < y'    = PP.Path.Step.UpStep
+        | otherwise = PP.Path.Step.DownStep
 
   -- |'knuthRotem' 'perm'
   --
@@ -58,7 +60,7 @@ where
   -- >>> putStr . draw $ knuth (mkPerm [7,5,6,4,2,1,3])
   --    /\    /\/\
   -- /\/  \/\/    \
-  knuthRotem :: PP.Perm.Perm -> PP.Dyck.Path
+  knuthRotem :: PP.Perm.Perm -> PP.Path.Dyck.DyckPath
   knuthRotem = buildPath . buildCoordinates . ballotSequence
 
   -- |'invKnuthRotem' 'perm'

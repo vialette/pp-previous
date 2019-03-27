@@ -18,7 +18,6 @@ import qualified Data.Foldable   as F
 import qualified Data.List       as L
 import qualified Data.Tuple      as T
 
-import qualified Data.Algorithm.PP.Dyck            as PP.Dyck
 import qualified Data.Algorithm.PP.Perm            as PP.Perm
 import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
 

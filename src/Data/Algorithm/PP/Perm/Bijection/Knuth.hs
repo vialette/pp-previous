@@ -17,7 +17,7 @@ import qualified Data.Foldable  as F
 import qualified Data.List      as L
 
 import qualified Data.Algorithm.PP.Path            as PP.Path
-import qualified Data.Algorithm.PP.Path.Dyck       as PP.Path.Dyck
+import qualified Data.Algorithm.PP.Path.DyckPath       as PP.Path.Dyck
 import qualified Data.Algorithm.PP.Path.Step       as PP.Path.Step
 import qualified Data.Algorithm.PP.Perm            as PP.Perm
 import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List

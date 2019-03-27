@@ -1,4 +1,4 @@
-module Data.Algorithm.PP.Path.Dyck.Generator (
+module Data.Algorithm.PP.Path.DyckPath.Generator (
   -- * Basic paths
     paths
 

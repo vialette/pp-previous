@@ -8,13 +8,17 @@ Stability   : experimental
 
 -}
 
-module Data.Algorithm.PP.Path.Dyck (
+module Data.Algorithm.PP.Path.DyckPath (
+  -- * Type
+    DyckPath
+
   -- * Constructing
-    mk
+  , mk
   , empty
   , fromString
 
   -- * Querying
+  , getSteps
   , len
   , semiLen
   , null
@@ -42,6 +46,8 @@ import qualified Data.Algorithm.PP.Utils.Maybe    as PP.Utils.Maybe
 
 type StepPoint = (PP.Path.Step.Step, PP.Geometry.Point.Point)
 
+type DyckPath = PP.Path.Path
+
 {- | 'mk' @xs@ returns a Dyck path from a list of steps @xs@.
 The function returns @Nothing@ if the path is not Dyck.
 
@@ -54,7 +60,7 @@ Nothing
 >>> mk [UpStep, UpStep, DownStep, DownStep, UpStep, DownStep]
 Just (())()
 -}
-mk :: [PP.Path.Step.Step] -> Maybe PP.Path.Path
+mk :: [PP.Path.Step.Step] -> Maybe DyckPath
 mk ss = PP.Utils.Maybe.whenMaybe (check 0 ss) (PP.Path.mk ss)
   where
     check :: Int -> [PP.Path.Step.Step] -> Bool
@@ -88,6 +94,10 @@ fromString = mk . fmap convert
 -}
 getPoints :: PP.Path.Path -> [PP.Geometry.Point.Point]
 getPoints = PP.Path.getPoints
+
+
+getSteps :: DyckPath -> [PP.Path.Step.Step]
+getSteps = PP.Path.getSteps
 
 {- |'len' @p@ returns the length of the path @p@.
 
