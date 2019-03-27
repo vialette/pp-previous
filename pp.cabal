@@ -18,7 +18,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:  Data.Algorithm.PP.Combinatorics
-                  , Data.Algorithm.PP.Dyck
+                  --, Data.Algorithm.PP.Dyck
                   , Data.Algorithm.PP.Path
                   , Data.Algorithm.PP.Path.Dyck
                   , Data.Algorithm.PP.Path.Dyck.Generator

@@ -16,7 +16,9 @@ module Data.Algorithm.PP.Perm.Bijection.Knuth (
 import qualified Data.Foldable  as F
 import qualified Data.List      as L
 
-import qualified Data.Algorithm.PP.Dyck            as PP.Dyck
+import qualified Data.Algorithm.PP.Path            as PP.Path
+import qualified Data.Algorithm.PP.Path.Dyck       as PP.Path.Dyck
+import qualified Data.Algorithm.PP.Path.Step       as PP.Path.Step
 import qualified Data.Algorithm.PP.Perm            as PP.Perm
 import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
 import qualified Data.Algorithm.PP.StdYoungTableau as PP.StdYoungTableau
@@ -29,12 +31,12 @@ import qualified Data.Algorithm.PP.StdYoungTableau as PP.StdYoungTableau
 >>> knuth $ mk [7,5,6,4,2,1,3]
 ()(())()(()())
 -}
-knuth132AvoidingPermToDyckPath :: PP.Perm.Perm -> PP.Dyck.Path
-knuth132AvoidingPermToDyckPath = PP.Dyck.mkUnsafe . aux . PP.Perm.getList
+knuth132AvoidingPermToDyckPath :: PP.Perm.Perm -> PP.Path.Path
+knuth132AvoidingPermToDyckPath = PP.Path.mk . aux . PP.Perm.getList
   where
     aux []  = []
-    aux [_] = [PP.Dyck.UpStep, PP.Dyck.DownStep]
-    aux xs  = [PP.Dyck.UpStep] ++ aux left ++ [PP.Dyck.DownStep] ++ aux right
+    aux [_] = [PP.Path.Step.UpStep, PP.Path.Step.DownStep]
+    aux xs  = [PP.Path.Step.UpStep] ++ aux left ++ [PP.Path.Step.DownStep] ++ aux right
       where
         maxY = F.maximum xs
         (left, right) = PP.Utils.List.splitOn maxY xs
@@ -42,13 +44,13 @@ knuth132AvoidingPermToDyckPath = PP.Dyck.mkUnsafe . aux . PP.Perm.getList
 {- | 'knuthDyckPathTo132AvoidingPerm' @p@
 
 -}
-knuthDyckPathTo132AvoidingPerm :: PP.Dyck.Path -> PP.Perm.Perm
+knuthDyckPathTo132AvoidingPerm :: PP.Path.Path -> PP.Perm.Perm
 knuthDyckPathTo132AvoidingPerm _ = PP.Perm.mk [1 :: Int]
 
 {- |'knuth321AvoidingPermToDyckPath' @p@
 -}
-knuth321AvoidingPermToDyckPath :: PP.Perm.Perm -> PP.Dyck.Path
-knuth321AvoidingPermToDyckPath perm = PP.Dyck.mkUnsafe (left ++ L.reverse right)
+knuth321AvoidingPermToDyckPath :: PP.Perm.Perm -> PP.Path.Path
+knuth321AvoidingPermToDyckPath perm = PP.Path.mk (left ++ L.reverse right)
   where
     ys = PP.Perm.getList perm
 
@@ -58,19 +60,19 @@ knuth321AvoidingPermToDyckPath perm = PP.Dyck.mkUnsafe (left ++ L.reverse right)
     left = F.foldr f [] ys
       where
         f y acc
-          | y `L.elem` firstRowPTableau = PP.Dyck.UpStep   : acc
-          | otherwise                   = PP.Dyck.DownStep : acc
+          | y `L.elem` firstRowPTableau = PP.Path.Step.UpStep   : acc
+          | otherwise                   = PP.Path.Step.DownStep : acc
 
     firstRowQTableau = L.head $ PP.StdYoungTableau.getRows qTableau
     right = F.foldr f [] ys
       where
         f y acc
-          | y `L.elem` firstRowQTableau = PP.Dyck.DownStep : acc
-          | otherwise                   = PP.Dyck.UpStep   : acc
+          | y `L.elem` firstRowQTableau = PP.Path.Step.DownStep : acc
+          | otherwise                   = PP.Path.Step.UpStep   : acc
 
 {- | 'knuthDyckPathTo321AvoidingPerm' @p@
 -}
-knuthDyckPathTo321AvoidingPerm :: PP.Dyck.Path -> PP.Perm.Perm
+knuthDyckPathTo321AvoidingPerm :: PP.Path.Path -> PP.Perm.Perm
 knuthDyckPathTo321AvoidingPerm _ = PP.Perm.mk [1 :: Int]
 
 {- | 'knuth132AvoidingPermTo321AvoidingPerm' @p@
