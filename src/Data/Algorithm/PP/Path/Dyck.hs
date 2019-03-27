@@ -23,11 +23,16 @@ module Data.Algorithm.PP.Path.Dyck (
   -- * Transforming
   , getPoints
   , rev
+
+  -- * Representing
+  , drawDefault
+  , draw
   ) where
 
 import Prelude hiding (null, notNull)
 import qualified Data.Foldable   as F
 import qualified Data.List       as L
+import qualified Data.Tuple      as T
 
 import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Combinatorics  as PP.Combinatorics
@@ -35,6 +40,7 @@ import qualified Data.Algorithm.PP.Path           as PP.Path
 import qualified Data.Algorithm.PP.Path.Step      as PP.Path.Step
 import qualified Data.Algorithm.PP.Utils.Maybe    as PP.Utils.Maybe
 
+type StepPoint = (PP.Path.Step.Step, PP.Geometry.Point.Point)
 
 {- | 'mk' @xs@ returns a Dyck path from a list of steps @xs@.
 The function returns @Nothing@ if the path is not Dyck.
@@ -156,3 +162,87 @@ returnPaths k n = F.concatMap f $ PP.Combinatorics.evenPartitions (k+1) n
                                                                                                    , ss  <- aux m
                                                                                                    , ss' <- aux (n'-2-m)]
 
+
+-- collect all steps in a given layer.
+getStepsAtLayer :: Int -> [(StepPoint)] -> [(StepPoint)]
+getStepsAtLayer y = L.filter ((== y) . PP.Geometry.Point.getY . T.snd)
+
+-- Stringify all steps at a given layer.
+drawLayer :: (Char, Char) -> [(StepPoint)] -> String
+drawLayer (upStepChar, downStepChar) = aux 0
+  where
+    aux _ [] = "\n"
+    aux x ((PP.Path.Step.UpStep, p) : pss) = L.replicate (x'-x-1) ' ' ++ [upStepChar]   ++ aux x' pss
+      where
+        x' = PP.Geometry.Point.getX p
+    aux x ((PP.Path.Step.DownStep, p) : pss) = L.replicate (x'-x-1) ' ' ++ [downStepChar] ++ aux x' pss
+      where
+        x' = PP.Geometry.Point.getX p
+
+-- Default UpStep character.
+defaultUpStepChar :: Char
+defaultUpStepChar = '/'
+
+-- Default DownStep character.
+defaultDownStepChar :: Char
+defaultDownStepChar = '\\'
+
+{- | 'drawDefault' @p@ stringify the path @p@ using @/@ for an upstep and @\@ for a
+downstep.
+
+>>> let f (i, p) = intercalate "\n" [show i, show p, drawDefault p] in mapM_ (putStr . f) . zip [1..] $ paths 6
+1
+(()())
+ /\/\
+/    \
+2
+((()))
+  /\
+ /  \
+/    \
+3
+()(())
+   /\
+/\/  \
+4
+(())()
+ /\
+/  \/\
+5
+()()()
+/\/\/\
+-}
+drawDefault :: PP.Path.Path -> String
+drawDefault = draw (defaultUpStepChar, defaultDownStepChar)
+
+{- | 'draw' @(lChar, rChar)@ @p@ stringify the path @p@ using @lChar@ for an upstep
+and @rChar@ for a downstep.
+
+>>> let f (i, p) = intercalate "\n" [show i, show p, draw ('u', 'd') p] in mapM_ (putStr . f) . zip [1..] $ paths 6
+1
+(()())
+ udud
+u    d
+2
+((()))
+  ud
+ u  d
+u    d
+3
+()(())
+   ud
+udu  d
+4
+(())()
+ ud
+u  dud
+5
+()()()
+ududud
+-}
+draw :: (Char, Char) -> PP.Path.Path -> String
+draw (upStepChar, downStepChar) p = F.concat [drawLayer (upStepChar, downStepChar) (getStepsAtLayer y pss) | y <- [maxY,maxY-1..1]]
+  where
+    ss   = PP.Path.getPoints p
+    maxY = F.maximum $ fmap PP.Geometry.Point.getY ss
+    pss  = L.zip (PP.Path.getSteps p) ss
