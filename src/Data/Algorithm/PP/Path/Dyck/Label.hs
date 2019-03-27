@@ -18,14 +18,15 @@ labelLeftToRightDown p = T.fst . F.foldr labelUpteps ([], []) . T.fst . F.foldr 
     n :: Int
     n = PP.Path.Dyck.semiLen p
 
-    -- labelDownSteps :: Step -> [(Step, Int)] -> [(Step, Int)]
-    labelDownSteps PP.Path.Step.UpStep   (acc, i) = ((PP.Path.Step.UpStep,   0) : acc, i)
-    labelDownSteps PP.Path.Step.DownStep (acc, i) = ((PP.Path.Step.DownStep, i) : acc, i-1)
-
-    -- labelUpteps :: (Step, Int) -> ([Int], [(Step, Int)]) -> ([Int], [(Step, Int)])
+    labelUpteps :: (Step, Int) -> ([Int], [(Step, Int)]) -> ([Int], [(Step, Int)])
     labelUpteps (PP.Path.Step.UpStep,   _) (acc, (PP.Path.Step.DownStep, i) : stack) = (i : acc, stack)
     labelUpteps (PP.Path.Step.DownStep, i) (acc, stack)                              = (i : acc, (PP.Path.Step.DownStep, i) : stack)
-    -- labelUpteps _            _                     = error "non Dyck path"
+    labelUpteps _                           _                                        = error "non Dyck path"
 
+
+    labelDownSteps :: Step -> [(Step, Int)] -> [(Step, Int)]
+    labelDownSteps PP.Path.Step.UpStep   (acc, i) = ((PP.Path.Step.UpStep,   0) : acc, i)
+    labelDownSteps PP.Path.Step.DownStep (acc, i) = ((PP.Path.Step.DownStep, i) : acc, i-1)
+    labelDownSteps _                     _        = error "non Dyck path"
 
 
