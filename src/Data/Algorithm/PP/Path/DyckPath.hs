@@ -95,7 +95,9 @@ fromString = mk . fmap convert
 getPoints :: PP.Path.Path -> [PP.Geometry.Point.Point]
 getPoints = PP.Path.getPoints
 
+{- | 'getSteps' @dp@ retuens
 
+-}
 getSteps :: DyckPath -> [PP.Path.Step.Step]
 getSteps = PP.Path.getSteps
 

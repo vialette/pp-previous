@@ -18,7 +18,6 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:  Data.Algorithm.PP.Combinatorics
-                  --, Data.Algorithm.PP.Dyck
                   , Data.Algorithm.PP.Path
                   , Data.Algorithm.PP.Path.DyckPath
                   , Data.Algorithm.PP.Path.DyckPath.Generator
@@ -46,6 +45,9 @@ library
                   , Data.Algorithm.PP.Perm.Block
                   , Data.Algorithm.PP.Perm.Generator
                   , Data.Algorithm.PP.Perm.Organization
+                  , Data.Algorithm.PP.Perm.Organization.Common
+                  , Data.Algorithm.PP.Perm.Organization.XOrganization
+                  , Data.Algorithm.PP.Perm.Organization.YOrganization
                   --, Data.Algorithm.PP.Perm.Pattern.Monotone
                   , Data.Algorithm.PP.Perm.Transposition
                   , Data.Algorithm.PP.Perm.Shuffle
@@ -81,7 +83,7 @@ library
                   , Data.Algorithm.PP.Utils.Foldable
                   , Data.Algorithm.PP.Geometry.Point
                   , Data.Algorithm.PP.Geometry.Rectangle
-                  , Data.Algorithm.PP.SepTree
+                  , Data.Algorithm.PP.SeparatingTree
                   , Data.Algorithm.PP.StdYoungTableau
   -- other-modules:
   -- other-extensions:
