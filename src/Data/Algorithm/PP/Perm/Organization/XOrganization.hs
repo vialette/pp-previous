@@ -49,31 +49,13 @@ import qualified Data.Algorithm.PP.Perm.Organization.Common as PP.Perm.Organizat
 
 {- | 'xOrganization' @p@ returns the xOrganization of permutation @p@.
 
->>> mapM_ print . fmap (id &&& xOrganization) $ perms 4
-([1,2,3,4],[1,1,1])
-([2,1,3,4],[1,2,1])
-([3,2,1,4],[1,1,3])
-([2,3,1,4],[1,2,3])
-([3,1,2,4],[2,1,2])
-([1,3,2,4],[2,1,2])
-([4,3,2,1],[1,1,1])
-([3,4,2,1],[1,2,1])
-([3,2,4,1],[1,2,3])
-([4,2,3,1],[2,1,2])
-([2,4,3,1],[2,1,2])
-([2,3,4,1],[1,1,3])
-([4,1,2,3],[3,1,1])
-([1,4,2,3],[3,2,1])
-([1,2,4,3],[1,2,1])
-([4,2,1,3],[2,1,2])
-([2,4,1,3],[2,3,2])
-([2,1,4,3],[1,3,1])
-([4,1,3,2],[3,2,1])
-([1,4,3,2],[3,1,1])
-([1,3,4,2],[2,1,2])
-([4,3,1,2],[1,2,1])
-([3,4,1,2],[1,3,1])
-([3,1,4,2],[2,3,2])
+>>> mapM_ print . fmap (id &&& xOrganization) $ perms 3
+([1,2,3],[1,1])
+([2,1,3],[1,2])
+([3,2,1],[1,1])
+([2,3,1],[1,2])
+([3,1,2],[2,1])
+([1,3,2],[2,1])
 -}
 xOrganization :: PP.Perm.Perm -> [Int]
 xOrganization = L.map (abs . uncurry (-)) . PP.Utils.List.chunk2 . PP.Perm.getList
@@ -81,8 +63,8 @@ xOrganization = L.map (abs . uncurry (-)) . PP.Utils.List.chunk2 . PP.Perm.getLi
 {- | 'xOrganizations' @n@ returns the xOrganizations of all permutations of length @n@.
 Duplicates xOrganizations are not removed.
 
->>> xOrganizations 4
-[[1,1,1],[1,2,1],[1,1,3],[1,2,3],[2,1,2],[2,1,2],[1,1,1],[1,2,1],[1,2,3],[2,1,2],[2,1,2],[1,1,3],[3,1,1],[3,2,1],[1,2,1],[2,1,2],[2,3,2],[1,3,1],[3,2,1],[3,1,1],[2,1,2],[1,2,1],[1,3,1],[2,3,2]]
+>>> xOrganizations 3
+[[1,1],[1,2],[1,1],[1,2],[2,1],[2,1]]
 -}
 xOrganizations :: Int -> [[Int]]
 xOrganizations = PP.Perm.Organization.Common.organizations xOrganization
@@ -119,7 +101,7 @@ the number of permutations.
 ([3,2,1],2)
 -}
 xOrganizationFreq :: [PP.Perm.Perm] -> [([Int], Int)]
-xOrganizationFreq = PP.Perm.Organization.Common.organizationAssoc xOrganization
+xOrganizationFreq = PP.Perm.Organization.Common.organizationFreq xOrganization
 
 {- | 'xOrganizationNumber' @p@ returns the xOrganization number of the permutation @p@.
 The xOrganization number of a permutation is the sum of the integers of the corresponding xOrganization.
@@ -151,21 +133,25 @@ The xOrganization number of a permutation is the sum of the integers of the corr
 ([3,1,4,2],7)
 -}
 xOrganizationNumber :: PP.Perm.Perm -> Int
-xOrganizationNumber = PP.Perm.Organization.Common.organizationAssoc xOrganization
+xOrganizationNumber = PP.Perm.Organization.Common.organizationNumber xOrganization
 
 {- | 'xOrganizationNumbers' @n@ returns the xOrganization numbers of all permutations of length @n@.
 Duplicates xOrganizations are not removed.
 
 >>> xOrganizationNumbers 3
->>> xOrganizationNumbers 4
-[[1,1,1],[1,2,1],[1,1,3],[1,2,3],[2,1,2],[2,1,2],[1,1,1],[1,2,1],[1,2,3],[2,1,2],[2,1,2],[1,1,3],[3,1,1],[3,2,1],[1,2,1],[2,1,2],[2,3,2],[1,3,1],[3,2,1],[3,1,1],[2,1,2],[1,2,1],[1,3,1],[2,3,2]]
+[[1,1],[1,2],[1,1],[1,2],[2,1],[2,1]]
 -}
 xOrganizationNumbers :: Int -> [[Int]]
 xOrganizationNumbers = PP.Perm.Organization.Common.organizationNumbers xOrganization
 
 {- | 'xOrganizationNumberAssoc'
 
-
+>>> mapM_ print $ xOrganizationNumberAssoc $ perms 4
+(3,[[1,2,3,4],[4,3,2,1]])
+(4,[[1,2,4,3],[2,1,3,4],[3,4,2,1],[4,3,1,2]])
+(5,[[1,3,2,4],[1,3,4,2],[1,4,3,2],[2,1,4,3],[2,3,4,1],[2,4,3,1],[3,1,2,4],[3,2,1,4],[3,4,1,2],[4,1,2,3],[4,2,1,3],[4,2,3,1]])
+(6,[[1,4,2,3],[2,3,1,4],[3,2,4,1],[4,1,3,2]])
+(7,[[2,4,1,3],[3,1,4,2]])
 -}
 xOrganizationNumberAssoc :: [PP.Perm.Perm] -> [(Int, [PP.Perm.Perm])]
 xOrganizationNumberAssoc = PP.Perm.Organization.Common.organizationNumberAssoc xOrganization
@@ -173,7 +159,7 @@ xOrganizationNumberAssoc = PP.Perm.Organization.Common.organizationNumberAssoc x
 {- | 'xOrganizationFreq' @n@ returns the list of pairs associating the xOrganization numbers to the number of
 permutation having this xOrganization number.
 
->>> mapM_ print $ xOrganizationNumberFreq 4
+>>> mapM_ print $ xOrganizationNumberFreq $ perms 4
 (3,2)
 (4,4)
 (5,12)
@@ -194,4 +180,4 @@ the xOrganizations.
 (7,[[2,3,2],[2,3,2]])
 -}
 xOrganizationByXOrganizationNumber :: Int -> [(Int, [[Int]])]
-xOrganizationByXOrganizationNumber =  PP.Perm.Organization.Common.organizationByXOrganizationNumber xOrganization
+xOrganizationByXOrganizationNumber =  PP.Perm.Organization.Common.organizationByOrganizationNumber xOrganization

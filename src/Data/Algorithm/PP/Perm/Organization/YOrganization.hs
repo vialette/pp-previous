@@ -49,42 +49,24 @@ import qualified Data.Algorithm.PP.Perm.Organization.Common as PP.Perm.Organizat
 
 {- | 'yOrganization' @p@ returns the yOrganization of permutation @p@.
 
->>> mapM_ print . fmap (id &&& yOrganization) $ perms 4
-([1,2,3,4],[1,1,1])
-([2,1,3,4],[1,2,1])
-([3,2,1,4],[1,1,3])
-([2,3,1,4],[1,2,3])
-([3,1,2,4],[2,1,2])
-([1,3,2,4],[2,1,2])
-([4,3,2,1],[1,1,1])
-([3,4,2,1],[1,2,1])
-([3,2,4,1],[1,2,3])
-([4,2,3,1],[2,1,2])
-([2,4,3,1],[2,1,2])
-([2,3,4,1],[1,1,3])
-([4,1,2,3],[3,1,1])
-([1,4,2,3],[3,2,1])
-([1,2,4,3],[1,2,1])
-([4,2,1,3],[2,1,2])
-([2,4,1,3],[2,3,2])
-([2,1,4,3],[1,3,1])
-([4,1,3,2],[3,2,1])
-([1,4,3,2],[3,1,1])
-([1,3,4,2],[2,1,2])
-([4,3,1,2],[1,2,1])
-([3,4,1,2],[1,3,1])
-([3,1,4,2],[2,3,2])
+>>> mapM_ print . fmap (id &&& yOrganization) $ perms 3
+([1,2,3],[1,1])
+([2,1,3],[1,2])
+([3,2,1],[1,1])
+([2,3,1],[2,1])
+([3,1,2],[1,2])
+([1,3,2],[2,1])
 -}
 yOrganization :: PP.Perm.Perm -> [Int]
-yOrganization = F.foldr f 0 . PP.Utils.List.chunk2 . fmap PP.Geometry.Point.getX .  PP.Geometry.Point.sortOnY . PP.Perm.getPoints
+yOrganization = L.map f . PP.Utils.List.chunk2 . L.map PP.Geometry.Point.getX . PP.Geometry.Point.sortOnY . PP.Perm.getPoints
   where
-    f (x1, x2) acc = acc + abs (x1 - x2)
+    f (x1, x2) = abs (x1 - x2)
 
 {- | 'yOrganizations' @n@ returns the yOrganizations of all permutations of length @n@.
 Duplicates yOrganizations are not removed.
 
->>> yOrganizations 4
-[[1,1,1],[1,2,1],[1,1,3],[1,2,3],[2,1,2],[2,1,2],[1,1,1],[1,2,1],[1,2,3],[2,1,2],[2,1,2],[1,1,3],[3,1,1],[3,2,1],[1,2,1],[2,1,2],[2,3,2],[1,3,1],[3,2,1],[3,1,1],[2,1,2],[1,2,1],[1,3,1],[2,3,2]]
+>>> yOrganizations 3
+[[1,1],[1,2],[1,1],[2,1],[1,2],[2,1]]
 -}
 yOrganizations :: Int -> [[Int]]
 yOrganizations = PP.Perm.Organization.Common.organizations yOrganization
@@ -94,14 +76,14 @@ permutations in @xs@.
 
 >>> mapM_ print . yOrganizationAssoc $ perms 4
 ([1,1,1],[[1,2,3,4],[4,3,2,1]])
-([1,1,3],[[2,3,4,1],[3,2,1,4]])
+([1,1,3],[[3,2,1,4],[4,1,2,3]])
 ([1,2,1],[[1,2,4,3],[2,1,3,4],[3,4,2,1],[4,3,1,2]])
-([1,2,3],[[2,3,1,4],[3,2,4,1]])
+([1,2,3],[[3,1,2,4],[4,2,1,3]])
 ([1,3,1],[[2,1,4,3],[3,4,1,2]])
-([2,1,2],[[1,3,2,4],[1,3,4,2],[2,4,3,1],[3,1,2,4],[4,2,1,3],[4,2,3,1]])
+([2,1,2],[[1,3,2,4],[1,4,2,3],[2,3,1,4],[3,2,4,1],[4,1,3,2],[4,2,3,1]])
 ([2,3,2],[[2,4,1,3],[3,1,4,2]])
-([3,1,1],[[1,4,3,2],[4,1,2,3]])
-([3,2,1],[[1,4,2,3],[4,1,3,2]])
+([3,1,1],[[1,4,3,2],[2,3,4,1]])
+([3,2,1],[[1,3,4,2],[2,4,3,1]])
 -}
 yOrganizationAssoc :: [PP.Perm.Perm] -> [([Int], [PP.Perm.Perm])]
 yOrganizationAssoc = PP.Perm.Organization.Common.organizationAssoc yOrganization
@@ -121,7 +103,7 @@ the number of permutations.
 ([3,2,1],2)
 -}
 yOrganizationFreq :: [PP.Perm.Perm] -> [([Int], Int)]
-yOrganizationFreq = PP.Perm.Organization.Common.organizationAssoc yOrganization
+yOrganizationFreq = PP.Perm.Organization.Common.organizationFreq yOrganization
 
 {- | 'yOrganizationNumber' @p@ returns the yOrganization number of the permutation @p@.
 The yOrganization number of a permutation is the sum of the integers of the corresponding yOrganization.
@@ -130,44 +112,48 @@ The yOrganization number of a permutation is the sum of the integers of the corr
 ([1,2,3,4],3)
 ([2,1,3,4],4)
 ([3,2,1,4],5)
-([2,3,1,4],6)
-([3,1,2,4],5)
+([2,3,1,4],5)
+([3,1,2,4],6)
 ([1,3,2,4],5)
 ([4,3,2,1],3)
 ([3,4,2,1],4)
-([3,2,4,1],6)
+([3,2,4,1],5)
 ([4,2,3,1],5)
-([2,4,3,1],5)
+([2,4,3,1],6)
 ([2,3,4,1],5)
 ([4,1,2,3],5)
-([1,4,2,3],6)
+([1,4,2,3],5)
 ([1,2,4,3],4)
-([4,2,1,3],5)
+([4,2,1,3],6)
 ([2,4,1,3],7)
 ([2,1,4,3],5)
-([4,1,3,2],6)
+([4,1,3,2],5)
 ([1,4,3,2],5)
-([1,3,4,2],5)
+([1,3,4,2],6)
 ([4,3,1,2],4)
 ([3,4,1,2],5)
 ([3,1,4,2],7)
 -}
 yOrganizationNumber :: PP.Perm.Perm -> Int
-yOrganizationNumber = PP.Perm.Organization.Common.organizationAssoc yOrganization
+yOrganizationNumber = PP.Perm.Organization.Common.organizationNumber yOrganization
 
 {- | 'yOrganizationNumbers' @n@ returns the yOrganization numbers of all permutations of length @n@.
 Duplicates yOrganizations are not removed.
 
 >>> yOrganizationNumbers 3
->>> yOrganizationNumbers 4
-[[1,1,1],[1,2,1],[1,1,3],[1,2,3],[2,1,2],[2,1,2],[1,1,1],[1,2,1],[1,2,3],[2,1,2],[2,1,2],[1,1,3],[3,1,1],[3,2,1],[1,2,1],[2,1,2],[2,3,2],[1,3,1],[3,2,1],[3,1,1],[2,1,2],[1,2,1],[1,3,1],[2,3,2]]
+[[1,1],[1,2],[1,1],[2,1],[1,2],[2,1]]
 -}
 yOrganizationNumbers :: Int -> [[Int]]
 yOrganizationNumbers = PP.Perm.Organization.Common.organizationNumbers yOrganization
 
 {- | 'yOrganizationNumberAssoc'
 
-
+>>> mapM_ print $ yOrganizationNumberAssoc $ perms 4
+(3,[[1,2,3,4],[4,3,2,1]])
+(4,[[1,2,4,3],[2,1,3,4],[3,4,2,1],[4,3,1,2]])
+(5,[[1,3,2,4],[1,4,2,3],[1,4,3,2],[2,1,4,3],[2,3,1,4],[2,3,4,1],[3,2,1,4],[3,2,4,1],[3,4,1,2],[4,1,2,3],[4,1,3,2],[4,2,3,1]])
+(6,[[1,3,4,2],[2,4,3,1],[3,1,2,4],[4,2,1,3]])
+(7,[[2,4,1,3],[3,1,4,2]])
 -}
 yOrganizationNumberAssoc :: [PP.Perm.Perm] -> [(Int, [PP.Perm.Perm])]
 yOrganizationNumberAssoc = PP.Perm.Organization.Common.organizationNumberAssoc yOrganization
@@ -175,7 +161,7 @@ yOrganizationNumberAssoc = PP.Perm.Organization.Common.organizationNumberAssoc y
 {- | 'yOrganizationFreq' @n@ returns the list of pairs associating the yOrganization numbers to the number of
 permutation having this yOrganization number.
 
->>> mapM_ print $ yOrganizationNumberFreq 4
+>>> mapM_ print $ yOrganizationNumberFreq $ perms 4
 (3,2)
 (4,4)
 (5,12)
@@ -196,4 +182,4 @@ the yOrganizations.
 (7,[[2,3,2],[2,3,2]])
 -}
 yOrganizationByYOrganizationNumber :: Int -> [(Int, [[Int]])]
-yOrganizationByYOrganizationNumber =  PP.Perm.Organization.Common.organizationByYOrganizationNumber yOrganization
+yOrganizationByYOrganizationNumber =  PP.Perm.Organization.Common.organizationByOrganizationNumber yOrganization

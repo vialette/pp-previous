@@ -42,7 +42,7 @@ organizationNumbers :: (PP.Perm.Perm -> [Int]) -> Int -> [[Int]]
 organizationNumbers f = fmap f . PP.Perm.Generator.Basic.perms
 
 organizationNumberAssoc :: (PP.Perm.Perm -> [Int]) -> [PP.Perm.Perm] -> [(Int, [PP.Perm.Perm])]
-organizationNumberAssoc f = L.map h . L.groupBy g . L.sort . L.map (f &&& id)
+organizationNumberAssoc f = L.map h . L.groupBy g . L.sort . L.map (organizationNumber f &&& id)
   where
     g t t' = T.fst t == T.fst t'
     h      = (T.fst . L.head) &&& (L.map T.snd)
@@ -51,8 +51,8 @@ organizationNumberFreq :: (PP.Perm.Perm -> [Int]) -> [PP.Perm.Perm] -> [(Int, In
 organizationNumberFreq f = L.map (id *** L.length) . organizationNumberAssoc f
 
 
-organizationByXOrganizationNumber :: (PP.Perm.Perm -> [Int]) -> Int -> [(Int, [[Int]])]
-organizationByXOrganizationNumber f =  L.map h . L.groupBy g . L.sort . L.map (F.sum &&& id) . organizations f
+organizationByOrganizationNumber :: (PP.Perm.Perm -> [Int]) -> Int -> [(Int, [[Int]])]
+organizationByOrganizationNumber f =  L.map h . L.groupBy g . L.sort . L.map (F.sum &&& id) . organizations f
   where
     g t t' = T.fst t == T.fst t'
     h      = (T.fst . L.head) &&& (L.map T.snd)
