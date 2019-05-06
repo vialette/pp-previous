@@ -10,8 +10,11 @@ Generating alternating permutations facilities.
 -}
 
 module Data.Algorithm.PP.Perm.Generator.Alternating (
+  -- * Basic
+    increasing
+
   -- * Wedge type 1
-    simpleAlternatingWedgeType1
+  , simpleAlternatingWedgeType1
   , simpleAlternatingWedgeType1s
 
   -- * Wedge type 2
@@ -19,8 +22,22 @@ module Data.Algorithm.PP.Perm.Generator.Alternating (
   , simpleAlternatingWedgeType2s
   ) where
 
-import qualified Data.Algorithm.PP.Perm       as PP.Perm
-import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+import qualified Data.List as L
+
+import qualified Data.Algorithm.PP.Perm            as PP.Perm
+import qualified Data.Algorithm.PP.Perm.Combinator as PP.Perm.Combinator
+import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
+
+{- | 'increasing'
+
+-}
+increasing :: Int -> PP.Perm.Perm
+increasing n
+  | even n    = increasingEven
+  | otherwise = increasingEven PP.Perm.Combinator.<<+>> PP.Perm.identity 1
+  where
+    increasingEven = PP.Perm.Combinator.directSum . L.map PP.Perm.mk $ L.replicate (n `div` 2) [2, 1]
+
 
 {- | 'simpleAlternatingWedgeType1' @n@ returns the simple alternating wedge type 1 permutation of length @n@.
 
