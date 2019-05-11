@@ -45,9 +45,6 @@ library
                   , Data.Algorithm.PP.Perm.Block
                   , Data.Algorithm.PP.Perm.Generator
                   , Data.Algorithm.PP.Perm.Organization
-                  , Data.Algorithm.PP.Perm.Organization.Common
-                  , Data.Algorithm.PP.Perm.Organization.XOrganization
-                  , Data.Algorithm.PP.Perm.Organization.YOrganization
                   --, Data.Algorithm.PP.Perm.Pattern.Monotone
                   , Data.Algorithm.PP.Perm.Transposition
                   , Data.Algorithm.PP.Perm.Shuffle
