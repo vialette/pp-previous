@@ -44,7 +44,7 @@ module Data.Algorithm.PP.Geometry.Point (
     -- * Compare
   , isStrictlyOnTheLeftOf
   , isOnTheLeftOf
-  , isStrictlyOnTheRighttOf
+  , isStrictlyOnTheRightOf
   , isOnTheRightOf
   , isStrictlyBelowOf
   , isBelowOf
@@ -175,12 +175,15 @@ isStrictlyBelowDiagonal p = getX p > getY p
 isBelowDiagonal :: Point -> Bool
 isBelowDiagonal p = getX p >= getY p
 
+isStrictlyOnTheLeftOf :: Point -> Point -> Bool
+p1 `isStrictlyOnTheLeftOf` p2 = getX p1 < getX p2
+
 {- | 'isOnTheLeftOf' @p1 = (x1, y1)@ @p2 = (x2, y2)@ returns @True@ if @x1 <= x2@. -}
 isOnTheLeftOf :: Point -> Point -> Bool
 p1 `isOnTheLeftOf` p2 = getX p1 <= getX p2
 
-isStrictlyOnTheRighttOf :: Point -> Point -> Bool
-p1 `isStrictlyOnTheRighttOf` p2 = getX p1 > getX p2
+isStrictlyOnTheRightOf :: Point -> Point -> Bool
+p1 `isStrictlyOnTheRightOf` p2 = getX p1 > getX p2
 
 isOnTheRightOf :: Point -> Point -> Bool
 p1 `isOnTheRightOf` p2 = getX p1 > getX p2
