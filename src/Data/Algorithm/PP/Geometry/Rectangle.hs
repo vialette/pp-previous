@@ -1,6 +1,6 @@
 {-|
 Module      : Data.Algorithm.PP.Geometry.Rectangle
-Description : 2D rectangles
+Description : 2D axis-parallel rectangles
 Copyright   : (c) Stéphane Vialette, 2018-2019
 License     : GPL-3
 Maintainer  : vialette@gmail.com
@@ -61,18 +61,22 @@ mk' p1 p2 = Rectangle { getPoints = (pLowerLeft, pUpperRight) }
         x = max (PP.Geometry.Point.getX p1) (PP.Geometry.Point.getX p2)
         y = max (PP.Geometry.Point.getY p1) (PP.Geometry.Point.getY p2)
 
+{- | 'lowerLeftPoint' @r@ returns the the lower left point of rectangle @r@. -}
 lowerLeftPoint :: Rectangle -> PP.Geometry.Point.Point
 lowerLeftPoint = T.fst . getPoints
 
+{- | 'upperRightPoint' @r@ returns the the upper right point of rectangle @r@. -}
 upperRightPoint :: Rectangle -> PP.Geometry.Point.Point
 upperRightPoint = T.snd . getPoints
 
+{- | 'lowerRightPoint' @r@ returns the the lower right point of rectangle @r@. -}
 lowerRightPoint :: Rectangle -> PP.Geometry.Point.Point
 lowerRightPoint r = PP.Geometry.Point.mk x y
   where
     x = PP.Geometry.Point.getX $ upperRightPoint r
     y = PP.Geometry.Point.getY $ lowerLeftPoint r
 
+{- | 'upperLeftPoint' @r@ returns the the upper left point of rectangle @r@. -}
 upperLeftPoint :: Rectangle -> PP.Geometry.Point.Point
 upperLeftPoint r = PP.Geometry.Point.mk x y
   where
@@ -95,15 +99,30 @@ minY = PP.Geometry.Point.getY . lowerLeftPoint
 maxY :: Rectangle -> Int
 maxY = PP.Geometry.Point.getY . upperRightPoint
 
+{- | 'move' @dx@ @dy@ @r@ moves rectangle @r@.
+
+>>> mk (Point.mk 1 2) (Point.mk 7 5) >>= Just . move 2 10
+Just ((3,12),(9,15))
+-}
 move :: Int -> Int -> Rectangle -> Rectangle
 move dx dy r = Rectangle { getPoints = (lowerLeft, upperRight) }
   where
     lowerLeft  = PP.Geometry.Point.move dx dy $ lowerLeftPoint r
     upperRight = PP.Geometry.Point.move dx dy $ upperRightPoint r
 
+{- | 'width' @r@ returns the width of rectangle @r@.
+
+>>> mk (Point.mk 1 2) (Point.mk 7 5) >>= Just . width
+Just 6
+-}
 width :: Rectangle -> Int
 width r = maxX r - minX r
 
+{- | 'height' @r@ returns the height of rectangle @r@.
+
+>>> mk (Point.mk 1 2) (Point.mk 7 5) >>= Just . width
+Just 3
+-}
 height :: Rectangle -> Int
 height r = maxY r - minY r
 
