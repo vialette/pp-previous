@@ -130,4 +130,4 @@ evenFactors = PP.Utils.List.uniq . fmap (PP.Perm.mk . fmap PP.Geometry.Point.get
 -}
 oddFactors :: PP.Perm.Perm -> [PP.Perm.Perm]
 oddFactors = PP.Utils.List.uniq . fmap (PP.Perm.mk . fmap PP.Geometry.Point.getY) . PP.Perm.Factor.Points.oddFactors
-ts.maxFactors f
+
