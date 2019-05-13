@@ -1,3 +1,14 @@
+{-|
+Module      : Data.Algorithm.PP.Geometry.Rectangle
+Description : 2D rectangles
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
+
+
+-}
+
 module Data.Algorithm.PP.Geometry.Rectangle (
   -- * Type
     Rectangle(..)
@@ -68,16 +79,19 @@ upperLeftPoint r = PP.Geometry.Point.mk x y
     x = PP.Geometry.Point.getX $ lowerLeftPoint r
     y = PP.Geometry.Point.getY $ upperRightPoint r
 
+{- | 'minX' @r@ returns the y-coordinate of the lower left point of rectangle @r@. -}
 minX :: Rectangle -> Int
 minX = PP.Geometry.Point.getX . lowerLeftPoint
 
-{- | 'minX' @r@ returns the @x@-coordinate of the lower left point of rectangle @r@. -}
+{- | 'maxX' @r@ returns the x-coordinate of the upper right point of rectangle @r@. -}
 maxX :: Rectangle -> Int
 maxX = PP.Geometry.Point.getX . upperRightPoint
 
+{- | 'minY' @r@ returns the y-coordinate of the lower left point of rectangle @r@. -}
 minY :: Rectangle -> Int
 minY = PP.Geometry.Point.getY . lowerLeftPoint
 
+{- | 'maxY' @r@ returns the y-coordinate of the upper right point of rectangle @r@. -}
 maxY :: Rectangle -> Int
 maxY = PP.Geometry.Point.getY . upperRightPoint
 
