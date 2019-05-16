@@ -14,6 +14,8 @@ module Data.Algorithm.PP.Utils.List (
   , safeTail
   , safeLast
 
+  , swapElementsAt
+
   , evens
   , odds
 
@@ -80,6 +82,15 @@ safeTail (_ : xs) = Just xs
 safeLast :: [a] -> Maybe a
 safeLast [] = Nothing
 safeLast xs = Just (L.last xs)
+
+swapElementsAt :: Int -> Int -> [a] -> [a]
+swapElementsAt i j xs = left ++ [elemJ] ++ middle ++ [elemI] ++ right
+  where
+    elemI  = xs L.!! i
+    elemJ  = xs L.!! j
+    left   = L.take i xs
+    middle = L.take (j-i-1) $ L.drop (i+1) xs
+    right  = L.drop (j+1) xs
 
 kDeleteAt :: Int -> Int -> [a] -> [a]
 kDeleteAt _ _ [] = []

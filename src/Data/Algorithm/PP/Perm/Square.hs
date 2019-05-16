@@ -56,17 +56,17 @@ True
 squareFrees :: Int -> [PP.Perm.Perm]
 squareFrees = PP.Perm.SquareBy.squaresByFree id
 
-{- | 'square' @p@ returns @True@ if the permutation @p@ is the concatenation of two order-isomorphic factors.
+{- | 'square' @p@ returns true iff the permutation @p@ is the concatenation of two order-isomorphic factors.
 
->>> square $ mkPerm [1,2,3,4]
+>>> let p = mkPerm [1,2,3,4] in square p
 True
->>> square $ mkPerm [2,1,3,4]
+>>> let p = mkPerm [2,1,3,4] in square p
 False
 -}
 square :: PP.Perm.Perm -> Bool
 square = PP.Perm.SquareBy.squareBy id
 
-{- | 'nonSquare' @p@ returns @True@ if the permutation @p@ is not the concatenation of two order-isomorphic factors.
+{- | 'nonSquare' @p@ returns true iff the permutation @p@ is not the concatenation of two order-isomorphic factors.
 
 >>> nonSquare $ mkPerm [1,2,3,4]
 False
@@ -76,7 +76,7 @@ True
 nonSquare :: PP.Perm.Perm -> Bool
 nonSquare = not . square
 
-{- | 'kSquareFree' @k@ @p@ return @True@ if the permutation @p@ does not contain a square factor of length @k@.
+{- | 'kSquareFree' @k@ @p@ returns true iff the permutation @p@ does not contain a square factor of length @k@.
 The function trivially returns @False@ if @k@ is odd.
 
 >>> kSquareFree 2 $ mkPerm [3,5,6,2,1,4]
@@ -89,7 +89,7 @@ True
 kSquareFree :: Int -> PP.Perm.Perm -> Bool
 kSquareFree = PP.Perm.SquareBy.kSquareByFree id
 
-{- | 'squareFree' @p@ returns @True@ if the permutation @p@ does not contain a square factor of length at least 4.
+{- | 'squareFree' @p@ returns true iff the permutation @p@ does not contain a square factor of length at least 4.
 
 >>> squareFree $ mkPerm [3,5,6,2,1,4]
 True
@@ -99,7 +99,7 @@ False
 squareFree :: PP.Perm.Perm -> Bool
 squareFree = PP.Perm.SquareBy.squareByFree id
 
-{- | 'kSquareCount' @k@ @p@ return the number of square factors of length @k@ of the permutation @p@.
+{- | 'kSquareCount' @k@ @p@ returns the number of square factors of length @k@ in the permutation @p@.
 
 prop> kSquareCount k p == length [q | q <- factors k p, square (mkPerm q)]
 
