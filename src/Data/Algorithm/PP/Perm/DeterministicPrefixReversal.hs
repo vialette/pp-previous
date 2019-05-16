@@ -21,6 +21,7 @@ module Data.Algorithm.PP.Perm.DeterministicPrefixReversal (
   ) where
 
 import Control.Applicative
+import Control.Arrow
 import qualified Data.Foldable as F
 import qualified Data.List     as L
 import qualified Data.Tuple    as T
@@ -62,39 +63,33 @@ by reversing the prefix of length @l@, where @l@ is the first element.
 deterministicPrefixReversals :: PP.Perm.Perm -> [PP.Perm.Perm]
 deterministicPrefixReversals = deterministicPrefixReversals' stopFirst
 
-
 {-| 'longestDeterministicPrefixReversals' @n@ returns the extremal permutations
 of length @n@ together with the length of the paths.
 
 >>> longestDeterministicPrefixReversals 4
-(4,[[3,1,4,2],[2,4,1,3]])
->>> mapM_ (putStr . (++ "\n") . show) . T.snd $ longestDeterministicPrefixReversals 4
+(5,[[2,4,1,3],[3,1,4,2]])
+>>> mapM_ (putStr . (++ "\n") . show . deterministicPrefixReversals) . T.snd $ longestDeterministicPrefixReversals 4
 [[2,4,1,3],[4,2,1,3],[3,1,2,4],[2,1,3,4],[1,2,3,4]]
 [[3,1,4,2],[4,1,3,2],[2,3,1,4],[3,2,1,4],[1,2,3,4]]
 >>> longestDeterministicPrefixReversals 5
-(7,[[3,1,4,5,2]])
->>> mapM_ (putStr . (++ "\n") . show) . T.snd $ longestDeterministicPrefixReversals 5
+(8,[[3,1,4,5,2]])
+>>> mapM_ (putStr . (++ "\n") . show . deterministicPrefixReversals) . T.snd $ longestDeterministicPrefixReversals 5
 [[3,1,4,5,2],[4,1,3,5,2],[5,3,1,4,2],[2,4,1,3,5],[4,2,1,3,5],[3,1,2,4,5],[2,1,3,4,5],[1,2,3,4,5]]
 -}
-longestDeterministicPrefixReversals :: Int -> (Int, [[PP.Perm.Perm]])
-longestDeterministicPrefixReversals = PP.Utils.Foldable.maximumsBy L.length . fmap deterministicPrefixReversals . PP.Perm.Generator.derangements
+longestDeterministicPrefixReversals :: Int -> (Int, [PP.Perm.Perm])
+longestDeterministicPrefixReversals = second (fmap L.head) . PP.Utils.Foldable.maximumsBy L.length . fmap deterministicPrefixReversals . PP.Perm.Generator.derangements
 
 {-| 'deterministicPrefixReversalRadius' @n@ return the radius (/i.e./ the length
 of a longest path for a permutation of length @n@).
 
->>> deterministicPrefixReversalRadius 2
-1
->>> deterministicPrefixReversalRadius 3
-2
->>> deterministicPrefixReversalRadius 4
-4
->>> deterministicPrefixReversalRadius 5
-7
->>> deterministicPrefixReversalRadius 6
-10
+>>> mapM_ print [(i, deterministicPrefixReversalRadius i) | i <- [2..5]]
+(2,2)
+(3,3)
+(4,5)
+(5,8)
 -}
 deterministicPrefixReversalRadius :: Int -> Int
-deterministicPrefixReversalRadius = L.length . L.head . T.snd . longestDeterministicPrefixReversals
+deterministicPrefixReversalRadius = T.fst . longestDeterministicPrefixReversals
 
 {- | 'lastDeterministicPrefixReversals' @p@
 -}
