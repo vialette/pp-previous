@@ -8,8 +8,7 @@ Stability   : experimental
 
 Deterministic prefix reversals of permutations.
 -}
-module Data.Algorithm.PP.Perm.DeterministicPrefixReversal
-  (
+module Data.Algorithm.PP.Perm.DeterministicPrefixReversal (
     deterministicPrefixReversals
   , deterministicPrefixReversalRadius
   , longestDeterministicPrefixReversals
@@ -35,14 +34,14 @@ import qualified Data.Algorithm.PP.Utils.Foldable  as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
 
 -- Helper function. Return True if 1 is at the first position.
-firstInPlace :: [Int] -> Bool
-firstInPlace []      = True
-firstInPlace (x : _) = x == 1
+stopFirst :: [Int] -> Bool
+stopFirst []      = True
+stopFirst (x : _) = x == 1
 
 -- Helper function. Return True if n is at the last position.
-lastInPlace :: Int -> [Int] -> Bool
-lastInPlace _ [] = True
-lastInPlace n xs = L.last xs == n
+stopLast :: Int -> [Int] -> Bool
+stopLast _ [] = True
+stopLast n xs = L.last xs == n
 
 -- Helper function parameterized by the stop predicate f.
 deterministicPrefixReversals' :: ([Int] -> Bool) -> PP.Perm.Perm -> [PP.Perm.Perm]
@@ -53,42 +52,34 @@ deterministicPrefixReversals' f = fmap PP.Perm.mk . L.reverse . aux [] . PP.Perm
       | f xs      = xs : acc
       | otherwise = aux (xs : acc) $ PP.Utils.List.prefixReversal (L.head xs) xs
 
-{- | 'deterministicPrefixReversals' @p@ returns the list of permutations @q1, q2, ... qk@
-with 'p = q1' and every permutation @qi@ is obtained from the preceding permutation
+{-| 'deterministicPrefixReversals' @p@ returns the list of permutations @q1, q2, ... qk@
+with @p = q1@ and every permutation @qi@ is obtained from the preceding permutation
 by reversing the prefix of length @l@, where @l@ is the first element.
 
->>> deterministicPrefixReversal $ mk [4,2,6,4,3,1]
+>>> let p = mk [4,2,6,4,3,1] in deterministicPrefixReversal p
 [4,2,6,5,3,1],[5,6,2,4,3,1],[3,4,2,6,5,1],[2,4,3,6,5,1],[4,2,3,6,5,1],[6,3,2,4,5,1],[1,5,4,2,3,6]]
 -}
 deterministicPrefixReversals :: PP.Perm.Perm -> [PP.Perm.Perm]
-deterministicPrefixReversals = deterministicPrefixReversals' firstInPlace
+deterministicPrefixReversals = deterministicPrefixReversals' stopFirst
 
 
-{- | 'longestdeterministicPrefixReversals' @n@ returns the extremal permutations
-of length @n@ together with the length of the path.
+{-| 'longestDeterministicPrefixReversals' @n@ returns the extremal permutations
+of length @n@ together with the length of the paths.
 
->>> longestdeterministicPrefixReversals 4
+>>> longestDeterministicPrefixReversals 4
 (4,[[3,1,4,2],[2,4,1,3]])
->>> mapM_ (putStr . (\ s -> s ++ "\n") . show) . map deterministicPrefixReversals . snd $ longestdeterministicPrefixReversals 4
-[[3,1,4,2],[4,1,3,2],[2,3,1,4],[3,2,1,4],[1,2,3,4]]
+>>> mapM_ (putStr . (++ "\n") . show) . T.snd $ longestDeterministicPrefixReversals 4
 [[2,4,1,3],[4,2,1,3],[3,1,2,4],[2,1,3,4],[1,2,3,4]]
->>> longestdeterministicPrefixReversals 5
+[[3,1,4,2],[4,1,3,2],[2,3,1,4],[3,2,1,4],[1,2,3,4]]
+>>> longestDeterministicPrefixReversals 5
 (7,[[3,1,4,5,2]])
->>> mapM_ (putStr . (\ s -> s ++ "\n") . show) . map deterministicPrefixReversals . snd $ longestdeterministicPrefixReversals 5
+>>> mapM_ (putStr . (++ "\n") . show) . T.snd $ longestDeterministicPrefixReversals 5
 [[3,1,4,5,2],[4,1,3,5,2],[5,3,1,4,2],[2,4,1,3,5],[4,2,1,3,5],[3,1,2,4,5],[2,1,3,4,5],[1,2,3,4,5]]
->>> longestdeterministicPrefixReversals 6
-(10,[[4,5,6,2,1,3],[4,1,5,2,6,3],[4,1,6,5,2,3],[3,6,5,1,4,2],[5,6,4,1,3,2]])
->>> mapM_ (putStr . (\ s -> s ++ "\n") . show) . map deterministicPrefixReversals . snd $ longestdeterministicPrefixReversals 6
-[[4,5,6,2,1,3],[2,6,5,4,1,3],[6,2,5,4,1,3],[3,1,4,5,2,6],[4,1,3,5,2,6],[5,3,1,4,2,6],[2,4,1,3,5,6],[4,2,1,3,5,6],[3,1,2,4,5,6],[2,1,3,4,5,6],[1,2,3,4,5,6]]
-[[4,1,5,2,6,3],[2,5,1,4,6,3],[5,2,1,4,6,3],[6,4,1,2,5,3],[3,5,2,1,4,6],[2,5,3,1,4,6],[5,2,3,1,4,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
-[[4,1,6,5,2,3],[5,6,1,4,2,3],[2,4,1,6,5,3],[4,2,1,6,5,3],[6,1,2,4,5,3],[3,5,4,2,1,6],[4,5,3,2,1,6],[2,3,5,4,1,6],[3,2,5,4,1,6],[5,2,3,4,1,6],[1,4,3,2,5,6]]
-[[3,6,5,1,4,2],[5,6,3,1,4,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
-[[5,6,4,1,3,2],[3,1,4,6,5,2],[4,1,3,6,5,2],[6,3,1,4,5,2],[2,5,4,1,3,6],[5,2,4,1,3,6],[3,1,4,2,5,6],[4,1,3,2,5,6],[2,3,1,4,5,6],[3,2,1,4,5,6],[1,2,3,4,5,6]]
 -}
 longestDeterministicPrefixReversals :: Int -> (Int, [[PP.Perm.Perm]])
 longestDeterministicPrefixReversals = PP.Utils.Foldable.maximumsBy L.length . fmap deterministicPrefixReversals . PP.Perm.Generator.derangements
 
-{- |'deterministicPrefixReversalRadius' @n@ return the radius (//i.e.// the length
+{-| 'deterministicPrefixReversalRadius' @n@ return the radius (/i.e./ the length
 of a longest path for a permutation of length @n@).
 
 >>> deterministicPrefixReversalRadius 2
@@ -108,7 +99,7 @@ deterministicPrefixReversalRadius = L.length . L.head . T.snd . longestDetermini
 {- | 'lastDeterministicPrefixReversals' @p@
 -}
 lastDeterministicPrefixReversals :: PP.Perm.Perm -> [PP.Perm.Perm]
-lastDeterministicPrefixReversals p = deterministicPrefixReversals' (lastInPlace (PP.Perm.len p)) p
+lastDeterministicPrefixReversals p = deterministicPrefixReversals' (stopLast (PP.Perm.len p)) p
 
 {- | 'lastLongestDeterministicPrefixReversals' @n@
 -}
