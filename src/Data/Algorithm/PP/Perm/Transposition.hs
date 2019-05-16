@@ -25,8 +25,9 @@ import qualified Data.Algorithm.PP.Utils.List           as PP.Utils.List
 import qualified Data.Algorithm.PP.Utils.Maybe          as PP.Utils.Maybe
 
 
-{-| 'transpose' @i@ @j@ @p@ returns the transposition @(i,j)@ of permutation @p@
-(indices start at 0).
+{-| 'transpose' @i@ @j@ @p@ returns the permutation obtained from permutation @p@ by swapping
+the elements at positions @i@ and @j@ (indices start at 0). The function raises an exception
+in case of non-valid indices.
 
 >>> let p = mk [1..4] in mapM_ print [(i, j, transpose i j p) | i <- [0..len p-2], j <- [i+1..len p-1]]
 (0,1,[2,1,3,4])
@@ -35,16 +36,35 @@ import qualified Data.Algorithm.PP.Utils.Maybe          as PP.Utils.Maybe
 (1,2,[1,3,2,4])
 (1,3,[1,4,3,2])
 (2,3,[1,2,4,3])
+>>> let p = mk [1..4] in transpose (-1) 2 p
+*** Exception: Prelude.!!: negative index
+>>> let p = mk [1..4] in transpose 0 4 p
+*** Exception: Prelude.!!: index too large
 -}
 transpose :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
 transpose i j = PP.Perm.mk . PP.Utils.List.swapElementsAt i j . PP.Perm.getList
 
+{-| 'safeTranspose' @i@ @j@ @p@ returns @Nothing@ for out of bounds indices @i@ and @j@,
+ and @Just $ transpose i j p@ otherwise.
+
+>>> let p = mk [1..4] in mapM_ print [(i, j, safeTranspose i j p) | i <- [0..len p], j <- [i+1..len p]]
+(0,1,Just [2,1,3,4])
+(0,2,Just [3,2,1,4])
+(0,3,Just [4,2,3,1])
+(0,4,Nothing)
+(1,2,Just [1,3,2,4])
+(1,3,Just [1,4,3,2])
+(1,4,Nothing)
+(2,3,Just [1,2,4,3])
+(2,4,Nothing)
+(3,4,Nothing)
+-}
 safeTranspose :: Int -> Int -> PP.Perm.Perm -> Maybe PP.Perm.Perm
 safeTranspose i j p = PP.Utils.Maybe.whenMaybe checkIJ $ transpose i j p
   where
     n       = PP.Perm.len p
-    checkI  = i >= 0 || i < n
-    checkJ  = i >= 0 || i < n
+    checkI  = i >= 0 && i < n
+    checkJ  = j >= 0 && j < n
     checkIJ = checkI && checkJ
 
 {-| 'transpositions' @p@ returns all transpositions of permutation @p@.
