@@ -130,8 +130,8 @@ rightToLeftMaxima :: PP.Perm.Perm -> Int
 rightToLeftMaxima = L.length . PP.Perm.Features.rightToLeftMaxima
 
 {-| 'components' @p@ returns the number of components in permutation @p@
-(/i.e./ the number of factorization @p = qr@, @|q| > 0|@, so that each element in @q@ is smaller
-than each element in @r@).
+(/i.e./ the number of factorizations @p = qr@, @q@ is non-empty, so that each element in @q@
+is smaller than each element in @r@).
 
 >>> let p = mk [2,1,3,5,4,6,8,7] in components p
 5
