@@ -32,7 +32,7 @@ import qualified Data.Algorithm.PP.Perm           as PP.Perm
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-{- |'ascendingRuns' @p@ returns all ascending runs (as lists of points) in permutation @p@.
+{- | 'ascendingRuns' @p@ returns all ascending runs (as lists of points) in permutation @p@.
 
 A sorted permutation (/i.e./ [1,2,...,n]) consists of a single ascending run,
 whereas a reverse sorted permutation (/i.e./ [n,n-1,...1]) consists of n ascending
@@ -48,7 +48,7 @@ runs, each of length 1.
 ascendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
 ascendingRuns = PP.Utils.List.groupBy' PP.Geometry.Point.isStrictlyBelowOf . PP.Perm.getPoints
 
-{- |'longestAscendingRun' @p@ returns a longest ascending run (as a list of points) in permutation @p@.
+{- | 'longestAscendingRun' @p@ returns a longest ascending run (as a list of points) in permutation @p@.
 
 >>> longestAscendingRun $ mkPerm [1..9]
 [1,2,3,4,5,6,7,8,9]
@@ -60,7 +60,7 @@ ascendingRuns = PP.Utils.List.groupBy' PP.Geometry.Point.isStrictlyBelowOf . PP.
 longestAscendingRun :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 longestAscendingRun = F.maximumBy (compare `on` L.length) . ascendingRuns
 
-{- |'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in permutation @p@.
+{- | 'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in permutation @p@.
 
 >>> longestAscendingRuns $ mkPerm [1..9]
 [[1,2,3,4,5,6,7,8,9]]
@@ -72,7 +72,7 @@ longestAscendingRun = F.maximumBy (compare `on` L.length) . ascendingRuns
 longestAscendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
 longestAscendingRuns = T.snd . PP.Utils.Foldable.maximumsBy L.length . ascendingRuns
 
-{- |'descendingRuns' @p@ returns all descending runs (as lists of points) in permutation @p@.
+{- | 'descendingRuns' @p@ returns all descending runs (as lists of points) in permutation @p@.
 
 A reverse sorted permutation (/i.e./ [n,n-1,...1]) consists of a single descending run,
 whereas a sorted permutation (/i.e./ [1,2,...,n]) consists of n descending
@@ -90,7 +90,7 @@ descendingRuns = PP.Utils.List.groupBy' f . PP.Perm.getPoints
   where
     f p1 p2 = PP.Geometry.Point.getY p1 > PP.Geometry.Point.getY p2
 
-{- |'longestDescendingRun' @p@ returns a longest descending run (as a list of points) in permutation
+{- | 'longestDescendingRun' @p@ returns a longest descending run (as a list of points) in permutation
 @p@.
 
 >>> longestDescendingRun $ mkPerm [1..9]
@@ -103,7 +103,7 @@ descendingRuns = PP.Utils.List.groupBy' f . PP.Perm.getPoints
 longestDescendingRun :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
 longestDescendingRun = F.maximumBy (compare `on` L.length) . descendingRuns
 
-{- |'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in permutation @p@.
+{- | 'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in permutation @p@.
 
 >>> longestDescendingRuns $ mkPerm [1..9]
 [[1],[2],[3],[4],[5],[6],[7],[8],[9]]
