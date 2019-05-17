@@ -24,11 +24,13 @@ module Data.Algorithm.PP.Perm.Statistics (
   , leftToRightMaxima
   , rightToLeftMaxima
   , rightToLeftMaxima
+  , components
   ) where
 
 import qualified Data.List as L
 
 import qualified Data.Algorithm.PP.Perm           as PP.Perm
+import qualified Data.Algorithm.PP.Perm.Component as PP.Perm.Component
 import qualified Data.Algorithm.PP.Perm.Features  as PP.Perm.Features
 
 {-| 'fixedPoints' @p@ returns the number of fixed points in the permutation @p@.
@@ -126,3 +128,17 @@ rightToLeftMinima = L.length . PP.Perm.Features.rightToLeftMinima
 -}
 rightToLeftMaxima :: PP.Perm.Perm -> Int
 rightToLeftMaxima = L.length . PP.Perm.Features.rightToLeftMaxima
+
+{-| 'components' @p@ returns the number of components in permutation @p@
+(/i.e./ the number of factorization @p = qr@, @|q| > 0|@, so that each element in @q@ is smaller
+than each element in @r@).
+
+>>> let p = mk [2,1,3,5,4,6,8,7] in components p
+5
+>>> let p = mk [1..8] in components p
+8
+>>> let p = mk [8,7..1] in components p
+1
+-}
+components :: PP.Perm.Perm -> Int
+components = L.length . PP.Perm.Component.components
