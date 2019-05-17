@@ -93,11 +93,11 @@ descendingRuns = PP.Utils.List.groupBy' f . PP.Perm.getPoints
 {- | 'longestDescendingRun' @p@ returns a longest descending run (as a list of points) in permutation
 @p@.
 
->>> longestDescendingRun $ mkPerm [1..9]
+>>> let p = mk [1..9] in longestDescendingRun p
 [9]
->>> longestDescendingRun $ mkPerm [9,8..1]
+>>> let p = mk [9,8..1] in longestDescendingRun p
 [9,8,7,6,5,4,3,2,1]
->>> longestDescendingRun $ mkPerm [7,3,1,6,5,2,4,9,8]
+>>> let p = [7,3,1,6,5,2,4,9,8] in longestDescendingRun p
 [6,5,2]
 -}
 longestDescendingRun :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
