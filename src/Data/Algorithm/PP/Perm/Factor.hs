@@ -42,9 +42,9 @@ import qualified Data.Algorithm.PP.Utils.List         as PP.Utils.List
 prefix :: Int -> PP.Perm.Perm -> PP.Perm.Perm
 prefix k = PP.Perm.mk . fmap PP.Geometry.Point.getY . PP.Perm.Factor.Points.prefix k
 
-{- | 'perPrefixes' @p@ returns all prefixes (as permutations) of permutation @p@ as permutations.
+{- | 'prefixes' @p@ returns all prefixes (as permutations) of permutation @p@ as permutations.
 
->>> prefixes $ mk [4,2,6,1,5,3]
+>>> let p = mk [4,2,6,1,5,3] in prefixes p
 [[1],[2,1],[2,1,3],[3,2,4,1],[3,2,5,1,4],[4,2,6,1,5,3]]
 -}
 prefixes :: PP.Perm.Perm -> [PP.Perm.Perm]

@@ -58,7 +58,7 @@ import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
--- |'Perm' type
+-- | 'Perm' type
 newtype Perm = Perm { getPoints :: [PP.Geometry.Point.Point] }
 
 -- |
@@ -77,8 +77,8 @@ instance Ord Perm where
     where
       f = getPoints . fromList . getList
 
-{- | 'mkUnsafe' @xs@.
-Use with caution.
+{- | 'mkUnsafe' @xs@ constructs a permutation from a list of distinct integers.
+The function does not check the argument. Use with caution.
 
 >>> mkUnsafe [1,2,4,3]
 [1,2,4,3]
@@ -86,7 +86,7 @@ Use with caution.
 [1,2,1,2]
 -}
 mkUnsafe :: [Int] -> Perm
-mkUnsafe = Perm . fmap (uncurry PP.Geometry.Point.mk) . L.zip [1..]
+mkUnsafe = Perm . L.map (uncurry PP.Geometry.Point.mk) . L.zip [1..]
 
 {- | 'mk' @xs@ constructs a permutation from foldable @xs@ (ties are resolved from left to right).
 

@@ -8,7 +8,8 @@ Stability   : experimental
 
 -}
 
-module Data.Algorithm.PP.Path (
+module Data.Algorithm.PP.Path
+  (
   -- * Type
     Path(..)
 
