@@ -13,12 +13,10 @@ module Data.Algorithm.PP.Perm.Run
   (
   -- * Ascending run
     ascendingRuns
-  , longestAscendingRun
   , longestAscendingRuns
 
   -- * Descending run
   , descendingRuns
-  , longestDescendingRun
   , longestDescendingRuns
   ) where
 
@@ -38,36 +36,25 @@ A sorted permutation (/i.e./ [1,2,...,n]) consists of a single ascending run,
 whereas a reverse sorted permutation (/i.e./ [n,n-1,...1]) consists of n ascending
 runs, each of length 1.
 
->>> ascendingRuns $ mkPerm [1..9]
-[[1,2,3,4,5,6,7,8,9]]
->>> ascendingRuns $ mkPerm [9,8..1]
-[[9],[8],[7],[6],[5],[4],[3],[2],[1]]
->>> ascendingRuns $ mkPerm [2,4,6,1,3,9,8,5,7]
-[[2,4,6],[1,3,9],[8],[5,7]]
+>>> let p = mk [1..8] in ascendingRuns p
+[[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8)]]
+>>> let p = mk [8,7..1] in ascendingRuns p
+[[(1,8)],[(2,7)],[(3,6)],[(4,5)],[(5,4)],[(6,3)],[(7,2)],[(8,1)]]
+>>> let p = mk [2,4,6,1,3,8,5,7] in ascendingRuns p
+[[(1,2),(2,4),(3,6)],[(4,1),(5,3),(6,8)],[(7,5),(8,7)]]
 -}
 ascendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
 ascendingRuns = PP.Utils.List.groupBy' PP.Geometry.Point.isStrictlyBelowOf . PP.Perm.getPoints
 
-{- | 'longestAscendingRun' @p@ returns a longest ascending run (as a list of points) in permutation @p@.
+{- | 'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in
+permutation @p@.
 
->>> longestAscendingRun $ mkPerm [1..9]
-[1,2,3,4,5,6,7,8,9]
->>> longestAscendingRun $ mkPerm [9,8..1]
-[1]
->>> longestAscendingRun $ mkPerm [2,4,6,1,3,9,8,5,7]
-[1,3,9]
--}
-longestAscendingRun :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-longestAscendingRun = F.maximumBy (compare `on` L.length) . ascendingRuns
-
-{- | 'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in permutation @p@.
-
->>> longestAscendingRuns $ mkPerm [1..9]
-[[1,2,3,4,5,6,7,8,9]]
->>> longestAscendingRuns $ mkPerm [9,8..1]
-[[9],[8],[7],[6],[5],[4],[3],[2],[1]]
->>> longestAscendingRuns $ mkPerm [2,4,6,1,3,9,8,5,7]
-[[2,4,6],[1,3,9]]
+>>> let p = mk [1..8] in longestAscendingRuns p
+[[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8)]]
+>>> let p = mk [8,7..1] in longestAscendingRuns p
+[[(1,8)],[(2,7)],[(3,6)],[(4,5)],[(5,4)],[(6,3)],[(7,2)],[(8,1)]]
+>>> let p = mk [2,4,7,6,1,3,8,5] in longestAscendingRuns p
+[[(1,2),(2,4),(3,7)],[(5,1),(6,3),(7,8)]]
 -}
 longestAscendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
 longestAscendingRuns = T.snd . PP.Utils.Foldable.maximumsBy L.length . ascendingRuns
@@ -78,39 +65,27 @@ A reverse sorted permutation (/i.e./ [n,n-1,...1]) consists of a single descendi
 whereas a sorted permutation (/i.e./ [1,2,...,n]) consists of n descending
 runs, each of length 1.
 
->>> descendingRuns $ mkPerm [1..9]
-[[1],[2],[3],[4],[5],[6],[7],[8],[9]]
->>> descendingRuns $ mkPerm [9,8..1]
-[[9,8,7,6,5,4,3,2,1]]
->>> descendingRuns $ mkPerm [7,3,1,6,5,2,4,9,8]
-[[7,3,1],[6,5,2],[4],[9,8]]
+>>> let p = mk [1..8] in descendingRuns p
+[[(1,1)],[(2,2)],[(3,3)],[(4,4)],[(5,5)],[(6,6)],[(7,7)],[(8,8)]]
+>>> let p = mk [8,7..1] in descendingRuns p
+[[(1,8),(2,7),(3,6),(4,5),(5,4),(6,3),(7,2),(8,1)]]
+>>> let p = mk [2,4,6,1,3,8,5,7] in descendingRuns p
+[[(1,2)],[(2,4)],[(3,6),(4,1)],[(5,3)],[(6,8),(7,5)],[(8,7)]]
 -}
 descendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
 descendingRuns = PP.Utils.List.groupBy' f . PP.Perm.getPoints
   where
     f p1 p2 = PP.Geometry.Point.getY p1 > PP.Geometry.Point.getY p2
 
-{- | 'longestDescendingRun' @p@ returns a longest descending run (as a list of points) in permutation
-@p@.
+{- | 'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in
+permutation @p@.
 
->>> let p = mk [1..9] in longestDescendingRun p
-[9]
->>> let p = mk [9,8..1] in longestDescendingRun p
-[9,8,7,6,5,4,3,2,1]
->>> let p = [7,3,1,6,5,2,4,9,8] in longestDescendingRun p
-[6,5,2]
--}
-longestDescendingRun :: PP.Perm.Perm -> [PP.Geometry.Point.Point]
-longestDescendingRun = F.maximumBy (compare `on` L.length) . descendingRuns
-
-{- | 'longestAscendingRuns' @p@ returns all longest ascending runs (as lists of points) in permutation @p@.
-
->>> longestDescendingRuns $ mkPerm [1..9]
-[[1],[2],[3],[4],[5],[6],[7],[8],[9]]
->>> longestDescendingRuns $ mkPerm [9,8..1]
-[[9,8,7,6,5,4,3,2,1]]
->>> longestDescendingRuns $ mkPerm [7,3,1,6,5,2,4,9,8]
-[[7,3,1],[6,5,2]]
+>>> let p = mk [1..8] in longestDescendingRuns p
+[[(1,1)],[(2,2)],[(3,3)],[(4,4)],[(5,5)],[(6,6)],[(7,7)],[(8,8)]]
+>>> let p = mk [8,7..1] in longestDescendingRuns p
+[[(1,8),(2,7),(3,6),(4,5),(5,4),(6,3),(7,2),(8,1)]]
+>>> let p = mk [2,4,7,6,1,3,8,5] in longestDescendingRuns p
+[[(3,7),(4,6),(5,1)]]
 -}
 longestDescendingRuns :: PP.Perm.Perm -> [[PP.Geometry.Point.Point]]
 longestDescendingRuns = T.snd . PP.Utils.Foldable.maximumsBy L.length . descendingRuns

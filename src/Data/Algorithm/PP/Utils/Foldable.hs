@@ -14,7 +14,7 @@ import qualified Data.Tuple    as T
 import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
 -- maximumsBy and minimumsBy helper function.
-extremalsBy :: (Ord b, Eq b) => (b -> b -> Bool) -> (a -> b) -> [a] -> (b, [a])
+extremalsBy :: (Foldable t, Functor t, Eq a) => (a -> a -> Bool) -> (b -> a) -> t a -> (a, [b])
 extremalsBy cmp f = F.foldr1 g . fmap (\ x -> (f x, [x]))
   where
     g (k, [x]) (l, acc)
