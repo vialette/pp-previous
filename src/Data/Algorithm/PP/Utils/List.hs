@@ -9,7 +9,8 @@ Stability   : experimental
 Convenient functions on lists.
 -}
 
-module Data.Algorithm.PP.Utils.List (
+module Data.Algorithm.PP.Utils.List
+  (
     safeHead
   , safeTail
   , safeLast
@@ -83,6 +84,8 @@ safeLast :: [a] -> Maybe a
 safeLast [] = Nothing
 safeLast xs = Just (L.last xs)
 
+{- | 'swapElementsAt' @i@ @j@ @xs@
+-}
 swapElementsAt :: Int -> Int -> [a] -> [a]
 swapElementsAt i j xs = left ++ [elemJ] ++ middle ++ [elemI] ++ right
   where

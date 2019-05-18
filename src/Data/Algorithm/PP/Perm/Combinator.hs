@@ -9,7 +9,8 @@ Stability   : experimental
 Combining permutations facilities.
 -}
 
-module Data.Algorithm.PP.Perm.Combinator (
+module Data.Algorithm.PP.Perm.Combinator
+  (
     -- * Direct sum
     (<<+>>)
   , directSum
@@ -51,10 +52,7 @@ p <<+>> q = PP.Perm.mk (xs ++ ys)
 [1,3,2,6,5,4,10,9,8,7,15,14,13,12,11]
 -}
 directSum :: (Foldable t) => t PP.Perm.Perm -> PP.Perm.Perm
-directSum = aux . F.toList
-  where
-    aux [] = PP.Perm.empty
-    aux ps = F.foldr1 (<<+>>) ps
+directSum = F.foldr (<<+>>) PP.Perm.empty
 
 {- | @p@ '<<->>' @q@ returns the skew sum of the permutations @p@ and @q@.
 
@@ -74,10 +72,7 @@ p <<->> q = PP.Perm.mk (xs ++ ys)
 [15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
 -}
 skewSum :: (Foldable t) => t PP.Perm.Perm -> PP.Perm.Perm
-skewSum = aux . F.toList
-  where
-    aux [] = PP.Perm.empty
-    aux ps = F.foldr1 (<<->>) ps
+skewSum = F.foldr (<<->>) PP.Perm.empty
 
 {- | @p@ '<<.>>' @q@ returns the dot product of the permutations @p@ and @q@.
 
