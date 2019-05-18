@@ -14,7 +14,7 @@ import qualified Data.Tuple    as T
 import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
 
 -- maximumsBy and minimumsBy helper function.
-extremalsBy :: (Foldable t, Functor t, Eq a) => (a -> a -> Bool) -> (b -> a) -> t a -> (a, [b])
+extremalsBy :: (Foldable t, Functor t, Eq b) => (b -> b -> Bool) -> (a -> b) -> t a -> (b, [a])
 extremalsBy cmp f = F.foldr1 g . fmap (\ x -> (f x, [x]))
   where
     g (k, [x]) (l, acc)
@@ -23,19 +23,18 @@ extremalsBy cmp f = F.foldr1 g . fmap (\ x -> (f x, [x]))
       | otherwise = (l, acc)
 
 {- | 'maximumsBy' @f@ @xs@ returns the list of the maximum elements of @xs@
-(according to @f@) together with the maximum.
+(according to function @f@) together with the maximum.
 
 -}
-maximumsBy :: (Ord b, Eq b) => (a -> b) -> [a] -> (b, [a])
+maximumsBy :: (Foldable t, Functor t, Ord a, Ord b, Eq b) => (a -> b) -> t a -> (b, [a])
 maximumsBy = extremalsBy (>)
 
 {- | 'maximumsBy' @f@ @xs@ returns the list of the maximum elements of @xs@
-(according to @f@) together with the maximum.
+(according to function @f@) together with the maximum.
 
 -}
-minimumsBy :: (Ord b, Eq b) => (a -> b) -> [a] -> (b, [a])
+minimumsBy :: (Foldable t, Functor t, Ord a, Ord b, Eq b) => (a -> b) -> t a -> (b, [a])
 minimumsBy = extremalsBy (<)
-
 
 
 {- | 'splitEvery' @p@ @xs@ splits foldable @xs@ after each element @x@ such that @p x@ is @True@.
