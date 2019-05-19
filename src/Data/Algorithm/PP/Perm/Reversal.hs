@@ -9,7 +9,8 @@ Stability   : experimental
 Here is a longer description of this module, containing some
 commentary with @some markup@.
 -}
-module Data.Algorithm.PP.Perm.Reversal (
+module Data.Algorithm.PP.Perm.Reversal
+  (
   -- * Reversals
     reversal
   , reversal'
@@ -27,7 +28,6 @@ module Data.Algorithm.PP.Perm.Reversal (
   , randomSuffixReversal
   ) where
 
-
 import qualified Data.Foldable as F
 import qualified Data.List     as L
 import qualified Data.Tuple    as T
@@ -38,24 +38,25 @@ import qualified Data.Algorithm.PP.Perm.Bijection.Trivial as PP.Perm.Bijection.T
 import qualified Data.Algorithm.PP.Perm.Generator         as PP.Perm.Generator
 import qualified Data.Algorithm.PP.Utils.List             as PP.Utils.List
 
--- |'reversal' 'i' 'j' 'p'
---
--- >>> let n = 3 in let p = identity n in mapM_ print [(i, j, reversal i j p) | i <- [0..n+1], j <- [i..n+1]]
--- (0,0,[1,2,3])
--- (0,1,[2,1,3])
--- (0,2,[3,2,1])
--- (0,3,[3,2,1])
--- (0,4,[3,2,1])
--- (1,1,[1,2,3])
--- (1,2,[2,1,3])
--- (1,3,[3,2,1])
--- (1,4,[3,2,1])
--- (2,2,[1,2,3])
--- (2,3,[1,3,2])
--- (2,4,[1,3,2])
--- (3,3,[1,2,3])
--- (3,4,[1,2,3])
--- (4,4,[1,2,3])
+{- | 'reversal' 'i' 'j' 'p'
+
+>>> let n = 3 in let p = identity n in mapM_ print [(i, j, reversal i j p) | i <- [0..n+1], j <- [i..n+1]]
+(0,0,[1,2,3])
+(0,1,[2,1,3])
+(0,2,[3,2,1])
+(0,3,[3,2,1])
+(0,4,[3,2,1])
+(1,1,[1,2,3])
+(1,2,[2,1,3])
+(1,3,[3,2,1])
+(1,4,[3,2,1])
+(2,2,[1,2,3])
+(2,3,[1,3,2])
+(2,4,[1,3,2])
+(3,3,[1,2,3])
+(3,4,[1,2,3])
+(4,4,[1,2,3])
+-}
 reversal :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
 reversal i j = PP.Perm.mk . PP.Utils.List.reversal i j . PP.Perm.getList
 
@@ -77,7 +78,7 @@ reversal i j = PP.Perm.mk . PP.Utils.List.reversal i j . PP.Perm.getList
 -- (3,3,[1,2,3])
 -- (3,4,[1,2,3])
 -- (4,4,[1,2,3])
-reversal' i j = PP.Perm.mk . PP.Utils.List.reversal' i j . PP.Perm.getList
+reversal' i k = PP.Perm.mk . PP.Utils.List.reversal' i k . PP.Perm.getList
 
 -- |'randomReversal' 'p' 'g'
 --

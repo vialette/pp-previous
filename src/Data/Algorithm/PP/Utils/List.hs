@@ -42,7 +42,9 @@ module Data.Algorithm.PP.Utils.List
   , shuffle
   , perfectShuffle
 
+  -- * Reversal
   , reversal
+  , safeReversal
   , reversal'
   , prefixReversal
 
@@ -219,34 +221,72 @@ perfectShuffle = aux []
     aux acc (x : xs) ys = aux (x : acc) ys xs
 
 {- | 'reversal' @i@ @j@ @xs@ returns the list obtained by reversing the elements at positions @i@,
-@i+1@, ..., @j@ in @xs.
+@i+1@, ..., @j@ in @xs. Indices start at 1.
 
->>> let n = 4 in mapM_ print [(i, j, reversal i j [1..n]) | i <- [1..n], j <- [1..n]]
-(1,1,[1,2,3,4])
-(1,2,[2,1,3,4])
-(1,3,[3,2,1,4])
-(1,4,[4,3,2,1])
-(2,1,[1,2,3,4])
-(2,2,[1,2,3,4])
-(2,3,[1,3,2,4])
-(2,4,[1,4,3,2])
-(3,1,[1,2,3,4])
-(3,2,[1,2,3,4])
-(3,3,[1,2,3,4])
-(3,4,[1,2,4,3])
-(4,1,[1,2,3,4])
-(4,2,[1,2,3,4])
-(4,3,[1,2,3,4])
-(4,4,[1,2,3,4])
+>>> let n = 3 in mapM_ print [(i, j, reversal i j [1..n]) | i <- [0..n+1], j <- [i-1..n+1]]
+(0,-1,[1,2,3])
+(0,0,[1,2,3])
+(0,1,[1,2,3])
+(0,2,[1,2,3])
+(0,3,[1,2,3])
+(0,4,[1,2,3])
+(1,0,[1,2,3])
+(1,1,[1,2,3])
+(1,2,[2,1,3])
+(1,3,[3,2,1])
+(1,4,[3,2,1])
+(2,1,[1,2,3])
+(2,2,[1,2,3])
+(2,3,[1,3,2])
+(2,4,[1,3,2])
+(3,2,[1,2,3])
+(3,3,[1,2,3])
+(3,4,[1,2,3])
+(4,3,[1,2,3])
+(4,4,[1,2,3])
 -}
 reversal :: Int -> Int -> [a] -> [a]
-reversal i j xs = pref ++ L.reverse ys ++ suff
+reversal i j xs = case safeReversal i j xs of
+                    Nothing  -> xs
+                    Just xs' -> xs'
+
+{- | 'safeReversal' @i@ @j@ @xs@ returns the list obtained by reversing the elements at positions @i@,
+@i+1@, ..., @j@ in @xs. Indices start at 1.
+
+>>> let n = 3 in mapM_ print [(i, j, safeReversal i j [1..n]) | i <- [0..n+1], j <- [i-1..n+1]]
+(0,-1,Nothing)
+(0,0,Nothing)
+(0,1,Nothing)
+(0,2,Nothing)
+(0,3,Nothing)
+(0,4,Nothing)
+(1,0,Nothing)
+(1,1,Just [1,2,3])
+(1,2,Just [2,1,3])
+(1,3,Just [3,2,1])
+(1,4,Just [3,2,1])
+(2,1,Nothing)
+(2,2,Just [1,2,3])
+(2,3,Just [1,3,2])
+(2,4,Just [1,3,2])
+(3,2,Nothing)
+(3,3,Just [1,2,3])
+(3,4,Just [1,2,3])
+(4,3,Nothing)
+(4,4,Nothing)
+-}
+safeReversal :: Int -> Int -> [a] -> Maybe [a]
+safeReversal i j xs
+  | i <= 0 || j <= 0 || j < i || i > n = Nothing
+  | otherwise                          = Just $ pref ++ L.reverse ys ++ suff
   where
+    n = L.length xs
     (pref, xs') = L.splitAt (i-1)   xs
     (ys, suff)  = L.splitAt (j-i+1) xs'
 
+
 {- | 'reversal'' @i@ @k@ @xs@ returns the list obtained by reversing the elements at positions @i@,
-@i+1@, ..., @i+k@ in @xs.
+@i+1@, ..., @i+k@ in @xs. Indices start at 1.
 
 >>> let n = 4 in mapM_ print [(i, k, reversal' i k [1..n]) | i <- [1..n], k <- [1..n]]
 (1,1,[1,2,3,4])
