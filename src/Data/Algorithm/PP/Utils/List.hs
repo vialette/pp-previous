@@ -11,9 +11,6 @@ Convenient functions on lists.
 
 module Data.Algorithm.PP.Utils.List
   (
-    safeHead
-  , safeTail
-  , safeLast
 
   , swapElementsAt
 
@@ -69,23 +66,6 @@ import qualified Data.Map.Strict as M
 import qualified Data.Set        as S
 import qualified Data.Tuple      as T
 
-{- | 'safeHead' @xs@
--}
-safeHead :: [a] -> Maybe a
-safeHead []      = Nothing
-safeHead (x : _) = Just x
-
-{- | 'safeTail' @xs@
--}
-safeTail :: [a] -> Maybe [a]
-safeTail []       = Nothing
-safeTail (_ : xs) = Just xs
-
-{- | 'safeLast' @xs@
--}
-safeLast :: [a] -> Maybe a
-safeLast [] = Nothing
-safeLast xs = Just (L.last xs)
 
 {- | 'swapElementsAt' @i@ @j@ @xs@
 -}
