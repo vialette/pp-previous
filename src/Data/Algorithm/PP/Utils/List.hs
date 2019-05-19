@@ -222,7 +222,7 @@ perfectShuffle = aux []
     aux acc (x : xs) ys = aux (x : acc) ys xs
 
 {- | 'reversal' @i@ @j@ @xs@ returns the list obtained by reversing the elements at positions @i@,
-@i+1@, ..., @j@ in @xs. Indices start at 1.
+@i+1@, ..., @j@ in @xs@. Indices start at 1.
 
 >>> let n = 3 in mapM_ print [(i, j, reversal i j [1..n]) | i <- [0..n+1], j <- [i-1..n+1]]
 (0,-1,[1,2,3])
@@ -252,7 +252,7 @@ reversal i j xs = case safeReversal i j xs of
                     Just xs' -> xs'
 
 {- | 'safeReversal' @i@ @j@ @xs@ returns the list obtained by reversing the elements at positions @i@,
-@i+1@, ..., @j@ in @xs. Indices start at 1.
+@i+1@, ..., @j@ in @xs@. Indices start at 1.
 
 >>> let n = 3 in mapM_ print [(i, j, safeReversal i j [1..n]) | i <- [0..n+1], j <- [i-1..n+1]]
 (0,-1,Nothing)
@@ -287,7 +287,7 @@ safeReversal i j xs
 
 
 {- | 'reversal'' @i@ @k@ @xs@ returns the list obtained by reversing the elements at positions @i@,
-@i+1@, ..., @i+k@ in @xs. Indices start at 1.
+@i+1@, ..., @i+k@ in @xs@. Indices start at 1.
 
 >>> let n = 3 in mapM_ print [(i, k, reversal' i k [1..n]) | i <- [0..n+1], k <- [0..n+1]]
 (0,0,[1,2,3])
@@ -322,7 +322,7 @@ reversal' i k xs = case safeReversal' i k xs of
                      Just xs' -> xs'
 
 {- | 'safeReversal'' @i@ @k@ @xs@ returns the list obtained by reversing the elements at positions @i@,
-@i+1@, ..., @i+k@ in @xs. Indices start at 1.
+@i+1@, ..., @i+k@ in @xs@. Indices start at 1.
 
 >>> let n = 3 in mapM_ print [(i, k, safeReversal' i k [1..n]) | i <- [0..n+1], k <- [0..n+1]]
 (0,0,Nothing)
