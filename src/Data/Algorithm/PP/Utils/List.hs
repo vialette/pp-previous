@@ -46,6 +46,7 @@ module Data.Algorithm.PP.Utils.List
   , reversal
   , safeReversal
   , reversal'
+  , safeReversal'
   , prefixReversal
 
   , subsets
@@ -234,11 +235,11 @@ perfectShuffle = aux []
 (1,1,[1,2,3])
 (1,2,[2,1,3])
 (1,3,[3,2,1])
-(1,4,[3,2,1])
+(1,4,[1,2,3])
 (2,1,[1,2,3])
 (2,2,[1,2,3])
 (2,3,[1,3,2])
-(2,4,[1,3,2])
+(2,4,[1,2,3])
 (3,2,[1,2,3])
 (3,3,[1,2,3])
 (3,4,[1,2,3])
@@ -264,21 +265,21 @@ reversal i j xs = case safeReversal i j xs of
 (1,1,Just [1,2,3])
 (1,2,Just [2,1,3])
 (1,3,Just [3,2,1])
-(1,4,Just [3,2,1])
+(1,4,Nothing)
 (2,1,Nothing)
 (2,2,Just [1,2,3])
 (2,3,Just [1,3,2])
-(2,4,Just [1,3,2])
+(2,4,Nothing)
 (3,2,Nothing)
 (3,3,Just [1,2,3])
-(3,4,Just [1,2,3])
+(3,4,Nothing)
 (4,3,Nothing)
 (4,4,Nothing)
 -}
 safeReversal :: Int -> Int -> [a] -> Maybe [a]
 safeReversal i j xs
-  | i <= 0 || j <= 0 || j < i || i > n = Nothing
-  | otherwise                          = Just $ pref ++ L.reverse ys ++ suff
+  | i <= 0 || j <= 0 || j < i || i > n || j > n = Nothing
+  | otherwise                                   = Just $ pref ++ L.reverse ys ++ suff
   where
     n = L.length xs
     (pref, xs') = L.splitAt (i-1)   xs
@@ -288,26 +289,70 @@ safeReversal i j xs
 {- | 'reversal'' @i@ @k@ @xs@ returns the list obtained by reversing the elements at positions @i@,
 @i+1@, ..., @i+k@ in @xs. Indices start at 1.
 
->>> let n = 4 in mapM_ print [(i, k, reversal' i k [1..n]) | i <- [1..n], k <- [1..n]]
-(1,1,[1,2,3,4])
-(1,2,[2,1,3,4])
-(1,3,[3,2,1,4])
-(1,4,[4,3,2,1])
-(2,1,[1,2,3,4])
-(2,2,[1,3,2,4])
-(2,3,[1,4,3,2])
-(2,4,[1,4,3,2])
-(3,1,[1,2,3,4])
-(3,2,[1,2,4,3])
-(3,3,[1,2,4,3])
-(3,4,[1,2,4,3])
-(4,1,[1,2,3,4])
-(4,2,[1,2,3,4])
-(4,3,[1,2,3,4])
-(4,4,[1,2,3,4])
+>>> let n = 3 in mapM_ print [(i, k, reversal' i k [1..n]) | i <- [0..n+1], k <- [0..n+1]]
+(0,0,[1,2,3])
+(0,1,[1,2,3])
+(0,2,[1,2,3])
+(0,3,[1,2,3])
+(0,4,[1,2,3])
+(1,0,[1,2,3])
+(1,1,[1,2,3])
+(1,2,[2,1,3])
+(1,3,[3,2,1])
+(1,4,[1,2,3])
+(2,0,[1,2,3])
+(2,1,[1,2,3])
+(2,2,[1,3,2])
+(2,3,[1,2,3])
+(2,4,[1,2,3])
+(3,0,[1,2,3])
+(3,1,[1,2,3])
+(3,2,[1,2,3])
+(3,3,[1,2,3])
+(3,4,[1,2,3])
+(4,0,[1,2,3])
+(4,1,[1,2,3])
+(4,2,[1,2,3])
+(4,3,[1,2,3])
+(4,4,[1,2,3])
 -}
 reversal' :: Int -> Int -> [a] -> [a]
-reversal' i m = reversal i (i+m-1)
+reversal' i k xs = case safeReversal' i k xs of
+                     Nothing  -> xs
+                     Just xs' -> xs'
+
+{- | 'safeReversal'' @i@ @k@ @xs@ returns the list obtained by reversing the elements at positions @i@,
+@i+1@, ..., @i+k@ in @xs. Indices start at 1.
+
+>>> let n = 3 in mapM_ print [(i, k, safeReversal' i k [1..n]) | i <- [0..n+1], k <- [0..n+1]]
+(0,0,Nothing)
+(0,1,Nothing)
+(0,2,Nothing)
+(0,3,Nothing)
+(0,4,Nothing)
+(1,0,Nothing)
+(1,1,Just [1,2,3])
+(1,2,Just [2,1,3])
+(1,3,Just [3,2,1])
+(1,4,Nothing)
+(2,0,Nothing)
+(2,1,Just [1,2,3])
+(2,2,Just [1,3,2])
+(2,3,Nothing)
+(2,4,Nothing)
+(3,0,Nothing)
+(3,1,Just [1,2,3])
+(3,2,Nothing)
+(3,3,Nothing)
+(3,4,Nothing)
+(4,0,Nothing)
+(4,1,Nothing)
+(4,2,Nothing)
+(4,3,Nothing)
+(4,4,Nothing)
+-}
+safeReversal' :: Int -> Int -> [a] -> Maybe [a]
+safeReversal' i k = safeReversal i (i+k-1)
 
 {- |'prefixReversal' @k@ @xs@ returns the list obtained by reversing the prefix of length @k@ of @xs@.
 
@@ -332,7 +377,7 @@ randomShuffle xs g = A.first M.elems $ foldr randomShuffleStep initial [1..n]
     n       = L.length xs
     initial = (M.fromList $ L.zip [1..] xs, g)
 
-{- |'subsets' @k@ @xs@ returns all @k@-subsets of @xs@.
+{- | 'subsets' @k@ @xs@ returns all @k@-subsets of @xs@.
 
 >>> subsets 0 [1..4]
 [[]]
