@@ -67,7 +67,7 @@ import qualified Data.Map.Strict as M
 import qualified Data.Set        as S
 import qualified Data.Tuple      as T
 
-import qualified Data.Algorithm.PP.Utils.List.Safe as PP.Utils.List.Safe
+import Data.Algorithm.PP.Utils.List.Safe as PP.Utils.List.Safe
 
 
 {- | 'swapElementsAt' @i@ @j@ @xs@
