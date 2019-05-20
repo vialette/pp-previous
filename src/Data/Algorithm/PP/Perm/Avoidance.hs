@@ -1,9 +1,8 @@
 module Data.Algorithm.PP.Perm.Avoidance
-(
-  avoid
-, contain
-)
-where
+  (
+    avoid
+  , contain
+  ) where
 
   import qualified Data.List as L
 

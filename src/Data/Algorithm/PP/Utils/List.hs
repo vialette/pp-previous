@@ -11,6 +11,7 @@ Convenient functions on lists.
 
 module Data.Algorithm.PP.Utils.List
   (
+    module PP.Utils.List.Safe
 
   , swapElementsAt
 
@@ -65,6 +66,8 @@ import Data.Map.Strict ((!))
 import qualified Data.Map.Strict as M
 import qualified Data.Set        as S
 import qualified Data.Tuple      as T
+
+import qualified Data.Algorithm.PP.Utils.List.Safe as PP.Utils.List.Safe
 
 
 {- | 'swapElementsAt' @i@ @j@ @xs@
