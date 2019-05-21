@@ -39,20 +39,30 @@ mk = go [] . PP.Perm.getList
     go stack  [] = case stack of
                      [(_, t, _)] -> Just t
                      _           -> Nothing
-    go [] (x : xs) = go [(x, Leaf x, x)] xs
+    go [] (x : xs)  = let stack = push (x, Leaf x, x) emptyStack
+                      in go stack xs
     go stack@((yMin, t, yMax) : nextStack) (x : xs)
-      | x == yMax+1 = let newStack = reduce ((yMin, PlusNode  t (Leaf x), x) : nextStack)
+      | x == yMax+1 = let newStack = reduce $ push (yMin, PlusNode  t (Leaf x), x) nextStack
                       in go newStack xs
-      | x == yMin-1 = let newStack = reduce ((x, MinusNode t (Leaf x), yMax) : nextStack)
+      | x == yMin-1 = let newStack = reduce $ push (x, MinusNode t (Leaf x), yMax) nextStack
                       in go newStack xs
-      | otherwise   = go ((x, Leaf x, x) : stack) xs
+      | otherwise   = let newStack = push (x, Leaf x, x) stack
+                      in go newStack xs
 
     reduce [] = []
     reduce [(yMin, t, yMax)] = [(yMin, t, yMax)]
-    reduce ((yMin, t, yMax) : (yMin', t', yMax') : nextStack)
-      | yMax +1 == yMin' = reduce ((yMin,  PlusNode t t',  yMax') : nextStack)
-      | yMax'+1 == yMin  = reduce ((yMin', MinusNode t t', yMax) : nextStack)
-      | otherwise        = []
+    reduce stack@((yMin, t, yMax) : (yMin', t', yMax') : nextStack)
+      | yMax +1 == yMin' = let newStack = push (yMin,  PlusNode t t',  yMax') nextStack
+                           in reduce newStack
+      | yMax'+1 == yMin  = let newStack = push (yMin', MinusNode t t', yMax)  nextStack
+                           in reduce newStack
+      | otherwise        = stack
+
+    emptyStack :: [(Int, SeparatingTree, Int)]
+    emptyStack = []
+
+    push :: (Int, SeparatingTree, Int) -> [(Int, SeparatingTree, Int)] -> [(Int, SeparatingTree, Int)]
+    push x stack = x : stack
 
 {- | 'getPerm' @t@ returns the permutations associated to the separating tree @t@.
 
