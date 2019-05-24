@@ -42,6 +42,7 @@ import qualified Data.Algorithm.PP.Geometry.Point         as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Perm                   as PP.Perm
 import qualified Data.Algorithm.PP.Perm.Bijection.Trivial as PP.Perm.Bijection.Trivial
 import qualified Data.Algorithm.PP.Utils.List             as PP.Utils.List
+import qualified Data.Algorithm.PP.Utils.List.Safe        as PP.Utils.List.Safe
 
 
 {- | 'leftmost' @p@ returns the first (/i.e./ leftmost) element of the permutation @p@.
@@ -64,7 +65,7 @@ Just 3
 Nothing
 -}
 safeLeftmost :: PP.Perm.Perm -> Maybe Int
-safeLeftmost = PP.Utils.List.safeHead . PP.Perm.getList
+safeLeftmost = PP.Utils.List.Safe.head . PP.Perm.getList
 
 {- | 'rightmost' @p@ returns the first (/i.e./ leftmost) element of the permutation @p@.
 The function raises an exception if @p@ is the empty permutation.
@@ -86,7 +87,7 @@ Just 2
 Nothing
 -}
 safeRightmost :: PP.Perm.Perm -> Maybe Int
-safeRightmost = PP.Utils.List.safeLast . PP.Perm.getList
+safeRightmost = PP.Utils.List.Safe.last . PP.Perm.getList
 
 {- | 'fixedPoints' @p@ returns the fixed points (as a list of points) in the permutation @p@.
 

@@ -12,38 +12,39 @@ Convenient safe functions on lists.
 module Data.Algorithm.PP.Utils.List.Safe
   (
   -- * Basic functions
-    safeHead
-  , safeTail
-  , safeLast
+    head
+  , tail
+  , last
   ) where
 
+import Prelude hiding (head, tail, last)
 import qualified Data.List as L
 
 
 {- | Safe 'head' function.
 
->>> safeHead []
+>>> head []
 Nothing
->>> safeHead [1..5]
+>>> head [1..5]
 Just 1
 -}
-safeHead :: [a] -> Maybe a
-safeHead []      = Nothing
-safeHead (x : _) = Just x
+head :: [a] -> Maybe a
+head []      = Nothing
+head (x : _) = Just x
 
 {- | Safe 'tail' function.
 
->>> safeTail []
+>>> tail []
 Nothing
->>> safeTail [1..5]
+>>> tail [1..5]
 Just [2,3,4,5]
 -}
-safeTail :: [a] -> Maybe [a]
-safeTail []       = Nothing
-safeTail (_ : xs) = Just xs
+tail :: [a] -> Maybe [a]
+tail []       = Nothing
+tail (_ : xs) = Just xs
 
-{- | 'safeLast' @xs@
+{- | 'last' @xs@
 -}
-safeLast :: [a] -> Maybe a
-safeLast [] = Nothing
-safeLast xs = Just (L.last xs)
+last :: [a] -> Maybe a
+last [] = Nothing
+last xs = Just (L.last xs)

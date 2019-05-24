@@ -27,9 +27,10 @@ import qualified Data.Foldable as F
 import qualified Data.List     as L
 import qualified Data.Tuple    as T
 
-import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
-import qualified Data.Algorithm.PP.Perm           as PP.Perm
-import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
+import qualified Data.Algorithm.PP.Geometry.Point  as PP.Geometry.Point
+import qualified Data.Algorithm.PP.Perm            as PP.Perm
+import qualified Data.Algorithm.PP.Utils.List      as PP.Utils.List
+import qualified Data.Algorithm.PP.Utils.List.Safe as PP.Utils.List.Safe
 
 {- | 'shuffleOf2' @p@ @q@ @r@ returns @True@ if the permutation @r@ is in the
 shuffle of the permutations @p@ and @q@.
@@ -61,7 +62,7 @@ shuffleOf2' p q = L.filter (T.uncurry (==) . (PP.Perm.mk A.*** PP.Perm.mk)) . PP
 Just ([1,5,3],[6,2,4])
 -}
 shuffleOf2'' :: PP.Perm.Perm -> PP.Perm.Perm -> PP.Perm.Perm -> Maybe ([PP.Geometry.Point.Point], [PP.Geometry.Point.Point])
-shuffleOf2'' p q = PP.Utils.List.safeHead . shuffleOf2' p q
+shuffleOf2'' p q = PP.Utils.List.Safe.head . shuffleOf2' p q
 
 {- | 'shuffle2' @p@ @q@ returns all distinct permutations that can be be obtained by shuffling permutation @p@ and @q@.
 

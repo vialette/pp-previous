@@ -6,7 +6,7 @@ License     : GPL-3
 Maintainer  : vialette@gmail.com
 Stability   : experimental
 
-Generating permutation facilities.
+Generating permutations facilities.
 -}
 
 module Data.Algorithm.PP.Perm.Generator
