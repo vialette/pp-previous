@@ -18,7 +18,6 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:  Data.Algorithm.PP.Combinatorics
-                  , Data.Algorithm.PP.DecompositionTree
                   , Data.Algorithm.PP.Interval
                   , Data.Algorithm.PP.Path
                   , Data.Algorithm.PP.Path.DyckPath
@@ -85,6 +84,7 @@ library
                   , Data.Algorithm.PP.Geometry.Point
                   , Data.Algorithm.PP.Geometry.Rectangle
                   , Data.Algorithm.PP.SeparatingTree
+                  , Data.Algorithm.PP.SuperSeparatingTree
                   , Data.Algorithm.PP.Stack
                   , Data.Algorithm.PP.StdYoungTableau
   -- other-modules:

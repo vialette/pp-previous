@@ -1,7 +1,7 @@
-module Data.Algorithm.PP.DecompositionTree
+module Data.Algorithm.PP.SuperSeparatingTree
   (
     -- * Type
-      DecompositionTree(..)
+      SuperSeparatingTree(..)
 
     -- * Constructing
     , mk
@@ -16,14 +16,23 @@ import qualified Data.List as L
 import qualified Data.Algorithm.PP.Perm       as PP.Perm
 import qualified Data.Algorithm.PP.Perm.Small as PP.Perm.Small
 
-data DecompositionTree = BranchPlus  DecompositionTree DecompositionTree
-                       | BranchMinus DecompositionTree DecompositionTree
-                       | Branch2413  DecompositionTree DecompositionTree DecompositionTree DecompositionTree
-                       | Branch3142  DecompositionTree DecompositionTree DecompositionTree DecompositionTree
-                       | Leaf Int
-                       deriving (Show)
+data SuperSeparatingTree = BranchPlus  SuperSeparatingTree SuperSeparatingTree
+                         | BranchMinus SuperSeparatingTree SuperSeparatingTree
+                         | Branch2413  SuperSeparatingTree SuperSeparatingTree SuperSeparatingTree SuperSeparatingTree
+                         | Branch3142  SuperSeparatingTree SuperSeparatingTree SuperSeparatingTree SuperSeparatingTree
+                         | Leaf Int
+                         deriving (Show)
 
-mk :: PP.Perm.Perm -> Maybe DecompositionTree
+{- | 'mk' @p@ returns a decomposition tree of the permutation @p@ if it is super-separable.
+-- Otherwise, the functions returns 'Nothing'.
+
+>>> let p = mk [1,5,3,4,2] in DT.mk p
+Just (BranchPlus (Leaf 1) (BranchMinus (BranchMinus (Leaf 5) (BranchPlus (Leaf 3) (Leaf 4))) (Leaf 2)))
+>>> let p = mk [3,2,5,4,2] in DT.mk p
+Just (Branch3142 (Leaf 3) (Leaf 1) (BranchMinus (Leaf 5) (Leaf 4)) (Leaf 2))
+>>>
+-}
+mk :: PP.Perm.Perm -> Maybe SuperSeparatingTree
 mk = aux [] . PP.Perm.getList
   where
     aux [(t, _)] []       = Just t
@@ -62,8 +71,10 @@ Just [1,5,3,4,2]
 Just [3,1,5,4,2]
 >>> let p = mk [3,5,1,4,2] in ST.mk p >>= (Just . DT.getPerm)
 Nothing
+>>> let p = mk [3,5,1,4,2] in DT.mk p
+Nothing
 -}
-getPerm :: DecompositionTree -> PP.Perm.Perm
+getPerm :: SuperSeparatingTree -> PP.Perm.Perm
 getPerm = PP.Perm.mk . aux []
   where
     aux acc (Leaf i)                 = i : acc
@@ -95,7 +106,7 @@ Just (BranchPlus (BranchPlus (BranchPlus (Branch3142 (Leaf 3) (Leaf 1) (BranchMi
 >>> let p = mk [3,2,5,4,2,6,7,8] in DT.mk p >>= (Just . DT.height)
 Just 6
 -}
-height :: DecompositionTree -> Int
+height :: SuperSeparatingTree -> Int
 height = aux 0
   where
     aux h (Leaf _)           = h + 1
