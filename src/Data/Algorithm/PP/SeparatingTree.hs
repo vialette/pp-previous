@@ -37,59 +37,21 @@ Nothing
 mk :: PP.Perm.Perm -> Maybe SeparatingTree
 mk = aux [] . PP.Perm.getList
   where
-    aux stack  [] = case stack of
-                     [(t, _)] -> Just t
-                     _        -> Nothing
-    aux [] (x : xs)  = let i = PP.Interval.mk x x
-                           n = Leaf x
-                           newStack = push (n, i) emptyStack
-                      in aux newStack xs
-    aux stack@((t, i) : nextStack) (x : xs)
-      | x == iMax+1 = let i' = PP.Interval.mk iMin x
-                          n = BranchPlus  t (Leaf x)
-                          newStack = push (n, i') nextStack
-                          reducedNewStack = reduce newStack
-                      in aux reducedNewStack xs
-      | x == iMin-1 = let i' = PP.Interval.mk x iMax
-                          n =  BranchMinus t (Leaf x)
-                          newStack = push (n, i') nextStack
-                          reducedNewStack = reduce newStack
-                      in aux reducedNewStack xs
-      | otherwise   = let i = PP.Interval.mk x x
-                          n =  Leaf x
-                          newStack = push (n, i) stack
-                      in aux newStack xs
+    aux [(t, _)] []       = Just t
+    aux _        []       = Nothing
+    aux s        (x : xs) = aux s' xs
       where
-        iMin  = PP.Interval.getLeft i
-        iMax  = PP.Interval.getRight i
+        s' = reduce ((Leaf x, (x, x)) : s)
 
-    -- reduce top stack elements.
-    reduce :: [(SeparatingTree, PP.Interval.Interval)] -> [(SeparatingTree, PP.Interval.Interval)]
-    reduce [] = []
-    reduce [(i, t)] = [(i, t)]
-    reduce stack@((t, i) : (t', i') : nextStack)
-      | iMax+1 == iMin' = let i'' = PP.Interval.mk iMin iMax'
-                              n = BranchPlus t t'
-                              newStack = push (n, i'') nextStack
-                          in reduce newStack
-      | iMax'+1 == iMin = let i'' = PP.Interval.mk  iMin' iMax
-                              n = BranchMinus t t'
-                              newStack = push (n, i'') nextStack
-                          in reduce newStack
-      | otherwise       = stack
+    reduce s@((t1, i1) : (t2, i2) : s')
+      | i2Max+1 == i1Min = tPlus
+      | i1Max+1 == i2Min = tMinus
+      | otherwise        = s
       where
-        iMin  = PP.Interval.getLeft i
-        iMax  = PP.Interval.getRight i
-        iMin' = PP.Interval.getLeft i'
-        iMax' = PP.Interval.getRight i'
+        tPlus  = reduce ((BranchPlus  t2 t1, (i2Min, i1Max)) : s')
+        tMinus = reduce ((BranchMinus t2 t1, (i1Min, i2Max)) : s')
 
-    -- empty stack
-    emptyStack :: [(SeparatingTree, PP.Interval.Interval)]
-    emptyStack = []
-
-    -- push an element onto the stack
-    push :: (SeparatingTree, PP.Interval.Interval) -> [(SeparatingTree, PP.Interval.Interval)] -> [(SeparatingTree, PP.Interval.Interval)]
-    push x stack = x : stack
+    reduce s = s
 
 {- | 'getPerm' @t@ returns the permutations associated to the separating tree @t@.
 
