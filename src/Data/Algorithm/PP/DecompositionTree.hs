@@ -8,6 +8,7 @@ module Data.Algorithm.PP.DecompositionTree
 
     -- * Querying
     , getPerm
+    , height
   ) where
 
 import qualified Data.List as L
@@ -86,3 +87,35 @@ getPerm = PP.Perm.mk . aux []
         acc4 = aux acc2 t4
         acc1 = aux acc4 t1
         acc3 = aux acc1 t3
+
+{- | 'height' @t@ returns the height of the decompsoition tree @t@.
+
+>>> let p = mk [3,2,5,4,2,6,7,8] in DT.mk p
+Just (BranchPlus (BranchPlus (BranchPlus (Branch3142 (Leaf 3) (Leaf 1) (BranchMinus (Leaf 5) (Leaf 4)) (Leaf 2)) (Leaf 6)) (Leaf 7)) (Leaf 8))
+>>> let p = mk [3,2,5,4,2,6,7,8] in DT.mk p >>= (Just . DT.height)
+Just 6
+-}
+height :: DecompositionTree -> Int
+height = aux 0
+  where
+    aux h (Leaf _)           = h + 1
+    aux h (BranchPlus lt rt) = 1 + max hl hr
+      where
+        hl = aux h lt
+        hr = aux h rt
+    aux h (BranchMinus lt rt) = 1 + max hl hr
+      where
+        hl = aux h lt
+        hr = aux h rt
+    aux h (Branch2413 t2 t4 t1 t3) = 1 + maximum [h2, h4, h1, h3]
+      where
+        h2 = aux h t2
+        h4 = aux h t4
+        h1 = aux h t1
+        h3 = aux h t3
+    aux h (Branch3142 t3 t1 t4 t2) = 1 + maximum [h3, h1, h4, h2]
+      where
+        h3 = aux h t3
+        h1 = aux h t1
+        h4 = aux h t4
+        h2 = aux h t2
