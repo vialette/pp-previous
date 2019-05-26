@@ -7,6 +7,7 @@ module Data.Algorithm.PP.DecompositionTree
     , mk
 
     -- * Querying
+    , getPerm
   ) where
 
 import qualified Data.List as L
@@ -51,3 +52,31 @@ mk = aux [] . PP.Perm.getList
         tMinus = reduce ((BranchMinus t2 t1, (i1Min, i2Max)) : s')
 
     reduce s = s
+
+{- | 'getPerm' @t@ returns the permutations associated to the separating tree @t@.
+
+-}
+getPerm :: DecompositionTree -> PP.Perm.Perm
+getPerm = PP.Perm.mkUnsafe . aux []
+  where
+    aux acc (Leaf i)                 = i : acc
+    aux acc (BranchPlus lt rt)       = acc''
+      where
+        acc'  = aux acc  lt
+        acc'' = aux acc' rt
+    aux acc (BranchMinus lt rt)      = acc''
+      where
+        acc'  = aux acc  lt
+        acc'' = aux acc' rt
+    aux acc (Branch2413 t2 t4 t1 t3) = acc3
+      where
+        acc2 = aux acc  t2
+        acc4 = aux acc2 t4
+        acc1 = aux acc4 t1
+        acc3 = aux acc1 t3
+    aux acc (Branch3142 t3 t1 t4 t2) = acc3
+      where
+        acc3 = aux acc  t3
+        acc1 = aux acc2 t1
+        acc4 = aux acc4 t4
+        acc2 = aux acc1 t2

@@ -59,6 +59,12 @@ mk = aux [] . PP.Perm.getList
 getPerm :: SeparatingTree -> PP.Perm.Perm
 getPerm = PP.Perm.mkUnsafe . aux []
   where
-    aux acc (Leaf i)          = i : acc
-    aux acc (BranchPlus lt rt)  = let acc' = aux acc rt in aux acc' lt
-    aux acc (BranchMinus lt rt) = let acc' = aux acc lt in aux acc' lt
+    aux acc (Leaf i)                 = i : acc
+    aux acc (BranchPlus lt rt)       = acc''
+      where
+        acc'  = aux acc  lt
+        acc'' = aux acc' rt
+    aux acc (BranchMinus lt rt)      = acc''
+      where
+        acc'  = aux acc  lt
+        acc'' = aux acc' rt
