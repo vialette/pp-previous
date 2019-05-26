@@ -7,12 +7,12 @@ module Data.Algorithm.PP.DecompositionTree
     , mk
 
     -- * Querying
---    , getPerm
   ) where
 
 import qualified Data.List as L
 
-import qualified Data.Algorithm.PP.Perm as PP.Perm
+import qualified Data.Algorithm.PP.Perm       as PP.Perm
+import qualified Data.Algorithm.PP.Perm.Small as PP.Perm.Small
 
 data DecompositionTree = BranchPlus  DecompositionTree DecompositionTree
                        | BranchMinus DecompositionTree DecompositionTree
@@ -21,60 +21,33 @@ data DecompositionTree = BranchPlus  DecompositionTree DecompositionTree
                        | Leaf Int
                        deriving (Show)
 
-mk :: PP.Perm.Perm -> DecompositionTree
-mk _ = Leaf 0
---mk = aux [] . PP.Perm.getList
---  where
---    aux stack  [] = case stack of
---                     [(t, _)] -> Just t
---                     _           -> Nothing
---    aux [] (x : xs)  = let i = PP.Interval.mk x x
---                           n = Leaf x
---                           newStack = push (n, i) emptyStack
---                      in aux newStack xs
---    aux stack@((t, i) : nextStack) (x : xs)
---      | x == iMax+1 = let i' = PP.Interval.mk iMin x
---                          n = PlusNode  t (Leaf x)
---                          newStack = push (n, i') nextStack
---                          reducedNewStack = reduce newStack
---                      in aux reducedNewStack xs
---      | x == iMin-1 = let i' = PP.Interval.mk x iMax
---                          n =  MinusNode t (Leaf x)
---                          newStack = push (n, i') nextStack
---                          reducedNewStack = reduce newStack
---                      in aux reducedNewStack xs
---      | otherwise   = let i = PP.Interval.mk x x
---                          n =  Leaf x
---                          newStack = push (n, i) stack
---                      in aux newStack xs
---      where
---        iMin  = PP.Interval.getLeft i
---        iMax  = PP.Interval.getRight i
---
---    -- reduce top stack elements.
---    reduce :: [(SeparatingTree, PP.Interval.Interval)] -> [(SeparatingTree, PP.Interval.Interval)]
---    reduce [] = []
---    reduce [(i, t)] = [(i, t)]
---    reduce stack@((t, i) : (t', i') : nextStack)
---      | iMax+1 == iMin' = let i'' = PP.Interval.mk iMin iMax'
---                              n = PlusNode t t'
---                              newStack = push (n, i'') nextStack
---                          in reduce newStack
---      | iMax'+1 == iMin = let i'' = PP.Interval.mk  iMin' iMax
---                              n = MinusNode t t'
---                              newStack = push (n, i'') nextStack
---                          in reduce newStack
---      | otherwise       = stack
---      where
---        iMin  = PP.Interval.getLeft i
---        iMax  = PP.Interval.getRight i
---        iMin' = PP.Interval.getLeft i'
---        iMax' = PP.Interval.getRight i'
---
---    -- empty stack
---    emptyStack :: [(SeparatingTree, PP.Interval.Interval)]
---    emptyStack = []
---
---    -- push an element onto the stack
---    push :: (SeparatingTree, PP.Interval.Interval) -> [(SeparatingTree, PP.Interval.Interval)] -> [(SeparatingTree, PP.Interval.Interval)]
---    push x stack = x : stack
+mk :: PP.Perm.Perm -> Maybe DecompositionTree
+mk = aux [] . PP.Perm.getList
+  where
+    aux [(t, _)] []       = Just t
+    aux _        []       = Nothing
+    aux s        (x : xs) = aux s' xs
+      where
+        s' = reduce ((Leaf x, (x, x)) : s)
+
+    reduce s@((t1, (i1Min, i1Max)) : (t2, (i2Min, i2Max)) : (t3, (i3Min, i3Max)) : (t4, (i4Min, i4Max)) : s')
+      | i2Max+1 == i1Min = tPlus
+      | i1Max+1 == i2Min = tMinus
+      | i2Max+1 == i4Min && i4Max+1 == i1Min && i1Max+1 == i3Min = t2413
+      | i3Max+1 == i1Min && i1Max+1 == i4Min && i4Max+1 == i2Min = t3142
+      | otherwise = s
+       where
+        tPlus  = reduce ((BranchPlus  t2 t1, (i2Min, i1Max)) : (t3, (i3Min, i3Max)) : (t4, (i4Min, i4Max)) : s')
+        tMinus = reduce ((BranchMinus t2 t1, (i1Min, i2Max)) : (t3, (i3Min, i3Max)) : (t4, (i4Min, i4Max)) : s')
+        t2413  = reduce ((Branch2413  t4 t3 t2 t1, (i2Min, i3Max)) : s')
+        t3142  = reduce ((Branch3142  t4 t3 t2 t1, (i3Min, i2Max)) : s')
+
+    reduce s@((t1, i1) : (t2, i2) : s')
+      | i2Max+1 == i1Min = tPlus
+      | i1Max+1 == i2Min = tMinus
+      | otherwise        = s
+      where
+        tPlus  = reduce ((BranchPlus  t2 t1, (i2Min, i1Max)) : s')
+        tMinus = reduce ((BranchMinus t2 t1, (i1Min, i2Max)) : s')
+
+    reduce s = s

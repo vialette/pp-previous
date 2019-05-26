@@ -16,8 +16,8 @@ import qualified Data.Algorithm.PP.Interval as PP.Interval
 import qualified Data.Algorithm.PP.Perm     as PP.Perm
 
 -- |Separating tree type definition
-data SeparatingTree = PlusNode SeparatingTree SeparatingTree
-                    | MinusNode SeparatingTree SeparatingTree
+data SeparatingTree = BranchPlus SeparatingTree SeparatingTree
+                    | BranchMinus SeparatingTree SeparatingTree
                     | Leaf Int
                     deriving (Show)
 
@@ -26,9 +26,9 @@ data SeparatingTree = PlusNode SeparatingTree SeparatingTree
 
 >>> import qualified Data.Algorithm.PP.SeparatingTree as ST
 >>> let p = mk [1,2,4,3] in ST.mk
-Just (MinusNode (MinusNode (Leaf 4) (Leaf 3)) (PlusNode (Leaf 1) (Leaf 2)))
+Just (BranchMinus (BranchMinus (Leaf 4) (Leaf 3)) (BranchPlus (Leaf 1) (Leaf 2)))
 >>> ST.mk $ mk [3,4,2,1]
-Just (MinusNode (MinusNode (PlusNode (Leaf 3) (Leaf 4)) (Leaf 2)) (Leaf 1))
+Just (BranchMinus (BranchMinus (BranchPlus (Leaf 3) (Leaf 4)) (Leaf 2)) (Leaf 1))
 >>> ST.mk $ mk [2,4,1,3]
 Nothing
 >>> ST.mk $ mk [3,1,4,2]
@@ -46,12 +46,12 @@ mk = aux [] . PP.Perm.getList
                       in aux newStack xs
     aux stack@((t, i) : nextStack) (x : xs)
       | x == iMax+1 = let i' = PP.Interval.mk iMin x
-                          n = PlusNode  t (Leaf x)
+                          n = BranchPlus  t (Leaf x)
                           newStack = push (n, i') nextStack
                           reducedNewStack = reduce newStack
                       in aux reducedNewStack xs
       | x == iMin-1 = let i' = PP.Interval.mk x iMax
-                          n =  MinusNode t (Leaf x)
+                          n =  BranchMinus t (Leaf x)
                           newStack = push (n, i') nextStack
                           reducedNewStack = reduce newStack
                       in aux reducedNewStack xs
@@ -69,11 +69,11 @@ mk = aux [] . PP.Perm.getList
     reduce [(i, t)] = [(i, t)]
     reduce stack@((t, i) : (t', i') : nextStack)
       | iMax+1 == iMin' = let i'' = PP.Interval.mk iMin iMax'
-                              n = PlusNode t t'
+                              n = BranchPlus t t'
                               newStack = push (n, i'') nextStack
                           in reduce newStack
       | iMax'+1 == iMin = let i'' = PP.Interval.mk  iMin' iMax
-                              n = MinusNode t t'
+                              n = BranchMinus t t'
                               newStack = push (n, i'') nextStack
                           in reduce newStack
       | otherwise       = stack
@@ -98,5 +98,5 @@ getPerm :: SeparatingTree -> PP.Perm.Perm
 getPerm = PP.Perm.mkUnsafe . aux []
   where
     aux acc (Leaf i)          = i : acc
-    aux acc (PlusNode lt rt)  = let acc' = aux acc rt in aux acc' lt
-    aux acc (MinusNode lt rt) = let acc' = aux acc lt in aux acc' lt
+    aux acc (BranchPlus lt rt)  = let acc' = aux acc rt in aux acc' lt
+    aux acc (BranchMinus lt rt) = let acc' = aux acc lt in aux acc' lt

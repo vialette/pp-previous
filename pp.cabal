@@ -80,6 +80,7 @@ library
                   , Data.Algorithm.PP.Utils.Int
                   , Data.Algorithm.PP.Utils.List
                   , Data.Algorithm.PP.Utils.Maybe
+                  , Data.Algorithm.PP.Utils.List.Safe
                   , Data.Algorithm.PP.Utils.Foldable
                   , Data.Algorithm.PP.Geometry.Point
                   , Data.Algorithm.PP.Geometry.Rectangle
