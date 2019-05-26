@@ -43,7 +43,7 @@ mk = aux [] . PP.Perm.getList
       where
         s' = reduce ((Leaf x, (x, x)) : s)
 
-    reduce s@((t1, i1) : (t2, i2) : s')
+    reduce s@((t1, (i1Min, i1Max)) : (t2, (i2Min, i2Max)) : s')
       | i2Max+1 == i1Min = tPlus
       | i1Max+1 == i2Min = tMinus
       | otherwise        = s
@@ -55,16 +55,21 @@ mk = aux [] . PP.Perm.getList
 
 {- | 'getPerm' @t@ returns the permutations associated to the separating tree @t@.
 
+
+>>> let p = mk [1,5,3,4,2] in ST.mk p >>= (Just . ST.getPerm)
+Just [1,5,3,4,2]
+>>> let p = mk [3,2,5,4,2] in ST.mk p >>= (Just . ST.getPerm)
+Nothing
 -}
 getPerm :: SeparatingTree -> PP.Perm.Perm
-getPerm = PP.Perm.mkUnsafe . aux []
+getPerm = PP.Perm.mk . aux []
   where
     aux acc (Leaf i)                 = i : acc
     aux acc (BranchPlus lt rt)       = acc''
       where
-        acc'  = aux acc  lt
-        acc'' = aux acc' rt
+        acc'  = aux acc  rt
+        acc'' = aux acc' lt
     aux acc (BranchMinus lt rt)      = acc''
       where
-        acc'  = aux acc  lt
-        acc'' = aux acc' rt
+        acc'  = aux acc  rt
+        acc'' = aux acc' lt
