@@ -11,6 +11,8 @@ module Data.Algorithm.PP.Interval
     , cover
 
     -- * Querying
+    , getLeft
+    , getRight
     , len
     , disjoint
 
@@ -20,38 +22,42 @@ module Data.Algorithm.PP.Interval
 
 import qualified Data.Foldable as F
 
-data Interval = Interval { getLeft :: Int, getRight :: Int } deriving (Show, Eq, Ord)
+newtype Interval = Interval (Int, Int) deriving (Show, Eq, Ord)
+
 
 mkUnsafe :: Int -> Int -> Interval
-mkUnsafe l r = Interval { getLeft = l, getRight = r }
+mkUnsafe l r = Interval (l, r)
 
+{- | 'mk' @l@ @r@ returns the interval with left endpoint @l@ and right endpoint @r@
+if @l <= r@ and @Nothing otherwhise.
+
+>>> Interval.mk 2 6
+
+-}
 mk :: Int -> Int -> Maybe Interval
 mk l r
   | l > r     = Nothing
   | otherwise = Just $ mkUnsafe l r
 
+getLeft :: Interval -> Int
+getLeft (Interval (l, _)) = l
+
+getRight :: Interval -> Int
+getRight (Interval (_, r)) = r
 
 union :: Interval -> Interval -> Maybe Interval
-union i i'
+union i@(Interval (l, r)) i'@(Interval (l', r'))
   | disjoint i i' = Nothing
   | otherwise     = mk l'' r''
   where
-    l   = getLeft i
-    r   = getRight i
-    l'  = getLeft i'
-    r'  = getRight i'
     l'' = min l l'
     r'' = max r r'
 
 intersection :: Interval -> Interval -> Maybe Interval
-intersection i i'
+intersection i@(Interval (l, r)) i'@(Interval (l', r'))
   | disjoint i i' = Nothing
   | otherwise     = mk l'' r''
   where
-    l   = getLeft i
-    r   = getRight i
-    l'  = getLeft i'
-    r'  = getRight i'
     l'' = max l l'
     r'' = min r r'
 
@@ -59,21 +65,16 @@ cover :: [Interval] -> Maybe Interval
 cover []       = Nothing
 cover (i : is) = Just $ F.foldr f i is
   where
-    f i iCover = mkUnsafe l r
+    f (Interval (l, r)) (Interval (l', r')) = mkUnsafe l'' r''
       where
-        l = min (getLeft i)  (getLeft iCover)
-        r = max (getRight i) (getRight iCover)
+        l'' = min l l'
+        r'' = max r r'
 
 len :: Interval -> Int
-len i = getRight i - getLeft i
+len (Interval (l, r)) = r-l
 
 disjoint ::  Interval -> Interval -> Bool
-disjoint i i' = r < l' || r' < l
-  where
-    l   = getLeft i
-    r   = getRight i
-    l'  = getLeft i'
-    r'  = getRight i'
+disjoint (Interval (l, r)) (Interval (l', r')) = r < l' || r' < l
 
 ints :: Interval -> [Int]
-ints i = [getLeft i .. getRight i]
+ints (Interval (l, r)) = [l .. r]

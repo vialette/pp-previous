@@ -6,8 +6,12 @@ module Data.Algorithm.PP.PTree
     -- * Constructing
     , mk
 
-    -- *
+    -- * Querying
+    , height
     , labels
+
+    -- * Displaying
+    , indent
   ) where
 
 import Data.Maybe
@@ -76,7 +80,64 @@ mk = go [] . L.map mkLeaf . PP.Perm.getList
         p  = PP.Perm.mk $ L.map PP.Interval.getLeft is
         i  = fromJust $ PP.Interval.cover is
 
+{- | 'height' @pT@ returns the height of the PTree @pT@.
+
+>>> pT = PTree.mk $ Perm.mk [1,7,6,5,2,8,3]
+>>> pT
+(PTree [1,2] [(PTree [1] []),(PTree [3,1,4,2] [(PTree [2,1] [(PTree [2,1] [(PTree [1] []),(PTree [1] [])]),(PTree [1] [])]),(PTree [1] []),(PTree [1] []),(PTree [1] [])])])
+>>> PTree.height pT
+4
+-}
+height :: PTree -> Int
+height pT
+  | L.null pTs = 0
+  | otherwise  = succ . F.maximum $ L.map height pTs
+  where
+    pTs = getPTrees pT
+
 labels :: PTree -> [PP.Perm.Perm]
 labels = L.sort . S.toList . aux S.empty
   where
     aux s pT = S.insert (getPerm pT) . F.foldl aux s $ getPTrees pT
+
+{- | 'indent' @pT@ returns an indented string representation of the PTree @pT@.
+
+>>> putStr . PTree.indent . PTree.mk $ P.mk [1,7,6,5,2,8,9,3]
+[1,2] {
+  1
+  [3,1,4,2] {
+    [2,1] {
+      [2,1] {
+        6
+        5
+      }
+      4
+    }
+    2
+    [1,2] {
+      7
+      8
+    }
+    3
+  }
+}
+-}
+indent :: PTree -> String
+indent = aux 0
+  where
+    aux o pT
+      | PP.Interval.len i == 0 = offset                       ++
+                                 show (PP.Interval.getLeft i) ++
+                                 "\n"
+
+      | otherwise              = offset                       ++
+                                 show p                       ++
+                                 " {\n"                       ++
+                                 F.concatMap (aux (o+2)) pTs  ++
+                                 offset                       ++
+                                 "}\n"
+      where
+        offset = L.take o $ L.repeat ' '
+        p      = getPerm     pT
+        i      = getInterval pT
+        pTs    = getPTrees   pT

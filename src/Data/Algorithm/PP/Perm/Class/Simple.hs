@@ -1,20 +1,26 @@
-module Data.Algorithm.PP.Perm.Class.Simple
-(
-  isSimple
-)
-where
+{-|
+Module      : Data.Algorithm.PP.Perm.Class.Simple
+Description : Simple permutations
+Copyright   : (c) Stéphane Vialette, 2018-2019
+License     : GPL-3
+Maintainer  : vialette@gmail.com
+Stability   : experimental
 
-  import qualified Data.Foldable as F
-  import qualified Data.List     as L
-  import qualified Data.Tuple    as T
+Permutations.
+-}
 
-  import qualified Data.Algorithm.PP.Perm       as PP.Perm
-  import qualified Data.Algorithm.PP.Utils.List as PP.Utils.List
+module Data.Algorithm.PP.Perm.Class.Simple (
+  simple
+ ) where
 
-  -- |'isSimple' 'p' returns 'True' is the permutation 'p' is simple.
-  isSimple :: PP.Perm.Perm -> Bool
-  isSimple = F.all check . L.tail . F.concatMap (L.reverse . L.inits) . L.tails . PP.Perm.getList
-    where
-      check []  = True
-      check [_] = True
-      check xs  = any (T.uncurry (/=)) . L.zip [F.minimum xs..] $ L.sort xs
+import qualified Data.Foldable as F
+import qualified Data.List     as L
+import qualified Data.Tuple    as T
+
+import qualified Data.Algorithm.PP.Perm       as PP.Perm
+import qualified Data.Algorithm.PP.PTree as PP.PTree
+
+{- | 'isSimple' @p@ returns true iff is the permutation @p@ is simple.
+-}
+simple :: PP.Perm.Perm -> Bool
+simple = (==) 1 . PP.PTree.height . PP.PTree.mk

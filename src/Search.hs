@@ -1,15 +1,15 @@
 module Main where
 
+import Control.Arrow
 import qualified Data.Foldable      as F
 import qualified Data.List          as L
 import qualified System.Environment as Environment
 import qualified System.IO          as IO
 
-import Data.Algorithm.PP.Perm                      as PP.Perm
-import Data.Algorithm.PP.Perm.Search               as PP.Perm.Search
-import Data.Algorithm.PP.Perm.Class.SuperSeparable as PP.Perm.Class.SuperSeparable
-import Data.Algorithm.PP.Perm.Generator            as PP.Perm.Generator
-import Data.Algorithm.PP.SuperSeparatingTree       as PP.SuperSeparatingTree
+import Data.Algorithm.PP.Perm           as PP.Perm
+import Data.Algorithm.PP.Perm.Search    as PP.Perm.Search
+import Data.Algorithm.PP.Perm.Generator as PP.Perm.Generator
+import Data.Algorithm.PP.PTree     as PP.PTree
 
 
 check :: PP.Perm.Perm -> Bool
@@ -25,13 +25,16 @@ check p = F.or [PP.Perm.Search.search q p | q <- qs]
 stringToInt :: String -> Int
 stringToInt s = read s :: Int
 
+--count :: Int -> [(Int, Int)]
+count = L.map shape . L.group . L.sort . L.map maxNode . PP.Perm.Generator.perms
+  where
+    maxNode = PP.Perm.len . F.maximum . PP.PTree.labels . PP.PTree.mk
+    shape   = L.head &&& L.length
+
+--map (sum . map snd) . groupBy ((==) `on` fst) . sort
+
 main :: IO ()
 main = do
   args <- Environment.getArgs
   let n = stringToInt $ L.head args
-  let ps = L.filter check . L.filter (PP.Perm.Class.SuperSeparable.superSeparable) $ PP.Perm.Generator.perms n
-  IO.putStrLn "superseparable permutations that do not avoid 24143, 25314, 31524,35142, 41352 and 42513:"
-  IO.putStrLn $ show ps
-  let ps' = L.filter (not . check) . L.filter (not . PP.Perm.Class.SuperSeparable.superSeparable) $ PP.Perm.Generator.perms n
-  IO.putStrLn "non-superseparable permutations that do contain 24143, 25314, 31524,35142, 41352 or 42513:"
-  IO.putStrLn $ show ps'
+  mapM_ print $ count n
