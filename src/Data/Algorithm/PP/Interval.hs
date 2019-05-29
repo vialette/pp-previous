@@ -5,30 +5,36 @@ module Data.Algorithm.PP.Interval
 
     -- * Constructing
     , mk
-    , mkSafe
+    , mkUnsafe
     , union
     , intersection
+    , cover
 
     -- * Querying
     , len
     , disjoint
+
+    -- * Transforming
+    , ints
   ) where
+
+import qualified Data.Foldable as F
 
 data Interval = Interval { getLeft :: Int, getRight :: Int } deriving (Show, Eq, Ord)
 
-mk :: Int -> Int -> Interval
-mk l r = Interval { getLeft = l, getRight = r }
+mkUnsafe :: Int -> Int -> Interval
+mkUnsafe l r = Interval { getLeft = l, getRight = r }
 
-mkSafe :: Int -> Int -> Maybe Interval
-mkSafe l r
-  | l > r = Nothing
-  | otherwise = Just $ mk l r
+mk :: Int -> Int -> Maybe Interval
+mk l r
+  | l > r     = Nothing
+  | otherwise = Just $ mkUnsafe l r
 
 
 union :: Interval -> Interval -> Maybe Interval
 union i i'
   | disjoint i i' = Nothing
-  | otherwise     = mkSafe l'' r''
+  | otherwise     = mk l'' r''
   where
     l   = getLeft i
     r   = getRight i
@@ -40,7 +46,7 @@ union i i'
 intersection :: Interval -> Interval -> Maybe Interval
 intersection i i'
   | disjoint i i' = Nothing
-  | otherwise     = mkSafe l'' r''
+  | otherwise     = mk l'' r''
   where
     l   = getLeft i
     r   = getRight i
@@ -48,6 +54,15 @@ intersection i i'
     r'  = getRight i'
     l'' = max l l'
     r'' = min r r'
+
+cover :: [Interval] -> Maybe Interval
+cover []       = Nothing
+cover (i : is) = Just $ F.foldr f i is
+  where
+    f i iCover = mkUnsafe l r
+      where
+        l = min (getLeft i)  (getLeft iCover)
+        r = max (getRight i) (getRight iCover)
 
 len :: Interval -> Int
 len i = getRight i - getLeft i
@@ -59,3 +74,6 @@ disjoint i i' = r < l' || r' < l
     r   = getRight i
     l'  = getLeft i'
     r'  = getRight i'
+
+ints :: Interval -> [Int]
+ints i = [getLeft i .. getRight i]

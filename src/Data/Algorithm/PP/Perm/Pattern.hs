@@ -12,6 +12,7 @@ Enumerating patterns in permutations.
 module Data.Algorithm.PP.Perm.Pattern (
   -- * Basic patterns
     kPatterns
+  , kDistinctPatterns
   , patterns
 
   -- * Maximizing
@@ -32,7 +33,7 @@ import qualified Data.Algorithm.PP.Perm           as PP.Perm
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-{- | 'kPatterns' @k@ @p@ returns tall permutations of length @k@ that occur in permutation @p@.
+{- | 'kPatterns' @k@ @p@ returns all permutations of length @k@ that occur in permutation @p@.
 
 >>> kPatterns 1 $ mkPerm [1,4,2,5,3]
 [[1]]
@@ -46,7 +47,15 @@ import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 [[1,4,2,5,3]]
 -}
 kPatterns :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
-kPatterns k = PP.Utils.List.uniq . L.map PP.Perm.mk . PP.Utils.List.subsets k . PP.Perm.getList
+kPatterns k = L.map PP.Perm.mk . PP.Utils.List.subsets k . PP.Perm.getList
+
+{- | 'kDistinctPatterns' @k@ @p@ returns all distinct permutations of length @k@ that occur in
+permutation @p@.
+
+>>>
+-}
+kDistinctPatterns :: Int -> PP.Perm.Perm -> [PP.Perm.Perm]
+kDistinctPatterns k = PP.Utils.List.uniq . kPatterns k
 
 {- | 'patterns' @p@ returns all permutations that occur in permutation @p@.
 

@@ -1,53 +1,37 @@
 module Main where
 
-  import qualified Data.Foldable      as F
-  import qualified Data.List          as L
-  import qualified System.Environment as Environment
-  import qualified System.IO          as IO
+import qualified Data.Foldable      as F
+import qualified Data.List          as L
+import qualified System.Environment as Environment
+import qualified System.IO          as IO
 
-  import Data.Algorithm.PP.Geometry.Point    as PP.Geometry.Point
-  import Data.Algorithm.PP.Perm              as PP.Perm
-  import Data.Algorithm.PP.Perm.Features     as PP.Perm.Features
-  import Data.Algorithm.PP.Perm.Organization as PP.Perm.Organization
-  import Data.Algorithm.PP.Perm.Generator    as PP.Perm.Generator
+import Data.Algorithm.PP.Perm                      as PP.Perm
+import Data.Algorithm.PP.Perm.Search               as PP.Perm.Search
+import Data.Algorithm.PP.Perm.Class.SuperSeparable as PP.Perm.Class.SuperSeparable
+import Data.Algorithm.PP.Perm.Generator            as PP.Perm.Generator
+import Data.Algorithm.PP.SuperSeparatingTree       as PP.SuperSeparatingTree
 
 
-  data Color = Red | Blue deriving (Show, Eq, Ord)
+check :: PP.Perm.Perm -> Bool
+check p = F.or [PP.Perm.Search.search q p | q <- qs]
+  where
+    qs = [ PP.Perm.mk [2,4,1,5,3]
+         , PP.Perm.mk [2,5,3,1,4]
+         , PP.Perm.mk [3,1,5,2,4]
+         , PP.Perm.mk [3,5,1,4,2]
+         , PP.Perm.mk [4,1,3,5,2]
+         , PP.Perm.mk [4,2,5,1,3]]
 
-  type Arc = (PP.Geometry.Point.Point, PP.Geometry.Point.Point)
+stringToInt :: String -> Int
+stringToInt s = read s :: Int
 
-  data Arcs = Arcs { getCountInArcs :: Int
-                   , getCountOutArcs :: Int
-                   , getOutArcs :: [Arc]
-                   } deriving (Show)
-
-  data Node = Node { point               :: PP.Geometry.Point.Point
-                   , getCountInBlueArcs  :: Int
-                   , getCountOutBlueArcs :: Int
-                   , getOutBlueArcs      :: [Node]
-                   , getCountInRedArcs   :: Int
-                   , getCountOutRedArcs  :: Int
-                   , getOutRedArcs       :: [Node]
-                   } deriving (Show, Eq)
-
-  mkArc :: (Int, Int) -> (Int, Int) -> Arc
-  mkArc (i, j) (k, l) = (PP.Geometry.Point.mk i j, PP.Geometry.Point.mk k l)
-
-  buildGraph :: PP.Perm.Perm -> [(PP.Geometry.Point.Point, PP.Geometry.Point.Point)]
-  buildGraph p = blueArcs ++ redArcs
-    where
-      n  = PP.Perm.len p
-      xo = L.zip [1..] $ PP.Perm.Organization.xOrganization p
-      yo = L.zip [1..] $ PP.Perm.Organization.yOrganization p
-
-      blueArcs = [mkArc (i, j) (i+d, j+1) | (j, d) <- yo, i <- [1..n-d]] ++
-                 [mkArc (i, j) (i-d, j+1) | (j, d) <- yo, i <- [d..n]]
-
-      redArcs  = [mkArc (i, j) (i+1, j+d) | (i, d) <- xo, j <- [1..n-d]] ++
-                 [mkArc (i, j) (i+1, j-d) | (i, d) <- xo, j <- [d..n]]
-
-  main :: IO ()
-  main = do
-    let p = PP.Perm.mk [2, 5, 1, 4, 6, 3]
-    let g = buildGraph p
-    IO.putStrLn $ show g
+main :: IO ()
+main = do
+  args <- Environment.getArgs
+  let n = stringToInt $ L.head args
+  let ps = L.filter check . L.filter (PP.Perm.Class.SuperSeparable.superSeparable) $ PP.Perm.Generator.perms n
+  IO.putStrLn "superseparable permutations that do not avoid 24143, 25314, 31524,35142, 41352 and 42513:"
+  IO.putStrLn $ show ps
+  let ps' = L.filter (not . check) . L.filter (not . PP.Perm.Class.SuperSeparable.superSeparable) $ PP.Perm.Generator.perms n
+  IO.putStrLn "non-superseparable permutations that do contain 24143, 25314, 31524,35142, 41352 or 42513:"
+  IO.putStrLn $ show ps'

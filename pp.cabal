@@ -74,7 +74,9 @@ library
                   , Data.Algorithm.PP.Perm.Generator.Alternating
                   , Data.Algorithm.PP.Perm.Class.Separable
                   , Data.Algorithm.PP.Perm.Class.Simple
+                  , Data.Algorithm.PP.Perm.Class.SuperSeparable
                   , Data.Algorithm.PP.Perm.Labeling
+                  , Data.Algorithm.PP.PTree
                   , Data.Algorithm.PP.Utils.Integer
                   , Data.Algorithm.PP.Utils.Int
                   , Data.Algorithm.PP.Utils.List
