@@ -43,7 +43,7 @@ mk = go [] . L.map mkLeaf . PP.Perm.getList
   where
     mkLeaf :: Int -> PTree
     mkLeaf y = PTree { getPerm     = PP.Perm.mk [1]
-                     , getInterval = PP.Interval.mkUnsafe y y
+                     , getInterval = PP.Interval.mk y y
                      , getPTrees   = [] }
 
     go :: [PTree] -> [PTree] -> PTree
