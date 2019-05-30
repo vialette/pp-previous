@@ -70,6 +70,10 @@ getRight (Interval (_, r)) = r
 {- | 'union' @i@ @i'@ returns the union of intervals @i@ and @i'@ if they are intersecting.
 Otherwise, the function returns @Nothing@.
 
+>>> Interval.union (Interval.mk 2 5) (Interval.mk 3 7)
+Just (Interval (2,7))
+>>> Interval.union (Interval.mk 2 5) (Interval.mk 6 7)
+Nothing
 -}
 union :: Interval -> Interval -> Maybe Interval
 union i@(Interval (l, r)) i'@(Interval (l', r'))
@@ -79,7 +83,10 @@ union i@(Interval (l, r)) i'@(Interval (l', r'))
 {- | 'intersection' @i@ @i'@ returns the intersection of intervals @i@ and @i'@ if they are intersecting.
 Otherwise, the function returns @Nothing@.
 
->>>
+>>> Interval.intersection (Interval.mk 2 5) (Interval.mk 3 7)
+Just (Interval (3,5))
+>>> Interval.intersection (Interval.mk 2 5) (Interval.mk 6 7)
+Nothing
 -}
 intersection :: Interval -> Interval -> Maybe Interval
 intersection i@(Interval (l, r)) i'@(Interval (l', r'))
@@ -89,7 +96,10 @@ intersection i@(Interval (l, r)) i'@(Interval (l', r'))
 {- | 'cover' @is@ returns the least interval coverings all intervals in @is@.
 The function returns @Nothing@ if @is@ is the empty list.
 
->>>
+>>> Interval.cover [Interval.mk 2 5, Interval.mk 3 7, Interval.mk 6 8]
+Just (Interval (2,8))
+>>> Interval.cover []
+Nothing
 -}
 cover :: [Interval] -> Maybe Interval
 cover []       = Nothing
@@ -99,27 +109,28 @@ cover (i : is) = Just $ F.foldr f i is
 
 {- | 'len' @i@ returns the length of the interval @i@.
 
->>> Interval.mk 2 5 >>= (Just . Interval.len)
-Just 3
->>> Interval.mk 2 2 >>= (Just . Interval.len)
-Just 0
+>>> let i = Interval.mk 2 5 in Interval.len i
+3
+>>> let i = Interval.mk 2 2 in Interval.len i
+0
 -}
 len :: Interval -> Int
 len (Interval (l, r)) = r-l
 
 {- | 'disjoint' @i@ @i'@ returns return true iff the intervals @i@ and @i'@ are disjoint.
 
->>>
+>>> let i = Interval.mk 2 5; i' = Interval.mk 3 7 in Interval.disjoint i i'
+False
+>>> let i = Interval.mk 2 5; i' = Interval.mk 6 7 in Interval.disjoint i i'
+True
 -}
 disjoint :: Interval -> Interval -> Bool
 disjoint (Interval (l, r)) (Interval (l', r')) = r < l' || r' < l
 
 {- | 'ints' @i@ returns the list @[l, l+1, ..., r]@
 
->>> Interval.mk 2 5 >>= (Just . Interval.ints)
-Just [2,3,4,5]
->>> Interval.mk 2 2 >>= (Just . Interval.ints)
-Just [2]
+>>> let i = Interval.mk 2 5 in Interval.ints i
+[2,3,4,5]
 -}
 ints :: Interval -> [Int]
 ints (Interval (l, r)) = [l .. r]
