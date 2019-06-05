@@ -69,7 +69,7 @@ The function does not check the argument. Use with caution.
 
 -}
 mk :: (Ord a) => [a] -> Perm
-mk = Perm . L.map (uncurry PP.Geometry.Point.mk) . L.zip [1..] . reduce
+mk = Perm .L.zipWith PP.Geometry.Point.mk [1 ..] . reduce
 
 {- |'fromPoints' @ps@ construct a permutation from a list of points. The points do need to be sorted.
 
@@ -99,23 +99,28 @@ len :: Perm -> Int
 len = L.length . getPoints
 
 {- | 'at' @i@ @p@ returns the integer at position @i@ in permutation @p@.
+The first element is at position 1.
 
->>> let p = mk [1..4] in [p `at` i | i <- [0..len p-1]]
+>>> let p = mk [1..4] in [p `at` i | i <- [1 .. len p]]
 [1,2,3,4]
->>> mk [1..4] `at` 4
+>>> mk [1..4] `at` 0
+*** Exception: Prelude.!!: negative index
+>>> mk [1 .. 4] `at` 5
 *** Exception: Prelude.!!: index too large
 -}
 at :: Perm -> Int -> Int
-at p i = flip (L.!!) i $ getList p
+at p i = PP.Geometry.Point.getY . flip (L.!!) (i-1) $ getPoints p
 
 {- | 'delete' @i@ @p@ returns the permutations obtains by deleting @i@ in permutation @p@.
 If @i@ is not part of permutation @p@, then the function returns @p@ unchanged.
 
->>> let p = mk [4,1,3,2] in [delete i p | i <- [1..4]]
+>>> let p = mk [4,1,3,2] in [delete i p | i <- [1 .. len p]]
 [[3,2,1],[3,1,2],[3,1,2],[1,3,2]]
 -}
-delete :: Int -> Perm -> Perm
-delete i = mk . L.delete i . getList
+delete :: Int -> Perm -> Maybe Perm
+delete i p
+  | i < 1 || i > len p = Nothing
+  | otherwise          = Just . mk . L.delete i $ getList p
 
 {- | 'deleteMin' @p@ returns the permutations obtains by deleting @1@ in permutation @p@.
 
@@ -124,7 +129,7 @@ delete i = mk . L.delete i . getList
 >>> let p = mk [4,1,3,2] in deleteMin p == delete 1 p
 True
 -}
-deleteMin :: Perm -> Perm
+deleteMin :: Perm -> Maybe Perm
 deleteMin = delete 1
 
 {- | 'deleteMax' @p@ returns the permutations obtains by deleting the maximum element in permutation @p@.
@@ -134,10 +139,8 @@ deleteMin = delete 1
 >>> let p = mk [4,1,3,2] in deleteMax p == delete 4 p
 True
 -}
-deleteMax :: Perm -> Perm
-deleteMax p = delete n p
-  where
-  n = len p
+deleteMax :: Perm -> Maybe Perm
+deleteMax p = delete (len p) p
 
 {- | 'deleteAt' @i@ @p@ returns the permutations obtains by deleting the element at position @i@
 in permutation @p@ (positions start at 0).
