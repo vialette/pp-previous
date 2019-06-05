@@ -13,7 +13,7 @@ module Data.Algorithm.PP.Perm (
     -- * Type
     Perm
 
-    -- * Building permutations
+    -- * Building
   , mk
   , fromPoints
   , ascending
@@ -56,6 +56,15 @@ import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
+data P
+data Q
+
+newtype Perm a = Perm { getPoints :: [PP.Geometry.Point.Point] }
+                 deriving (Eq, Ord)
+
+type Perm = Perm PermTag
+type Pattern = Perm PatternTag
+
 -- | 'Perm' type
 newtype Perm = Perm { getPoints :: [PP.Geometry.Point.Point] }
                deriving (Eq, Ord)
@@ -68,8 +77,8 @@ instance Show Perm where
 The function does not check the argument. Use with caution.
 
 -}
-mk :: (Ord a) => [a] -> Perm
-mk = Perm .L.zipWith PP.Geometry.Point.mk [1 ..] . reduce
+mk :: (Foldable t, Ord a) => t a -> Perm
+mk = Perm .L.zipWith PP.Geometry.Point.mk [1 ..] . reduce . F.toList
 
 {- |'fromPoints' @ps@ construct a permutation from a list of points. The points do need to be sorted.
 
@@ -189,7 +198,7 @@ identity = ascending
 [1,2,3,4]
 -}
 ascending :: Int -> Perm
-ascending n = mk [1..n]
+ascending n = mk [1 .. n]
 
 {- | 'descending' @n@ returns the ascending permutation of length @n@.
 
@@ -197,7 +206,7 @@ ascending n = mk [1..n]
 [4,3,2,1]
 -}
 descending :: Int -> Perm
-descending n = mk [n,n-1..1]
+descending n = mk [n, n-1 .. 1]
 
 {- | 'empty' returns the empty permutation.
 -}
