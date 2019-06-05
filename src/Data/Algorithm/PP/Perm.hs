@@ -56,15 +56,6 @@ import qualified Data.Algorithm.PP.Geometry.Point as PP.Geometry.Point
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
-data P
-data Q
-
-newtype Perm a = Perm { getPoints :: [PP.Geometry.Point.Point] }
-                 deriving (Eq, Ord)
-
-type Perm = Perm PermTag
-type Pattern = Perm PatternTag
-
 -- | 'Perm' type
 newtype Perm = Perm { getPoints :: [PP.Geometry.Point.Point] }
                deriving (Eq, Ord)
