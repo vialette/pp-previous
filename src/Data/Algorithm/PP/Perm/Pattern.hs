@@ -14,6 +14,7 @@ module Data.Algorithm.PP.Perm.Pattern (
     kPatterns
   , kDistinctPatterns
   , patterns
+  , kProlific
 
   -- * Maximizing
   , maxPatterns
@@ -30,6 +31,7 @@ import qualified Data.List       as L
 import qualified Data.Tuple      as T
 
 import qualified Data.Algorithm.PP.Perm           as PP.Perm
+import qualified Data.Algorithm.PP.Perm.Jump      as PP.Perm.Jump
 import qualified Data.Algorithm.PP.Utils.Foldable as PP.Utils.Foldable
 import qualified Data.Algorithm.PP.Utils.List     as PP.Utils.List
 
@@ -64,6 +66,14 @@ kDistinctPatterns k = PP.Utils.List.uniq . kPatterns k
 -}
 patterns :: PP.Perm.Perm -> [PP.Perm.Perm]
 patterns p = L.concat [kPatterns k p | k <- [1..PP.Perm.len p]]
+
+{- | 'kProlofic' @k@ @p@ returns true iff every choice of @k@ deletions yields a different pattern.
+
+Bevan, Homberger, andTenner [2, Theorem 2.22] established a tight connection between the prolific property andminimum Manhattan distance: a permutationπisd-prolific if and only ifd(π)≥d+2
+BEVAN, D., HOMBERGER, C.,ANDTENNER, B. E. Prolific permutations and permutedpackings: downsets containing many large patterns.J. Combinatorial Theory, Series A,153 (2018), 98–121.
+-}
+kProlific :: Int -> PP.Perm.Perm -> Bool
+kProlific k p = PP.Perm.Jump.manhattan p >= k+2
 
 {- | 'maxPatterns' @f@ @p@ returns the longest patterns @q@ of permutation @p@ such that @f q@ holds.
 -}
