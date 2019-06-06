@@ -1,10 +1,11 @@
 {-|
 Module      : Data.Algorithm.PP.Perm.Transposition
-Description : Organization numbers
+Description : Transpositions
 Copyright   : (c) Stéphane Vialette, 2018-2019
 License     : GPL-3
 Maintainer  : vialette@gmail.com
 Stability   : experimental
+
 
 -}
 
@@ -42,7 +43,7 @@ in case of non-valid indices.
 *** Exception: Prelude.!!: index too large
 -}
 transpose :: Int -> Int -> PP.Perm.Perm -> PP.Perm.Perm
-transpose i j = PP.Perm.mk . PP.Utils.List.swapElementsAt i j . PP.Perm.getList
+transpose i j = PP.Perm.mk . PP.Utils.List.swapElementsAt (i-1) (j-1) . PP.Perm.getList
 
 {-| 'safeTranspose' @i@ @j@ @p@ returns @Nothing@ for out of bounds indices @i@ and @j@,
  and @Just $ transpose i j p@ otherwise.
@@ -63,8 +64,8 @@ safeTranspose :: Int -> Int -> PP.Perm.Perm -> Maybe PP.Perm.Perm
 safeTranspose i j p = PP.Utils.Maybe.whenMaybe checkIJ $ transpose i j p
   where
     n       = PP.Perm.len p
-    checkI  = i >= 0 && i < n
-    checkJ  = j >= 0 && j < n
+    checkI  = i >= 1 && i <= n
+    checkJ  = j >= 1 && j <= n
     checkIJ = checkI && checkJ
 
 {-| 'transpositions' @p@ returns all transpositions of permutation @p@.
@@ -73,7 +74,7 @@ safeTranspose i j p = PP.Utils.Maybe.whenMaybe checkIJ $ transpose i j p
 [[2,1,3,4],[3,2,1,4],[4,2,3,1],[1,3,2,4],[1,4,3,2],[1,2,4,3]]
 -}
 transpositions :: PP.Perm.Perm -> [PP.Perm.Perm]
-transpositions p = [transpose i j p | i <- [0..n-2], j <- [i+1..n-1]]
+transpositions p = [transpose i j p | i <- [1 .. n-1], j <- [i+1 .. n]]
   where
     n = PP.Perm.len p
 
@@ -83,6 +84,6 @@ transpositions p = [transpose i j p | i <- [0..n-2], j <- [i+1..n-1]]
 [[2,1,3,4],[1,3,2,4],[1,2,4,3]]
 -}
 adjacentTranspositions :: PP.Perm.Perm -> [PP.Perm.Perm]
-adjacentTranspositions p = [transpose i (i+1) p | i <- [0..n-2]]
+adjacentTranspositions p = [transpose i (i+1) p | i <- [1 .. n-1]]
   where
     n = PP.Perm.len p

@@ -28,11 +28,20 @@ import Control.Applicative ((<$>))
 import Control.Monad (foldM)
 import qualified Data.Foldable as F
 import qualified Data.List     as L
+import Data.Semigroup
+import Data.Monoid
 import qualified Data.Tuple    as T
 import Data.Function (on)
 
 import qualified Data.Algorithm.PP.Utils.Maybe as PP.Utils.Maybe
 import qualified Data.Algorithm.PP.Perm        as PP.Perm
+
+instance Semigroup PP.Perm.Perm where
+  (<>) = (<<+>>)
+
+instance Monoid PP.Perm.Perm where
+  mempty = PP.Perm.empty
+  mappend = (<<+>>)
 
 {- | @p@ '<<+>>' @q@ returns the direct sum of the permutations @p@ and @q@.
 

@@ -10,9 +10,11 @@ Stability   : experimental
 -}
 
 module Data.Algorithm.PP.Combinatorics (
+  -- * Partitions
     partitions
   , evenPartitions
 
+-- * Compositions
   , kCompositions
   ) where
 
