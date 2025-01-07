@@ -85,7 +85,7 @@ mk' = uncurry mk
 
 -}
 mkZero :: Point
-mkZero = mk 0 0
+mkZero = mkOnDiagonal 0
 
 {- | 'onDiagonal' @i@ returns the point @(i, i)@. -}
 mkOnDiagonal :: Int -> Point
@@ -99,7 +99,7 @@ mkOnDiagonal i = mk i i
 move :: Int -> Int -> Point -> Point
 move dx dy p = mk (getX p + dx) (getY p + dy)
 
-{- | 'symmetric' @p@ returns the point with coordinates @(y, x)@, where @(x,y)@ are the coordinates of the point @p@.
+{- | 'symmetric' @p@ returns the point with coordinates @(y,x)@, where @(x,y)@ are the coordinates of the point @p@.
 
 >>> symmetric $ mk 4 5
 (5,4)
@@ -214,4 +214,4 @@ False
 True
 -}
 dominatedBy :: Point -> Point -> Bool
-p1 `dominatedBy` p2 = getX p1 <= getX p2 && getY p1 <= getY p2
+p1 `dominatedBy` p2 = p1 `isOnTheLeftOf` p2 && p1 `isBelowOf` p2
